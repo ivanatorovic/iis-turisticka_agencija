@@ -4,5 +4,6 @@ public enum Role {
     CUSTOMER,
     ADMIN,
     SALES_AGENT,
-    MANAGER
+    MANAGER,
+    GUIDE
 }
