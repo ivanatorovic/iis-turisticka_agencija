@@ -1,0 +1,112 @@
+<section class="register-page">
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <div class="register-card">
+    <a routerLink="/" class="back-link">← Nazad na početnu</a>
+
+    <p class="subtitle">KREIRAJ NALOG</p>
+
+    <h1>Registracija</h1>
+
+    <p class="description">Napravi nalog i započni planiranje svog sledećeg putovanja.</p>
+
+    <form (ngSubmit)="register()" #registerForm="ngForm">
+      <div class="form-row">
+        <div class="form-group">
+          <label>Ime</label>
+
+          <input
+            type="text"
+            name="firstName"
+            [(ngModel)]="form.firstName"
+            required
+            placeholder="Unesi ime"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Prezime</label>
+
+          <input
+            type="text"
+            name="lastName"
+            [(ngModel)]="form.lastName"
+            required
+            placeholder="Unesi prezime"
+          />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Korisničko ime</label>
+
+        <input
+          type="text"
+          name="username"
+          [(ngModel)]="form.username"
+          required
+          placeholder="Unesi korisničko ime"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Email adresa</label>
+
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="form.email"
+          required
+          placeholder="Unesi email adresu"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Kontakt <span class="optional">(opciono)</span></label>
+
+        <input
+          type="text"
+          name="contact"
+          [(ngModel)]="form.contact"
+          placeholder="Unesi broj telefona"
+        />
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Lozinka</label>
+
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="form.password"
+            required
+            placeholder="Unesi lozinku"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Potvrda lozinke</label>
+
+          <input
+            type="password"
+            name="confirmPassword"
+            [(ngModel)]="form.confirmPassword"
+            required
+            placeholder="Ponovi lozinku"
+          />
+        </div>
+      </div>
+
+      <input type="hidden" name="role" [(ngModel)]="form.role" />
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      <p class="success" *ngIf="successMessage">{{ successMessage }}</p>
+
+      <button type="submit" [disabled]="registerForm.invalid || loading">
+        {{ loading ? 'Registracija...' : 'Registruj se' }}
+      </button>
+    </form>
+  </div>
+</section>

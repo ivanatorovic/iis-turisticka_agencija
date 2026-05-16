@@ -1,0 +1,30 @@
+<button class="menu-btn" (click)="toggleMenu()">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<div class="menu-backdrop" *ngIf="menuOpen" (click)="closeMenu()"></div>
+
+<aside class="side-menu" [class.open]="menuOpen">
+  <div class="menu-header">
+    <div class="profile-avatar">
+      {{ getUsername().charAt(0).toUpperCase() }}
+    </div>
+
+    <div>
+      <p>Dobrodošli</p>
+      <h3>{{ getUsername() }}</h3>
+    </div>
+  </div>
+
+  <div class="menu-links">
+    <a class="home-link" routerLink="/" (click)="closeMenu()"> Početna stranica </a>
+    <a routerLink="/my-profile" (click)="closeMenu()">Moj profil</a>
+    <a href="#" (click)="closeMenu()">Moja putovanja</a>
+    <a href="#" (click)="closeMenu()">Preporuke</a>
+    <a href="#" (click)="closeMenu()">Podešavanja</a>
+  </div>
+
+  <button class="menu-logout" (click)="logout()">Odjava</button>
+</aside>

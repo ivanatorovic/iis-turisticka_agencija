@@ -2,6 +2,7 @@ package com.example.turisticka_agencija.controller;
 
 import com.example.turisticka_agencija.dto.ChangePasswordRequest;
 import com.example.turisticka_agencija.dto.UpdateProfileRequest;
+import com.example.turisticka_agencija.dto.UpdateProfileResponse;
 import com.example.turisticka_agencija.dto.UserResponse;
 import com.example.turisticka_agencija.model.User;
 import com.example.turisticka_agencija.service.AuthService;
@@ -19,7 +20,7 @@ public class UserController {
     private final UserService userService;
     private final AuthService authService;
 
-    public UserController(UserService userService,AuthService authService) {
+    public UserController(UserService userService, AuthService authService) {
         this.userService = userService;
         this.authService = authService;
     }
@@ -31,6 +32,8 @@ public class UserController {
                 .stream()
                 .map(user -> new UserResponse(
                         user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
                         user.getUsername(),
                         user.getEmail(),
                         user.getContact(),
@@ -49,6 +52,8 @@ public class UserController {
         return ResponseEntity.ok(
                 new UserResponse(
                         user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
                         user.getUsername(),
                         user.getEmail(),
                         user.getContact(),
@@ -65,17 +70,16 @@ public class UserController {
         return ResponseEntity.ok("Korisnik je uspešno obrisan");
     }
 
-    @PutMapping("/me")
-    public ResponseEntity<UserResponse> updateProfile(
-            Authentication authentication,
-            @RequestBody UpdateProfileRequest request
-    ) {
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getMyProfile(Authentication authentication) {
 
-        User user = userService.updateProfile(authentication.getName(), request);
+        User user = userService.findByUsername(authentication.getName());
 
         return ResponseEntity.ok(
                 new UserResponse(
                         user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
                         user.getUsername(),
                         user.getEmail(),
                         user.getContact(),
@@ -84,12 +88,22 @@ public class UserController {
         );
     }
 
+    @PutMapping("/me")
+    public ResponseEntity<UpdateProfileResponse> updateProfile(
+            Authentication authentication,
+            @RequestBody UpdateProfileRequest request
+    ) {
+        UpdateProfileResponse response =
+                userService.updateProfile(authentication.getName(), request);
+
+        return ResponseEntity.ok(response);
+    }
+
     @PutMapping("/me/password")
     public ResponseEntity<String> changePassword(
             Authentication authentication,
             @RequestBody ChangePasswordRequest request
     ) {
-
         authService.changePassword(authentication.getName(), request);
 
         return ResponseEntity.ok("Lozinka je uspešno promenjena");

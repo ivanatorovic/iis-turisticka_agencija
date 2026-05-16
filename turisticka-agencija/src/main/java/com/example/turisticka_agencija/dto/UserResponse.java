@@ -5,13 +5,17 @@ import com.example.turisticka_agencija.model.Role;
 public class UserResponse {
 
     private Long id;
+    private String firstName;
+    private String lastName;
     private String username;
     private String email;
     private String contact;
     private Role role;
 
-    public UserResponse(Long id, String username, String email, String contact, Role role) {
+    public UserResponse(Long id, String firstName, String lastName, String username, String email, String contact, Role role) {
         this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.username = username;
         this.email = email;
         this.contact = contact;
@@ -20,6 +24,14 @@ public class UserResponse {
 
     public Long getId() {
         return id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public String getUsername() {

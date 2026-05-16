@@ -2,9 +2,27 @@ package com.example.turisticka_agencija.dto;
 
 public class UpdateProfileRequest {
 
+    private String firstName;
+    private String lastName;
     private String username;
     private String email;
     private String contact;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public String getUsername() {
         return username;

@@ -1,0 +1,174 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.login-page {
+  min-height: 100vh;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  font-family: 'Inter', sans-serif;
+  background: #050505;
+  color: white;
+  overflow: hidden;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  background: url('../../../../assets/hotel.jpg') center/cover no-repeat;
+  transform: scale(1.04);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to right, rgba(0, 0, 0, 0.68), rgba(0, 0, 0, 0.38)),
+    linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.2));
+}
+
+.login-card {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 520px;
+  padding: 44px 48px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 10, 10, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.72);
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.25s;
+}
+
+.back-link:hover {
+  color: #d8c19b;
+}
+
+.subtitle {
+  margin-bottom: 12px;
+  color: #d8c19b;
+  letter-spacing: 5px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 60px;
+  line-height: 1;
+  font-weight: 600;
+}
+
+.description {
+  margin: 16px 0 34px;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.form-group {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+input {
+  display: block;
+  width: 100%;
+  height: 58px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  outline: none;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 15px;
+  font-family: 'Inter', sans-serif;
+  transition: 0.25s;
+}
+
+input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
+}
+
+input:focus {
+  border-color: #d8c19b;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.error {
+  margin: 8px 0 16px;
+  color: #ff9b9b;
+  line-height: 1.5;
+  font-size: 14px;
+}
+
+button {
+  width: 100%;
+  height: 58px;
+  margin-top: 8px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: white;
+  color: #111;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: 0.25s;
+}
+
+button:hover {
+  background: #d8c19b;
+  transform: translateY(-2px);
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.register-text {
+  margin-top: 24px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 14px;
+}
+
+.register-text a {
+  color: #d8c19b;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+@media (max-width: 650px) {
+  .login-card {
+    max-width: 100%;
+    padding: 34px 24px;
+  }
+
+  h1 {
+    font-size: 48px;
+  }
+}

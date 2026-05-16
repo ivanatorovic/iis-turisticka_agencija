@@ -1,0 +1,198 @@
+<section class="profile-page">
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <nav class="profile-navbar">
+    <div class="left-nav">
+      <app-sidebar-menu></app-sidebar-menu>
+      <a routerLink="/" class="logo">LUXTRAVEL</a>
+    </div>
+  </nav>
+
+  <main class="profile-layout">
+    <div class="profile-info">
+      <p class="subtitle">MOJ PROFIL</p>
+      <h1>Podaci o nalogu</h1>
+
+      <p class="description">
+        Pregled osnovnih informacija koje su povezane sa vašim korisničkim nalogom.
+      </p>
+    </div>
+
+    <div>
+      <div class="loading-box" *ngIf="loading">Učitavanje profila...</div>
+
+      <article class="profile-card" *ngIf="user">
+        <div class="profile-header">
+          <div class="avatar">{{ getInitial() }}</div>
+
+          <div class="profile-main-info">
+            <p class="welcome">Dobrodošli nazad</p>
+
+            <div class="name-row" *ngIf="editingField !== 'name'">
+              <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+
+              <button class="edit-btn" (click)="startEditing('name')">✎</button>
+            </div>
+
+            <div class="edit-name-wrapper" *ngIf="editingField === 'name'">
+              <input type="text" placeholder="Ime" [(ngModel)]="editableUser.firstName" />
+              <input type="text" placeholder="Prezime" [(ngModel)]="editableUser.lastName" />
+
+              <button class="confirm-btn" (click)="saveChanges()" [disabled]="saving">✓</button>
+              <button class="close-btn" (click)="cancelEditing()">✕</button>
+            </div>
+
+            <p class="profile-username">@{{ user.username }}</p>
+          </div>
+        </div>
+
+        <div class="profile-grid" *ngIf="!changingPassword">
+          <div class="info-item">
+            <div class="info-top">
+              <span>Korisničko ime</span>
+
+              <button
+                class="edit-btn"
+                *ngIf="editingField !== 'username'"
+                (click)="startEditing('username')"
+              >
+                ✎
+              </button>
+
+              <button
+                class="close-btn"
+                *ngIf="editingField === 'username'"
+                (click)="cancelEditing()"
+              >
+                ✕
+              </button>
+            </div>
+
+            <strong *ngIf="editingField !== 'username'">{{ user.username }}</strong>
+
+            <div class="edit-input-wrapper" *ngIf="editingField === 'username'">
+              <input type="text" [(ngModel)]="editableUser.username" />
+              <button class="confirm-btn" (click)="saveChanges()" [disabled]="saving">✓</button>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-top">
+              <span>Email adresa</span>
+
+              <button
+                class="edit-btn"
+                *ngIf="editingField !== 'email'"
+                (click)="startEditing('email')"
+              >
+                ✎
+              </button>
+
+              <button class="close-btn" *ngIf="editingField === 'email'" (click)="cancelEditing()">
+                ✕
+              </button>
+            </div>
+
+            <strong *ngIf="editingField !== 'email'">{{ user.email }}</strong>
+
+            <div class="edit-input-wrapper" *ngIf="editingField === 'email'">
+              <input type="email" [(ngModel)]="editableUser.email" />
+              <button class="confirm-btn" (click)="saveChanges()" [disabled]="saving">✓</button>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <div class="info-top">
+              <span>Kontakt</span>
+
+              <button
+                class="edit-btn"
+                *ngIf="editingField !== 'contact'"
+                (click)="startEditing('contact')"
+              >
+                ✎
+              </button>
+
+              <button
+                class="close-btn"
+                *ngIf="editingField === 'contact'"
+                (click)="cancelEditing()"
+              >
+                ✕
+              </button>
+            </div>
+
+            <strong *ngIf="editingField !== 'contact'">{{ user.contact || 'Nije unet' }}</strong>
+
+            <div class="edit-input-wrapper" *ngIf="editingField === 'contact'">
+              <input type="text" [(ngModel)]="editableUser.contact" />
+              <button class="confirm-btn" (click)="saveChanges()" [disabled]="saving">✓</button>
+            </div>
+          </div>
+
+          <div class="info-item">
+            <span>Uloga</span>
+            <strong>{{ getRoleLabel(user.role) }}</strong>
+          </div>
+        </div>
+
+        <form class="password-form" *ngIf="changingPassword" (ngSubmit)="changePassword()">
+          <div class="password-header">
+            <div>
+              <p class="password-subtitle">PROMENA LOZINKE</p>
+              <h3>Unesite novu lozinku</h3>
+            </div>
+
+            <button type="button" class="close-btn" (click)="cancelPasswordChange()">✕</button>
+          </div>
+
+          <div class="password-grid">
+            <div class="password-field">
+              <label>Stara lozinka</label>
+              <input
+                type="password"
+                name="oldPassword"
+                [(ngModel)]="passwordForm.oldPassword"
+                required
+              />
+            </div>
+
+            <div class="password-field">
+              <label>Nova lozinka</label>
+              <input
+                type="password"
+                name="newPassword"
+                [(ngModel)]="passwordForm.newPassword"
+                required
+              />
+            </div>
+
+            <div class="password-field password-full">
+              <label>Potvrda nove lozinke</label>
+              <input
+                type="password"
+                name="confirmNewPassword"
+                [(ngModel)]="passwordForm.confirmNewPassword"
+                required
+              />
+            </div>
+          </div>
+
+          <button class="save-password-btn" type="submit" [disabled]="saving">
+            {{ saving ? 'Čuvanje...' : 'Sačuvaj novu lozinku' }}
+          </button>
+        </form>
+
+        <div class="profile-footer">
+          <p class="profile-message error-text" *ngIf="errorMessage">{{ errorMessage }}</p>
+          <p class="profile-message success-text" *ngIf="successMessage">{{ successMessage }}</p>
+
+          <button class="secondary" *ngIf="!changingPassword" (click)="showPasswordForm()">
+            Promeni lozinku
+          </button>
+        </div>
+      </article>
+    </div>
+  </main>
+</section>

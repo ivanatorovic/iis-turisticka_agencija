@@ -4,12 +4,30 @@ import com.example.turisticka_agencija.model.Role;
 
 public class RegisterRequest {
 
+    private String firstName;
+    private String lastName;
     private String username;
     private String email;
     private String password;
     private String confirmPassword;
     private Role role;
     private String contact;
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
 
     public String getContact() {
         return contact;
