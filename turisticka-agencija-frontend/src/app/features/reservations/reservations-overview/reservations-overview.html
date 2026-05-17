@@ -55,6 +55,16 @@
             <span>Ukupna cena</span>
             <b>{{ reservation.totalPrice }} €</b>
           </div>
+          <div>
+  <span>Plaćanje</span>
+  <b>
+    {{
+      reservation.paymentType === 'INSTALLMENTS'
+        ? reservation.numberOfInstallments + ' rata po ' + (reservation.installmentAmount | number: '1.2-2') + ' €'
+        : 'Jednokratno'
+    }}
+  </b>
+</div>
 
           <div>
             <span>Datum rezervacije</span>

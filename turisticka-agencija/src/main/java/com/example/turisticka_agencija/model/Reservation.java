@@ -27,6 +27,13 @@ public class Reservation {
     @ManyToOne
     private ArrangementTerm arrangementTerm;
 
+    @Enumerated(EnumType.STRING)
+    private PaymentType paymentType;
+
+    private Integer numberOfInstallments;
+
+    private Double installmentAmount;
+
     public Reservation() {
         this.reservationDate = LocalDateTime.now();
         this.status = ReservationStatus.PENDING;
@@ -90,6 +97,30 @@ public class Reservation {
 
     public void setArrangement(Arrangement arrangement) {
         this.arrangement = arrangement;
+    }
+
+    public PaymentType getPaymentType() {
+        return paymentType;
+    }
+
+    public Integer getNumberOfInstallments() {
+        return numberOfInstallments;
+    }
+
+    public Double getInstallmentAmount() {
+        return installmentAmount;
+    }
+
+    public void setPaymentType(PaymentType paymentType) {
+        this.paymentType = paymentType;
+    }
+
+    public void setNumberOfInstallments(Integer numberOfInstallments) {
+        this.numberOfInstallments = numberOfInstallments;
+    }
+
+    public void setInstallmentAmount(Double installmentAmount) {
+        this.installmentAmount = installmentAmount;
     }
 
 

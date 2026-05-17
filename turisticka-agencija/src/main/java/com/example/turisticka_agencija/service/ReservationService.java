@@ -86,14 +86,34 @@ public class ReservationService {
             throw new RuntimeException("Not enough available spots");
         }
 
+        double totalPrice = arrangement.getBasePrice() * request.getNumberOfPassengers();
+
         Reservation reservation = new Reservation();
 
         reservation.setUser(user);
         reservation.setArrangement(arrangement);
         reservation.setArrangementTerm(arrangementTerm);
         reservation.setNumberOfPassengers(request.getNumberOfPassengers());
-        reservation.setTotalPrice(arrangement.getBasePrice() * request.getNumberOfPassengers());
+        reservation.setTotalPrice(totalPrice);
         reservation.setStatus(ReservationStatus.CONFIRMED);
+
+        PaymentType paymentType = request.getPaymentType() != null
+                ? request.getPaymentType()
+                : PaymentType.ONE_TIME;
+
+        reservation.setPaymentType(paymentType);
+
+        if (paymentType == PaymentType.INSTALLMENTS) {
+            if (request.getNumberOfInstallments() == null || request.getNumberOfInstallments() < 2) {
+                throw new RuntimeException("Number of installments must be at least 2");
+            }
+
+            reservation.setNumberOfInstallments(request.getNumberOfInstallments());
+            reservation.setInstallmentAmount(totalPrice / request.getNumberOfInstallments());
+        } else {
+            reservation.setNumberOfInstallments(1);
+            reservation.setInstallmentAmount(totalPrice);
+        }
 
         arrangementTerm.setReservedSpots(
                 arrangementTerm.getReservedSpots() + request.getNumberOfPassengers()

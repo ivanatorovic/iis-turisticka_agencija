@@ -28,7 +28,8 @@ export class ArrangementDetails implements OnInit {
   numberOfPassengers = 1;
 
   availabilityResponse: AvailabilityResponse | null = null;
-
+paymentType = 'ONE_TIME';
+numberOfInstallments: number | null = null;
   successMessage = '';
   errorMessage = '';
 
@@ -135,12 +136,15 @@ export class ArrangementDetails implements OnInit {
     }
 
     this.reservationService
-      .createReservation({
-        userId,
-        arrangementId: this.arrangement.id,
-        arrangementTermId: this.selectedArrangementTermId,
-        numberOfPassengers: this.numberOfPassengers,
-      })
+  .createReservation({
+    userId,
+    arrangementId: this.arrangement.id,
+    arrangementTermId: this.selectedArrangementTermId,
+    numberOfPassengers: this.numberOfPassengers,
+    paymentType: this.paymentType,
+    numberOfInstallments:
+      this.paymentType === 'INSTALLMENTS' ? this.numberOfInstallments : 1,
+  })
       .subscribe({
         next: () => {
           this.successMessage = 'Rezervacija je uspešno kreirana.';
@@ -165,4 +169,16 @@ export class ArrangementDetails implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
   }
+
+  calculateInstallmentAmount(): number {
+  if (this.paymentType !== 'INSTALLMENTS') {
+    return this.calculateTotalPrice();
+  }
+
+  if (!this.numberOfInstallments || this.numberOfInstallments < 2) {
+    return 0;
+  }
+
+  return this.calculateTotalPrice() / this.numberOfInstallments;
+}
 }

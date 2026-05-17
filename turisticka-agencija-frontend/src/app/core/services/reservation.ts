@@ -21,6 +21,8 @@ export interface CreateReservationRequest {
   arrangementId: number;
   arrangementTermId: number;
   numberOfPassengers: number;
+  paymentType: string;
+  numberOfInstallments: number | null;
 }
 
 export interface Reservation {
@@ -29,6 +31,9 @@ export interface Reservation {
   totalPrice: number;
   reservationDate: string;
   status: string;
+  paymentType: string;
+  numberOfInstallments: number;
+  installmentAmount: number;
 
   user: {
     id: number;

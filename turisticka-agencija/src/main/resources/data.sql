@@ -88,3 +88,11 @@ VALUES
     '0641111111',
     'SALES_AGENT'
 );
+SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
+SELECT setval('destination_id_seq', (SELECT MAX(id) FROM destination));
+SELECT setval('accommodation_id_seq', (SELECT MAX(id) FROM accommodation));
+SELECT setval('transport_id_seq', (SELECT MAX(id) FROM transport));
+SELECT setval('additional_service_id_seq', (SELECT MAX(id) FROM additional_service));
+SELECT setval('arrangement_id_seq', (SELECT MAX(id) FROM arrangement));
+SELECT setval('term_id_seq', (SELECT MAX(id) FROM term));
+SELECT setval('arrangement_term_id_seq', (SELECT MAX(id) FROM arrangement_term));

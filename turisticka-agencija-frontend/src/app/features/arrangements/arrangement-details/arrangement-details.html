@@ -37,29 +37,51 @@
       </div>
 
       <div class="reservation-form">
-        <div class="form-group">
-          <label>Termin putovanja</label>
-          <select [(ngModel)]="selectedArrangementTermId">
-            <option
-              *ngFor="let arrangementTerm of arrangement.arrangementTerms"
-              [ngValue]="arrangementTerm.id"
-            >
-              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
-              | slobodno: {{ arrangementTerm.availableSpots }}
-            </option>
-          </select>
-        </div>
+  <div class="form-group">
+    <label>Termin putovanja</label>
+    <select [(ngModel)]="selectedArrangementTermId">
+      <option
+        *ngFor="let arrangementTerm of arrangement.arrangementTerms"
+        [ngValue]="arrangementTerm.id"
+      >
+        {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
+        | slobodno: {{ arrangementTerm.availableSpots }}
+      </option>
+    </select>
+  </div>
 
-        <div class="form-group">
-          <label>Broj osoba</label>
-          <input type="number" min="1" [(ngModel)]="numberOfPassengers" />
-        </div>
+  <div class="form-group">
+    <label>Broj osoba</label>
+    <input type="number" min="1" [(ngModel)]="numberOfPassengers" />
+  </div>
 
-        <div class="reservation-price">
-          <span>Ukupna cena</span>
-          <b>{{ calculateTotalPrice() }} €</b>
-        </div>
-      </div>
+  <div class="form-group">
+    <label>Način plaćanja</label>
+    <select [(ngModel)]="paymentType">
+      <option value="ONE_TIME">Jednokratno</option>
+      <option value="INSTALLMENTS">Na rate</option>
+    </select>
+  </div>
+
+  <div class="form-group" *ngIf="paymentType === 'INSTALLMENTS'">
+    <label>Broj rata</label>
+    <input type="number" min="2" [(ngModel)]="numberOfInstallments" />
+  </div>
+
+  <div class="reservation-price">
+    <span>Ukupna cena</span>
+    <b>{{ calculateTotalPrice() }} €</b>
+
+    <small *ngIf="paymentType === 'ONE_TIME'">
+      Jednokratno plaćanje
+    </small>
+
+    <small *ngIf="paymentType === 'INSTALLMENTS' && numberOfInstallments">
+      {{ numberOfInstallments }} rata po
+      {{ calculateInstallmentAmount() | number: '1.2-2' }} €
+    </small>
+  </div>
+</div>
 
       <div class="reservation-actions">
         <button class="check-btn" (click)="checkAvailability()">

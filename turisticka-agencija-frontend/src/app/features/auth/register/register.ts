@@ -44,16 +44,15 @@ export class Register {
 
     this.authService.register(this.form).subscribe({
       next: (response) => {
-        this.loading = false;
-        this.successMessage = 'Registracija je uspešna.';
+  this.loading = false;
+  this.successMessage = 'Registracija je uspešna.';
 
-        if (response.token) localStorage.setItem('token', response.token);
-        if (response.username) localStorage.setItem('username', response.username);
+  this.authService.saveAuthData(response);
 
-        setTimeout(() => {
-          this.router.navigate(['/']);
-        }, 1200);
-      },
+  setTimeout(() => {
+    this.router.navigate(['/']);
+  }, 1200);
+},
       error: (err) => {
         this.loading = false;
 
