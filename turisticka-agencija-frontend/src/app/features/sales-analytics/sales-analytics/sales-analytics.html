@@ -1,0 +1,156 @@
+<div class="analytics-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <div class="content">
+    <div class="page-header">
+      <p class="subtitle">LUXTRAVEL</p>
+      <h1>Analitika prodaje</h1>
+      <p class="description">
+        Pregled prodaje, prihoda, popularnosti destinacija i sezonalnosti aranžmana.
+      </p>
+    </div>
+
+    <div class="filters-card">
+      <div class="form-group">
+        <label>Godina</label>
+        <input
+          type="number"
+          [(ngModel)]="selectedYear"
+          (change)="onYearChange()"
+        />
+      </div>
+
+      <button class="primary-btn" (click)="loadAnalytics()">
+        Prikaži analitiku
+      </button>
+    </div>
+
+    <p class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+
+    <div class="summary-grid" *ngIf="yearlySummary">
+      <div class="summary-card">
+        <span>Ukupno rezervacija</span>
+        <b>{{ yearlySummary.totalReservations }}</b>
+      </div>
+
+      <div class="summary-card">
+        <span>Potvrđene rezervacije</span>
+        <b>{{ yearlySummary.confirmedReservations }}</b>
+      </div>
+
+      <div class="summary-card">
+        <span>Otkazane rezervacije</span>
+        <b>{{ yearlySummary.cancelledReservations }}</b>
+      </div>
+
+      <div class="summary-card highlight">
+        <span>Ukupan prihod</span>
+        <b>{{ yearlySummary.totalRevenue | number: '1.2-2' }} €</b>
+      </div>
+
+      <div class="summary-card">
+        <span>Prosečna vrednost rezervacije</span>
+        <b>{{ yearlySummary.averageReservationValue | number: '1.2-2' }} €</b>
+      </div>
+    </div>
+
+    <div class="analytics-grid">
+      <div class="analytics-card">
+        <h2>Poređenje prihoda po godinama</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Godina</th>
+              <th>Broj rezervacija</th>
+              <th>Prihod</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let item of revenueByYears">
+              <td>{{ item.year }}</td>
+              <td>{{ item.reservationCount }}</td>
+              <td>{{ item.revenue | number: '1.2-2' }} €</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="analytics-card">
+        <h2>Popularne destinacije</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Destinacija</th>
+              <th>Rezervacije</th>
+              <th>Prihod</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let destination of popularDestinations">
+              <td>{{ destination.destinationName }}, {{ destination.country }}</td>
+              <td>{{ destination.reservationCount }}</td>
+              <td>{{ destination.revenue | number: '1.2-2' }} €</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="analytics-card">
+        <h2>Najuspešniji aranžmani</h2>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Aranžman</th>
+              <th>Rezervacije</th>
+              <th>Prihod</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let arrangement of popularArrangements">
+              <td>{{ arrangement.arrangementName }}</td>
+              <td>{{ arrangement.reservationCount }}</td>
+              <td>{{ arrangement.revenue | number: '1.2-2' }} €</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="analytics-card wide">
+        <div class="card-header">
+          <h2>Sezonalnost aranžmana</h2>
+
+          <div class="form-group small">
+            <label>Aranžman</label>
+            <select
+              [(ngModel)]="selectedArrangementId"
+              (change)="onArrangementChange()"
+            >
+              <option
+                *ngFor="let arrangement of arrangements"
+                [ngValue]="arrangement.id"
+              >
+                {{ arrangement.name }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <div class="month-grid">
+          <div class="month-card" *ngFor="let month of monthlyArrangementSales">
+            <span>{{ month.monthName }}</span>
+            <b>{{ month.reservationCount }}</b>
+            <small>{{ month.revenue | number: '1.2-2' }} €</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

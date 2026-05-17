@@ -38,4 +38,20 @@ export class SidebarMenu {
     this.authService.logout();
     this.router.navigate(['/']);
   }
+
+  getRole(): string | null {
+  return this.authService.getRole();
+}
+
+isCustomer(): boolean {
+  return this.getRole() === 'CUSTOMER';
+}
+
+isSalesAgent(): boolean {
+  return this.getRole() === 'SALES_AGENT';
+}
+
+isManager(): boolean {
+  return this.getRole() === 'MANAGER';
+}
 }
