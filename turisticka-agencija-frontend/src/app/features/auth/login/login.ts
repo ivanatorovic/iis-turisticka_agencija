@@ -30,17 +30,26 @@ export class Login {
 
     this.authService.login(this.form).subscribe({
       next: (response) => {
-        this.loading = false;
+  this.loading = false;
 
-        if (response.token) {
-          localStorage.setItem('token', response.token);
-        }
+  if (response.token) {
+    localStorage.setItem('token', response.token);
+  }
 
-        if (response.username) {
-          localStorage.setItem('username', response.username);
-        }
+  if (response.username) {
+    localStorage.setItem('username', response.username);
+  }
 
-        this.router.navigate(['/']);
+  if (response.id) {
+    localStorage.setItem('userId', response.id.toString());
+  }
+
+  if (response.role) {
+    localStorage.setItem('role', response.role);
+  }
+
+  this.router.navigate(['/']);
+
       },
       error: (err) => {
         this.loading = false;

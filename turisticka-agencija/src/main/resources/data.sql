@@ -44,14 +44,15 @@ VALUES
     (4, '2026-12-20', '2026-12-27'),
     (5, '2026-06-15', '2026-06-22');
 
-INSERT INTO arrangement_terms (arrangement_id, term_id)
+INSERT INTO arrangement_term
+(id, arrangement_id, term_id, capacity, reserved_spots)
 VALUES
-    (1, 1),
-    (1, 2),
-    (2, 3),
-    (3, 4),
-    (4, 2),
-    (5, 5);
+    (1, 1, 1, 40, 0),
+    (2, 1, 2, 35, 0),
+    (3, 2, 3, 25, 0),
+    (4, 3, 4, 30, 0),
+    (5, 4, 2, 20, 0),
+    (6, 5, 5, 15, 0);
 
 INSERT INTO arrangement_additional_services (arrangement_id, additional_service_id)
 VALUES

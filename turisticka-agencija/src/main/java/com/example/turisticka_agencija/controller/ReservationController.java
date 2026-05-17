@@ -1,7 +1,9 @@
 package com.example.turisticka_agencija.controller;
 
-import com.example.turisticka_agencija.model.*;
-import com.example.turisticka_agencija.repository.*;
+import com.example.turisticka_agencija.dto.AvailabilityResponse;
+import com.example.turisticka_agencija.dto.CreateReservationRequest;
+import com.example.turisticka_agencija.model.Reservation;
+import com.example.turisticka_agencija.service.ReservationService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,53 +12,30 @@ import java.util.List;
 @RequestMapping("/api/reservations")
 public class ReservationController {
 
-    private final ReservationRepository reservationRepository;
-    private final UserRepository userRepository;
-    private final ArrangementRepository arrangementRepository;
-    private final TermRepository termRepository;
+    private final ReservationService reservationService;
 
-    public ReservationController(ReservationRepository reservationRepository,
-                                 UserRepository userRepository,
-                                 ArrangementRepository arrangementRepository,
-                                 TermRepository termRepository) {
-        this.reservationRepository = reservationRepository;
-        this.userRepository = userRepository;
-        this.arrangementRepository = arrangementRepository;
-        this.termRepository = termRepository;
+    public ReservationController(ReservationService reservationService) {
+        this.reservationService = reservationService;
     }
 
     @GetMapping
     public List<Reservation> getAllReservations() {
-        return reservationRepository.findAll();
+        return reservationService.getAllReservations();
+    }
+
+    @GetMapping("/check-availability")
+    public AvailabilityResponse checkAvailability(@RequestParam Long arrangementId,
+                                                  @RequestParam Long arrangementTermId,
+                                                  @RequestParam int passengers) {
+        return reservationService.checkAvailability(
+                arrangementId,
+                arrangementTermId,
+                passengers
+        );
     }
 
     @PostMapping
-    public Reservation createReservation(@RequestParam Long userId,
-                                         @RequestParam Long arrangementId,
-                                         @RequestParam Long termId,
-                                         @RequestParam int passengers) {
-
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-
-        Arrangement arrangement = arrangementRepository.findById(arrangementId)
-                .orElseThrow(() -> new RuntimeException("Arrangement not found"));
-
-        Term term = termRepository.findById(termId)
-                .orElseThrow(() -> new RuntimeException("Term not found"));
-
-        Reservation reservation = new Reservation();
-
-        reservation.setUser(user);
-        reservation.setArrangement(arrangement);
-        reservation.setTerm(term);
-
-        reservation.setNumberOfPassengers(passengers);
-
-        reservation.setTotalPrice(
-                arrangement.getBasePrice() * passengers
-        );
-
-        return reservationRepository.save(reservation);
+    public Reservation createReservation(@RequestBody CreateReservationRequest request) {
+        return reservationService.createReservation(request);
     }
 }

@@ -9,6 +9,21 @@ export interface Term {
   endDate: string;
 }
 
+export interface ArrangementTerm {
+  id: number;
+  term: Term;
+  capacity: number;
+  reservedSpots: number;
+  availableSpots: number;
+}
+
+export interface Destination {
+  id: number;
+  name: string;
+  country: string;
+  description: string;
+}
+
 export interface Accommodation {
   id: number;
   name: string;
@@ -25,12 +40,6 @@ export interface AdditionalService {
   id: number;
   name: string;
 }
-export interface Destination {
-  id: number;
-  name: string;
-  country: string;
-  description: string;
-}
 
 export interface Arrangement {
   id: number;
@@ -43,7 +52,7 @@ export interface Arrangement {
   accommodation: Accommodation;
   transport: Transport;
   additionalServices: AdditionalService[];
-  terms: Term[];
+  arrangementTerms: ArrangementTerm[];
 }
 
 export interface ArrangementSearchRequest {
@@ -84,14 +93,14 @@ export class ArrangementService {
     });
   }
 
-  getById(id: number): Observable<Arrangement> {
-  return this.http.get<Arrangement>(`${this.apiUrl}/${id}`, {
-    headers: this.getHeaders(),
-  });
-}
-
   search(request: ArrangementSearchRequest): Observable<Arrangement[]> {
     return this.http.post<Arrangement[]>(`${this.apiUrl}/search`, request, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getById(id: number): Observable<Arrangement> {
+    return this.http.get<Arrangement>(`${this.apiUrl}/${id}`, {
       headers: this.getHeaders(),
     });
   }

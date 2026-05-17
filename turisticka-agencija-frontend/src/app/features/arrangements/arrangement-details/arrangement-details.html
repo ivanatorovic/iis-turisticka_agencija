@@ -30,6 +30,84 @@
       </div>
     </div>
 
+    <div class="reservation-card">
+      <div>
+        <p class="section-label">Rezervacija</p>
+        <h2>Proveri dostupnost i rezerviši</h2>
+      </div>
+
+      <div class="reservation-form">
+        <div class="form-group">
+          <label>Termin putovanja</label>
+          <select [(ngModel)]="selectedArrangementTermId">
+            <option
+              *ngFor="let arrangementTerm of arrangement.arrangementTerms"
+              [ngValue]="arrangementTerm.id"
+            >
+              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
+              | slobodno: {{ arrangementTerm.availableSpots }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Broj osoba</label>
+          <input type="number" min="1" [(ngModel)]="numberOfPassengers" />
+        </div>
+
+        <div class="reservation-price">
+          <span>Ukupna cena</span>
+          <b>{{ calculateTotalPrice() }} €</b>
+        </div>
+      </div>
+
+      <div class="reservation-actions">
+        <button class="check-btn" (click)="checkAvailability()">
+          Proveri dostupnost
+        </button>
+
+        <button
+          class="reserve-btn"
+          (click)="reserve()"
+          [disabled]="availabilityResponse && !availabilityResponse.available"
+        >
+          Rezerviši aranžman
+        </button>
+      </div>
+
+      <p class="success-message" *ngIf="successMessage">
+        {{ successMessage }}
+      </p>
+
+      <p class="error-message" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </p>
+
+      <div
+        class="alternatives"
+        *ngIf="
+          availabilityResponse &&
+          !availabilityResponse.available &&
+          availabilityResponse.alternativeTerms.length > 0
+        "
+      >
+        <h3>Alternativni termini</h3>
+
+        <div
+          class="alternative-term"
+          *ngFor="let term of availabilityResponse.alternativeTerms"
+          (click)="chooseAlternativeTerm(term)"
+        >
+          <div>
+            <b>{{ term.startDate }} - {{ term.endDate }}</b>
+            <span>{{ term.availableSpots }} slobodnih mesta</span>
+          </div>
+
+          <button>Izaberi</button>
+        </div>
+      </div>
+    </div>
+
     <div class="details-section">
       <h2>Detalji aranžmana</h2>
 
@@ -42,8 +120,9 @@
         <div class="detail-row">
           <span>Termini putovanja</span>
           <ul>
-            <li *ngFor="let term of arrangement.terms">
-              {{ term.startDate }} - {{ term.endDate }}
+            <li *ngFor="let arrangementTerm of arrangement.arrangementTerms">
+              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
+              — slobodno: {{ arrangementTerm.availableSpots }}
             </li>
           </ul>
         </div>

@@ -2,10 +2,12 @@ package com.example.turisticka_agencija.service;
 
 import com.example.turisticka_agencija.dto.ArrangementSearchRequest;
 import com.example.turisticka_agencija.model.Arrangement;
+import com.example.turisticka_agencija.model.ArrangementTerm;
 import com.example.turisticka_agencija.model.Term;
 import com.example.turisticka_agencija.repository.ArrangementRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -23,6 +25,11 @@ public class ArrangementService {
 
     public Arrangement createArrangement(Arrangement arrangement) {
         return arrangementRepository.save(arrangement);
+    }
+
+    public Arrangement getArrangementById(Long id) {
+        return arrangementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Arrangement not found"));
     }
 
     public List<Arrangement> searchArrangements(ArrangementSearchRequest request) {
@@ -50,6 +57,59 @@ public class ArrangementService {
         }
 
         return results;
+    }
+
+    private boolean matchesDestination(Arrangement arrangement, String destination) {
+        if (destination == null || destination.isBlank()) {
+            return true;
+        }
+
+        if (arrangement.getDestination() == null) {
+            return false;
+        }
+
+        String search = destination.toLowerCase();
+
+        return arrangement.getDestination().getName().toLowerCase().contains(search)
+                || arrangement.getDestination().getCountry().toLowerCase().contains(search);
+    }
+
+    private boolean matchesTravelDate(Arrangement arrangement, LocalDate travelDate) {
+        if (travelDate == null) {
+            return true;
+        }
+
+        if (arrangement.getArrangementTerms() == null) {
+            return false;
+        }
+
+        return arrangement.getArrangementTerms()
+                .stream()
+                .map(ArrangementTerm::getTerm)
+                .anyMatch(term -> isDateInsideTerm(term, travelDate));
+    }
+
+    private boolean isDateInsideTerm(Term term, LocalDate travelDate) {
+        if (term == null || term.getStartDate() == null || term.getEndDate() == null) {
+            return false;
+        }
+
+        return !travelDate.isBefore(term.getStartDate())
+                && !travelDate.isAfter(term.getEndDate());
+    }
+
+    private boolean matchesBudget(Arrangement arrangement, ArrangementSearchRequest request) {
+        if (request.getBudget() == null) {
+            return true;
+        }
+
+        int passengers = request.getNumberOfPassengers() > 0
+                ? request.getNumberOfPassengers()
+                : 1;
+
+        double totalPrice = arrangement.getBasePrice() * passengers;
+
+        return totalPrice <= request.getBudget();
     }
 
     private boolean matchesAccommodationCategory(Arrangement arrangement, ArrangementSearchRequest request) {
@@ -83,59 +143,14 @@ public class ArrangementService {
             return true;
         }
 
+        if (arrangement.getAdditionalServices() == null) {
+            return false;
+        }
+
         return arrangement.getAdditionalServices()
                 .stream()
                 .anyMatch(service ->
                         service.getName().equalsIgnoreCase(request.getAdditionalService())
                 );
-    }
-
-    private boolean matchesDestination(Arrangement arrangement, String destination) {
-        if (destination == null || destination.isBlank()) {
-            return true;
-        }
-
-        if (arrangement.getDestination() == null) {
-            return false;
-        }
-
-        String search = destination.toLowerCase();
-
-        return arrangement.getDestination().getName().toLowerCase().contains(search)
-                || arrangement.getDestination().getCountry().toLowerCase().contains(search);
-    }
-
-    private boolean matchesTravelDate(Arrangement arrangement, java.time.LocalDate travelDate) {
-        if (travelDate == null) {
-            return true;
-        }
-
-        return arrangement.getTerms()
-                .stream()
-                .anyMatch(term -> isDateInsideTerm(term, travelDate));
-    }
-
-    private boolean isDateInsideTerm(Term term, java.time.LocalDate travelDate) {
-        return !travelDate.isBefore(term.getStartDate())
-                && !travelDate.isAfter(term.getEndDate());
-    }
-
-    private boolean matchesBudget(Arrangement arrangement, ArrangementSearchRequest request) {
-        if (request.getBudget() == null) {
-            return true;
-        }
-
-        int passengers = request.getNumberOfPassengers() > 0
-                ? request.getNumberOfPassengers()
-                : 1;
-
-        double totalPrice = arrangement.getBasePrice() * passengers;
-
-        return totalPrice <= request.getBudget();
-    }
-
-    public Arrangement getArrangementById(Long id) {
-        return arrangementRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Arrangement not found"));
     }
 }

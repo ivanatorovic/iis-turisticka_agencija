@@ -1,10 +1,8 @@
 package com.example.turisticka_agencija.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 public class Term {
@@ -14,11 +12,8 @@ public class Term {
     private Long id;
 
     private LocalDate startDate;
-    private LocalDate endDate;
 
-    @ManyToMany(mappedBy = "terms")
-    @JsonIgnore
-    private List<Arrangement> arrangements = new ArrayList<>();
+    private LocalDate endDate;
 
     public Term() {
     }
@@ -35,19 +30,11 @@ public class Term {
         return endDate;
     }
 
-    public List<Arrangement> getArrangements() {
-        return arrangements;
-    }
-
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
-    }
-
-    public void setArrangements(List<Arrangement> arrangements) {
-        this.arrangements = arrangements;
     }
 }

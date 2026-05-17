@@ -165,14 +165,15 @@
         </div>
 
         <div class="terms">
-          <b>Dostupni termini:</b>
+  <b>Dostupni termini:</b>
 
-          <ul>
-            <li *ngFor="let term of arrangement.terms">
-              {{ term.startDate }} - {{ term.endDate }}
-            </li>
-          </ul>
-        </div>
+  <ul>
+    <li *ngFor="let arrangementTerm of arrangement.arrangementTerms">
+      {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
+      <span>({{ arrangementTerm.availableSpots }} slobodnih mesta)</span>
+    </li>
+  </ul>
+</div>
         <button class="details-btn" [routerLink]="['/arrangements', arrangement.id]">
   Pogledaj detalje
 </button>

@@ -25,7 +25,7 @@ public class Reservation {
     private Arrangement arrangement;
 
     @ManyToOne
-    private Term term;
+    private ArrangementTerm arrangementTerm;
 
     public Reservation() {
         this.reservationDate = LocalDateTime.now();
@@ -60,8 +60,12 @@ public class Reservation {
         return arrangement;
     }
 
-    public Term getTerm() {
-        return term;
+    public ArrangementTerm getArrangementTerm() {
+        return arrangementTerm;
+    }
+
+    public void setArrangementTerm(ArrangementTerm arrangementTerm) {
+        this.arrangementTerm = arrangementTerm;
     }
 
     public void setNumberOfPassengers(int numberOfPassengers) {
@@ -88,7 +92,5 @@ public class Reservation {
         this.arrangement = arrangement;
     }
 
-    public void setTerm(Term term) {
-        this.term = term;
-    }
+
 }

@@ -18,13 +18,8 @@ public class Arrangement {
     private double basePrice;
     private String imageUrl;
 
-    @ManyToMany
-    @JoinTable(
-            name = "arrangement_terms",
-            joinColumns = @JoinColumn(name = "arrangement_id"),
-            inverseJoinColumns = @JoinColumn(name = "term_id")
-    )
-    private List<Term> terms = new ArrayList<>();
+    @OneToMany(mappedBy = "arrangement")
+    private List<ArrangementTerm> arrangementTerms = new ArrayList<>();
 
     private int numberOfNights;
 
@@ -65,8 +60,12 @@ public class Arrangement {
         return basePrice;
     }
 
-    public List<Term> getTerms() {
-        return terms;
+    public List<ArrangementTerm> getArrangementTerms() {
+        return arrangementTerms;
+    }
+
+    public void setArrangementTerms(List<ArrangementTerm> arrangementTerms) {
+        this.arrangementTerms = arrangementTerms;
     }
 
     public void setName(String name) {
@@ -85,9 +84,7 @@ public class Arrangement {
         this.basePrice = basePrice;
     }
 
-    public void setTerms(List<Term> terms) {
-        this.terms = terms;
-    }
+
 
     public String getImageUrl() {
         return imageUrl;

@@ -19,6 +19,7 @@ export interface LoginRequest {
 }
 
 export interface AuthResponse {
+  id?: number;
   token?: string;
   username?: string;
   email?: string;
@@ -41,6 +42,24 @@ export class AuthService {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request);
   }
 
+  saveAuthData(response: AuthResponse): void {
+  if (response.token) {
+    localStorage.setItem('token', response.token);
+  }
+
+  if (response.username) {
+    localStorage.setItem('username', response.username);
+  }
+
+  if (response.id) {
+    localStorage.setItem('userId', response.id.toString());
+  }
+
+  if (response.role) {
+    localStorage.setItem('role', response.role);
+  }
+}
+
   isLoggedIn(): boolean {
     return !!localStorage.getItem('token');
   }
@@ -49,10 +68,24 @@ export class AuthService {
     return localStorage.getItem('username') || 'Profil';
   }
 
+  getUserId(): number | null {
+  const id = localStorage.getItem('userId');
+
+  return id ? Number(id) : null;
+}
+
+  getRole(): string | null {
+    return localStorage.getItem('role');
+  }
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('role');
   }
+
+  
 
   getToken(): string | null {
     return localStorage.getItem('token');
