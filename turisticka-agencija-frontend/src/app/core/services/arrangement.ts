@@ -9,6 +9,23 @@ export interface Term {
   endDate: string;
 }
 
+export interface Accommodation {
+  id: number;
+  name: string;
+  category: string;
+}
+
+export interface Transport {
+  id: number;
+  type: string;
+  company: string;
+}
+
+export interface AdditionalService {
+  id: number;
+  name: string;
+}
+
 export interface Arrangement {
   id: number;
   name: string;
@@ -16,6 +33,10 @@ export interface Arrangement {
   description: string;
   basePrice: number;
   imageUrl: string;
+  numberOfNights: number;
+  accommodation: Accommodation;
+  transport: Transport;
+  additionalServices: AdditionalService[];
   terms: Term[];
 }
 
@@ -24,6 +45,12 @@ export interface ArrangementSearchRequest {
   travelDate: string;
   numberOfPassengers: number;
   budget: number | null;
+
+  accommodationCategory: string | null;
+  transportType: string | null;
+  numberOfNights: number | null;
+  additionalService: string;
+  sortByPrice: string;
 }
 
 @Injectable({

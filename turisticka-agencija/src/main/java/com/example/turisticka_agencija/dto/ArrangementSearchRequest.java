@@ -1,5 +1,8 @@
 package com.example.turisticka_agencija.dto;
 
+import com.example.turisticka_agencija.model.AccommodationCategory;
+import com.example.turisticka_agencija.model.TransportType;
+
 import java.time.LocalDate;
 
 public class ArrangementSearchRequest {
@@ -8,6 +11,12 @@ public class ArrangementSearchRequest {
     private LocalDate travelDate;
     private int numberOfPassengers;
     private Double budget;
+
+    private AccommodationCategory accommodationCategory;
+    private TransportType transportType;
+    private Integer numberOfNights;
+    private String additionalService;
+    private String sortByPrice;
 
     public ArrangementSearchRequest() {
     }
@@ -28,6 +37,26 @@ public class ArrangementSearchRequest {
         return budget;
     }
 
+    public AccommodationCategory getAccommodationCategory() {
+        return accommodationCategory;
+    }
+
+    public TransportType getTransportType() {
+        return transportType;
+    }
+
+    public Integer getNumberOfNights() {
+        return numberOfNights;
+    }
+
+    public String getAdditionalService() {
+        return additionalService;
+    }
+
+    public String getSortByPrice() {
+        return sortByPrice;
+    }
+
     public void setDestination(String destination) {
         this.destination = destination;
     }
@@ -42,5 +71,25 @@ public class ArrangementSearchRequest {
 
     public void setBudget(Double budget) {
         this.budget = budget;
+    }
+
+    public void setAccommodationCategory(AccommodationCategory accommodationCategory) {
+        this.accommodationCategory = accommodationCategory;
+    }
+
+    public void setTransportType(TransportType transportType) {
+        this.transportType = transportType;
+    }
+
+    public void setNumberOfNights(Integer numberOfNights) {
+        this.numberOfNights = numberOfNights;
+    }
+
+    public void setAdditionalService(String additionalService) {
+        this.additionalService = additionalService;
+    }
+
+    public void setSortByPrice(String sortByPrice) {
+        this.sortByPrice = sortByPrice;
     }
 }

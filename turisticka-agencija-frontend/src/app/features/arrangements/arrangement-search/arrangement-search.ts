@@ -16,12 +16,19 @@ import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
 })
 export class ArrangementSearch implements OnInit {
   arrangements: Arrangement[] = [];
+  filtersOpen = false;
 
   searchRequest: ArrangementSearchRequest = {
     destination: '',
     travelDate: '',
     numberOfPassengers: 1,
     budget: null,
+
+    accommodationCategory: null,
+    transportType: null,
+    numberOfNights: null,
+    additionalService: '',
+    sortByPrice: '',
   };
 
   constructor(private arrangementService: ArrangementService) {}
@@ -58,9 +65,20 @@ export class ArrangementSearch implements OnInit {
       travelDate: '',
       numberOfPassengers: 1,
       budget: null,
+
+      accommodationCategory: null,
+      transportType: null,
+      numberOfNights: null,
+      additionalService: '',
+      sortByPrice: '',
     };
 
+    this.filtersOpen = false;
     this.loadAll();
+  }
+
+  toggleFilters(): void {
+    this.filtersOpen = !this.filtersOpen;
   }
 
   calculateTotalPrice(arrangement: Arrangement): number {
@@ -71,7 +89,8 @@ export class ArrangementSearch implements OnInit {
 
     return arrangement.basePrice * passengers;
   }
+
   getImageUrl(arrangement: Arrangement): string {
-  return `http://localhost:8080${arrangement.imageUrl}`;
-}
+    return `http://localhost:8080${arrangement.imageUrl}`;
+  }
 }

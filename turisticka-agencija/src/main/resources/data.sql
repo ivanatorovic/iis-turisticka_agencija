@@ -1,10 +1,32 @@
-INSERT INTO arrangement (id, name, destination, description, base_price, image_url)
+INSERT INTO accommodation (id, name, category)
 VALUES
-    (1, 'Letovanje Krf', 'Grcka', 'Letovanje na Krfu sa autobuskim prevozom i smeštajem blizu plaže.', 450, '/arrangements/krf.jpg'),
-    (2, 'Rim city break', 'Italija', 'Putovanje u Rim, obilazak znamenitosti i slobodno vreme za kupovinu.', 380, '/arrangements/rimjpg.jpg'),
-    (3, 'Zimovanje Kopaonik', 'Srbija', 'Zimski aranžman na Kopaoniku sa hotelskim smeštajem.', 300, '/arrangements/zimovanje.jpg'),
-    (4, 'Letovanje Hurgada', 'Egipat', 'All inclusive letovanje u Hurgadi sa avionskim prevozom.', 700, '/arrangements/hurgada.jpg'),
-    (5, 'Pariz romantično putovanje', 'Francuska', 'Putovanje u Pariz sa obilaskom najpoznatijih znamenitosti.', 620, '/arrangements/pariz.jpg');
+    (1, 'Hotel Ionian View', 'HOTEL_4'),
+    (2, 'Hotel Roma Centro', 'HOTEL_3'),
+    (3, 'Grand Hotel Kopaonik', 'HOTEL_5'),
+    (4, 'Hurgada Resort', 'HOTEL_5'),
+    (5, 'Paris Apartment', 'APARTMENT');
+
+INSERT INTO transport (id, type, company)
+VALUES
+    (1, 'BUS', 'LuxTravel Bus'),
+    (2, 'PLANE', 'Air Serbia'),
+    (3, 'OWN_TRANSPORT', 'Bez prevoza');
+
+INSERT INTO additional_service (id, name)
+VALUES
+    (1, 'Doručak'),
+    (2, 'All inclusive'),
+    (3, 'Vodič'),
+    (4, 'Spa');
+
+INSERT INTO arrangement
+(id, name, destination, description, base_price, image_url, number_of_nights, accommodation_id, transport_id)
+VALUES
+    (1, 'Letovanje Krf', 'Grcka', 'Letovanje na Krfu sa autobuskim prevozom i smeštajem blizu plaže.', 450, '/arrangements/krf.jpg', 10, 1, 1),
+    (2, 'Rim city break', 'Italija', 'Putovanje u Rim, obilazak znamenitosti i slobodno vreme za kupovinu.', 380, '/arrangements/rimjpg.jpg', 4, 2, 2),
+    (3, 'Zimovanje Kopaonik', 'Srbija', 'Zimski aranžman na Kopaoniku sa hotelskim smeštajem.', 300, '/arrangements/zimovanje.jpg', 7, 3, 3),
+    (4, 'Letovanje Hurgada', 'Egipat', 'All inclusive letovanje u Hurgadi sa avionskim prevozom.', 700, '/arrangements/hurgada.jpg', 10, 4, 2),
+    (5, 'Pariz romantično putovanje', 'Francuska', 'Putovanje u Pariz sa obilaskom najpoznatijih znamenitosti.', 620, '/arrangements/pariz.jpg', 7, 5, 2);
 
 INSERT INTO term (id, start_date, end_date)
 VALUES
@@ -22,6 +44,18 @@ VALUES
     (3, 4),
     (4, 2),
     (5, 5);
+
+INSERT INTO arrangement_additional_services (arrangement_id, additional_service_id)
+VALUES
+    (1, 1),
+    (1, 3),
+    (2, 1),
+    (2, 3),
+    (3, 1),
+    (3, 4),
+    (4, 2),
+    (5, 1),
+    (5, 3);
 
 INSERT INTO users
 (id, first_name, last_name, username, email, password, contact, role)

@@ -25,6 +25,22 @@ public class Arrangement {
     )
     private List<Term> terms = new ArrayList<>();
 
+    private int numberOfNights;
+
+    @ManyToOne
+    private Accommodation accommodation;
+
+    @ManyToOne
+    private Transport transport;
+
+    @ManyToMany
+    @JoinTable(
+            name = "arrangement_additional_services",
+            joinColumns = @JoinColumn(name = "arrangement_id"),
+            inverseJoinColumns = @JoinColumn(name = "additional_service_id")
+    )
+    private List<AdditionalService> additionalServices = new ArrayList<>();
+
     public Arrangement() {
     }
 
@@ -78,6 +94,38 @@ public class Arrangement {
 
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
+    }
+
+    public int getNumberOfNights() {
+        return numberOfNights;
+    }
+
+    public Accommodation getAccommodation() {
+        return accommodation;
+    }
+
+    public Transport getTransport() {
+        return transport;
+    }
+
+    public List<AdditionalService> getAdditionalServices() {
+        return additionalServices;
+    }
+
+    public void setNumberOfNights(int numberOfNights) {
+        this.numberOfNights = numberOfNights;
+    }
+
+    public void setAccommodation(Accommodation accommodation) {
+        this.accommodation = accommodation;
+    }
+
+    public void setTransport(Transport transport) {
+        this.transport = transport;
+    }
+
+    public void setAdditionalServices(List<AdditionalService> additionalServices) {
+        this.additionalServices = additionalServices;
     }
 
 }
