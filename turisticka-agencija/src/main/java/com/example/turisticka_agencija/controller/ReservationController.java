@@ -23,6 +23,11 @@ public class ReservationController {
         return reservationService.getAllReservations();
     }
 
+    @GetMapping("/my")
+    public List<Reservation> getMyReservations(@RequestParam Long userId) {
+        return reservationService.getReservationsByUser(userId);
+    }
+
     @GetMapping("/check-availability")
     public AvailabilityResponse checkAvailability(@RequestParam Long arrangementId,
                                                   @RequestParam Long arrangementTermId,
@@ -37,5 +42,10 @@ public class ReservationController {
     @PostMapping
     public Reservation createReservation(@RequestBody CreateReservationRequest request) {
         return reservationService.createReservation(request);
+    }
+
+    @PutMapping("/{id}/cancel")
+    public Reservation cancelReservation(@PathVariable Long id) {
+        return reservationService.cancelReservation(id);
     }
 }

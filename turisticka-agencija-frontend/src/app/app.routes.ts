@@ -5,6 +5,7 @@ import { Login } from './features/auth/login/login';
 import { MyProfile } from './features/user/my-profile/my-profile';
 import { ArrangementSearch } from './features/arrangements/arrangement-search/arrangement-search';
 import { ArrangementDetails } from './features/arrangements/arrangement-details/arrangement-details';
+import { ReservationsOverview } from './features/reservations/reservations-overview/reservations-overview';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,10 @@ export const routes: Routes = [
     path: 'my-profile',
     component: MyProfile,
   },
+  {
+  path: 'reservations',
+  component: ReservationsOverview,
+},
   {
   path: 'arrangements/:id',
   component: ArrangementDetails,

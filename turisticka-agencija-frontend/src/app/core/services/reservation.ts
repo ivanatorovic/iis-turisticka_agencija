@@ -29,6 +29,34 @@ export interface Reservation {
   totalPrice: number;
   reservationDate: string;
   status: string;
+
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    username: string;
+    email: string;
+  };
+
+  arrangement: {
+    id: number;
+    name: string;
+    destination: {
+      name: string;
+      country: string;
+    };
+  };
+
+  arrangementTerm: {
+    id: number;
+    capacity: number;
+    reservedSpots: number;
+    availableSpots: number;
+    term: {
+      startDate: string;
+      endDate: string;
+    };
+  };
 }
 
 @Injectable({
@@ -50,6 +78,21 @@ export class ReservationService {
     });
   }
 
+  getAllReservations(): Observable<Reservation[]> {
+    return this.http.get<Reservation[]>(this.apiUrl, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getMyReservations(userId: number): Observable<Reservation[]> {
+    const params = new HttpParams().set('userId', userId);
+
+    return this.http.get<Reservation[]>(`${this.apiUrl}/my`, {
+      headers: this.getHeaders(),
+      params,
+    });
+  }
+
   checkAvailability(
     arrangementId: number,
     arrangementTermId: number,
@@ -68,6 +111,12 @@ export class ReservationService {
 
   createReservation(request: CreateReservationRequest): Observable<Reservation> {
     return this.http.post<Reservation>(this.apiUrl, request, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  cancelReservation(id: number): Observable<Reservation> {
+    return this.http.put<Reservation>(`${this.apiUrl}/${id}/cancel`, {}, {
       headers: this.getHeaders(),
     });
   }

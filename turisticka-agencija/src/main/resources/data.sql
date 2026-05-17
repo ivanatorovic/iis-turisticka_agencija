@@ -78,4 +78,13 @@ VALUES
         '$2a$12$vwKOu6LpRjAsYDDUCi2b/eeuZfn6Vdok4UY8aP3Xk.uHDpUedpdiG',
         '0641111111',
         'CUSTOMER'
-    );
+    ),(
+    2,
+    'Tijana',
+    'Barudzija',
+    'tijana',
+    'tijana@gmail.com',
+    '$2a$12$8a.6wRX01hEc4/cy.KvDAO.jG6n6hhVbv9uh65bmVDb6Yl/vSh4.i',
+    '0641111111',
+    'SALES_AGENT'
+);

@@ -31,6 +31,10 @@ public class ReservationService {
         return reservationRepository.findAll();
     }
 
+    public List<Reservation> getReservationsByUser(Long userId) {
+        return reservationRepository.findByUserId(userId);
+    }
+
     public AvailabilityResponse checkAvailability(Long arrangementId,
                                                   Long arrangementTermId,
                                                   int passengers) {
@@ -78,9 +82,7 @@ public class ReservationService {
             throw new RuntimeException("Selected term does not belong to this arrangement");
         }
 
-        int availableSpots = arrangementTerm.getAvailableSpots();
-
-        if (availableSpots < request.getNumberOfPassengers()) {
+        if (arrangementTerm.getAvailableSpots() < request.getNumberOfPassengers()) {
             throw new RuntimeException("Not enough available spots");
         }
 
@@ -98,6 +100,31 @@ public class ReservationService {
         );
 
         arrangementTermRepository.save(arrangementTerm);
+
+        return reservationRepository.save(reservation);
+    }
+
+    public Reservation cancelReservation(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId)
+                .orElseThrow(() -> new RuntimeException("Reservation not found"));
+
+        if (reservation.getStatus() == ReservationStatus.CANCELLED) {
+            throw new RuntimeException("Reservation is already cancelled");
+        }
+
+        ArrangementTerm arrangementTerm = reservation.getArrangementTerm();
+
+        arrangementTerm.setReservedSpots(
+                arrangementTerm.getReservedSpots() - reservation.getNumberOfPassengers()
+        );
+
+        if (arrangementTerm.getReservedSpots() < 0) {
+            arrangementTerm.setReservedSpots(0);
+        }
+
+        arrangementTermRepository.save(arrangementTerm);
+
+        reservation.setStatus(ReservationStatus.CANCELLED);
 
         return reservationRepository.save(reservation);
     }
