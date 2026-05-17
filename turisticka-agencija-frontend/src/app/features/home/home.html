@@ -34,6 +34,12 @@
       Istraži pažljivo odabrane destinacije, luksuzne hotele i jedinstvena iskustva kreirana za
       putnike koji žele više od običnog odmora.
     </p>
+
+    <div class="hero-actions" *ngIf="isLoggedIn()">
+  <button class="primary-btn" routerLink="/arrangements">
+    Pretraži aranžmane
+  </button>
+</div>
   </div>
 
   <section class="features">

@@ -15,6 +15,7 @@ public class Arrangement {
     private String destination;
     private String description;
     private double basePrice;
+    private String imageUrl;
 
     @ManyToMany
     @JoinTable(
@@ -70,4 +71,13 @@ public class Arrangement {
     public void setTerms(List<Term> terms) {
         this.terms = terms;
     }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
 }

@@ -1,9 +1,11 @@
 package com.example.turisticka_agencija.controller;
 
+import com.example.turisticka_agencija.dto.ArrangementSearchRequest;
 import com.example.turisticka_agencija.model.Arrangement;
 import com.example.turisticka_agencija.model.Term;
 import com.example.turisticka_agencija.repository.ArrangementRepository;
 import com.example.turisticka_agencija.repository.TermRepository;
+import com.example.turisticka_agencija.service.ArrangementService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,22 +14,31 @@ import java.util.List;
 @RequestMapping("/api/arrangements")
 public class ArrangementController {
 
+    private final ArrangementService arrangementService;
     private final ArrangementRepository arrangementRepository;
     private final TermRepository termRepository;
-    public ArrangementController(ArrangementRepository arrangementRepository,
+
+    public ArrangementController(ArrangementService arrangementService,
+                                 ArrangementRepository arrangementRepository,
                                  TermRepository termRepository) {
+        this.arrangementService = arrangementService;
         this.arrangementRepository = arrangementRepository;
         this.termRepository = termRepository;
     }
 
     @GetMapping
     public List<Arrangement> getAllArrangements() {
-        return arrangementRepository.findAll();
+        return arrangementService.getAllArrangements();
     }
 
     @PostMapping
     public Arrangement createArrangement(@RequestBody Arrangement arrangement) {
-        return arrangementRepository.save(arrangement);
+        return arrangementService.createArrangement(arrangement);
+    }
+
+    @PostMapping("/search")
+    public List<Arrangement> searchArrangements(@RequestBody ArrangementSearchRequest request) {
+        return arrangementService.searchArrangements(request);
     }
 
     @PutMapping("/{arrangementId}/terms/{termId}")

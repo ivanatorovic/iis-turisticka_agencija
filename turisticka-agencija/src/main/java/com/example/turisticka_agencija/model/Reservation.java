@@ -1,6 +1,7 @@
 package com.example.turisticka_agencija.model;
 
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
