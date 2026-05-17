@@ -1,0 +1,81 @@
+<div class="details-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <div class="content" *ngIf="arrangement; else loading">
+    <button class="back-btn" routerLink="/arrangements">
+      Nazad na aranžmane
+    </button>
+
+    <div class="hero-card">
+      <div class="image-wrapper">
+        <img [src]="getImageUrl()" [alt]="arrangement.name" />
+      </div>
+
+      <div class="main-info">
+        <p class="subtitle">
+          {{ arrangement.destination.name }}, {{ arrangement.destination.country }}
+        </p>
+
+        <h1>{{ arrangement.name }}</h1>
+
+        <p class="description">
+          {{ arrangement.description }}
+        </p>
+
+        <div class="price-box">
+          <span>Početna cena</span>
+          <b>{{ arrangement.basePrice }} €</b>
+          <small>po osobi</small>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-section">
+      <h2>Detalji aranžmana</h2>
+
+      <div class="details-list">
+        <div class="detail-row">
+          <span>Opis destinacije</span>
+          <p>{{ arrangement.destination.description }}</p>
+        </div>
+
+        <div class="detail-row">
+          <span>Termini putovanja</span>
+          <ul>
+            <li *ngFor="let term of arrangement.terms">
+              {{ term.startDate }} - {{ term.endDate }}
+            </li>
+          </ul>
+        </div>
+
+        <div class="detail-row">
+          <span>Trajanje</span>
+          <p>{{ arrangement.numberOfNights }} noćenja</p>
+        </div>
+
+        <div class="detail-row">
+          <span>Prevoz</span>
+          <p>{{ arrangement.transport.type }} — {{ arrangement.transport.company }}</p>
+        </div>
+
+        <div class="detail-row">
+          <span>Smeštaj</span>
+          <p>{{ arrangement.accommodation.name }} — {{ arrangement.accommodation.category }}</p>
+        </div>
+
+        <div class="detail-row">
+          <span>Sadržaj usluge</span>
+          <div class="service-tags">
+            <span *ngFor="let service of arrangement.additionalServices">
+              {{ service.name }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <p class="loading">Učitavanje detalja aranžmana...</p>
+  </ng-template>
+</div>

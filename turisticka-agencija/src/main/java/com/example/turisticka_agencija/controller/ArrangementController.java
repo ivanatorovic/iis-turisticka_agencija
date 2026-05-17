@@ -55,4 +55,8 @@ public class ArrangementController {
 
         return arrangementRepository.save(arrangement);
     }
+    @GetMapping("/{id}")
+    public Arrangement getArrangementById(@PathVariable Long id) {
+        return arrangementService.getArrangementById(id);
+    }
 }

@@ -95,10 +95,14 @@ public class ArrangementService {
             return true;
         }
 
-        return arrangement.getDestination() != null &&
-                arrangement.getDestination()
-                        .toLowerCase()
-                        .contains(destination.toLowerCase());
+        if (arrangement.getDestination() == null) {
+            return false;
+        }
+
+        String search = destination.toLowerCase();
+
+        return arrangement.getDestination().getName().toLowerCase().contains(search)
+                || arrangement.getDestination().getCountry().toLowerCase().contains(search);
     }
 
     private boolean matchesTravelDate(Arrangement arrangement, java.time.LocalDate travelDate) {
@@ -128,5 +132,10 @@ public class ArrangementService {
         double totalPrice = arrangement.getBasePrice() * passengers;
 
         return totalPrice <= request.getBudget();
+    }
+
+    public Arrangement getArrangementById(Long id) {
+        return arrangementRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Arrangement not found"));
     }
 }

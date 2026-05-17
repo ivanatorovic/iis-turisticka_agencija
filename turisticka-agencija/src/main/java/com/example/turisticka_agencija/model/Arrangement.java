@@ -12,7 +12,8 @@ public class Arrangement {
     private Long id;
 
     private String name;
-    private String destination;
+    @ManyToOne
+    private Destination destination;
     private String description;
     private double basePrice;
     private String imageUrl;
@@ -52,7 +53,7 @@ public class Arrangement {
         return name;
     }
 
-    public String getDestination() {
+    public Destination getDestination() {
         return destination;
     }
 
@@ -72,7 +73,7 @@ public class Arrangement {
         this.name = name;
     }
 
-    public void setDestination(String destination) {
+    public void setDestination(Destination destination) {
         this.destination = destination;
     }
 

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import {
   Arrangement,
   ArrangementSearchRequest,
@@ -10,7 +11,7 @@ import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
 
 @Component({
   selector: 'app-arrangement-search',
-  imports: [CommonModule, FormsModule, SidebarMenu],
+  imports: [CommonModule, FormsModule, SidebarMenu,  RouterLink],
   templateUrl: './arrangement-search.html',
   styleUrl: './arrangement-search.css',
 })

@@ -4,6 +4,7 @@ import { Register } from './features/auth/register/register';
 import { Login } from './features/auth/login/login';
 import { MyProfile } from './features/user/my-profile/my-profile';
 import { ArrangementSearch } from './features/arrangements/arrangement-search/arrangement-search';
+import { ArrangementDetails } from './features/arrangements/arrangement-details/arrangement-details';
 
 export const routes: Routes = [
   {
@@ -22,6 +23,10 @@ export const routes: Routes = [
     path: 'my-profile',
     component: MyProfile,
   },
+  {
+  path: 'arrangements/:id',
+  component: ArrangementDetails,
+},
   {
     path: 'arrangements',
     component: ArrangementSearch,

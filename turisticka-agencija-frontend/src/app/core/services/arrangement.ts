@@ -25,11 +25,17 @@ export interface AdditionalService {
   id: number;
   name: string;
 }
+export interface Destination {
+  id: number;
+  name: string;
+  country: string;
+  description: string;
+}
 
 export interface Arrangement {
   id: number;
   name: string;
-  destination: string;
+  destination: Destination;
   description: string;
   basePrice: number;
   imageUrl: string;
@@ -77,6 +83,12 @@ export class ArrangementService {
       headers: this.getHeaders(),
     });
   }
+
+  getById(id: number): Observable<Arrangement> {
+  return this.http.get<Arrangement>(`${this.apiUrl}/${id}`, {
+    headers: this.getHeaders(),
+  });
+}
 
   search(request: ArrangementSearchRequest): Observable<Arrangement[]> {
     return this.http.post<Arrangement[]>(`${this.apiUrl}/search`, request, {

@@ -129,7 +129,9 @@
 
         <div class="card-top">
           <div>
-            <p class="destination">{{ arrangement.destination }}</p>
+            <p class="destination">
+  {{ arrangement.destination.name }}, {{ arrangement.destination.country }}
+</p>
             <h3>{{ arrangement.name }}</h3>
           </div>
 
@@ -171,6 +173,9 @@
             </li>
           </ul>
         </div>
+        <button class="details-btn" [routerLink]="['/arrangements', arrangement.id]">
+  Pogledaj detalje
+</button>
       </div>
     </div>
   </div>
