@@ -25,4 +25,9 @@ public class TermController {
     public Term createTerm(@RequestBody Term term) {
         return termRepository.save(term);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteTerm(@PathVariable Long id) {
+        termRepository.deleteById(id);
+    }
 }

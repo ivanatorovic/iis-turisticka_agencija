@@ -1,0 +1,104 @@
+<div class="workflow-list-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <main class="content">
+    <section class="page-header">
+      <p>LUXTRAVEL ADMIN</p>
+      <h1>Radni tokovi</h1>
+      <span>Pregled šablona procesa koje si kreirala.</span>
+    </section>
+    <div class="success-message" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+
+<div class="error-message" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+    <p class="empty" *ngIf="workflows.length === 0">
+      Nema kreiranih radnih tokova.
+    </p>
+
+    <div class="workflow-grid">
+      <article
+    class="workflow-card"
+    *ngFor="let workflow of workflows"
+    [routerLink]="['/workflows', workflow.id]"
+  >
+        <div>
+          <h2>{{ workflow.name }}</h2>
+          <p>{{ workflow.createdAt | date:'dd.MM.yyyy. HH:mm' }}</p>
+        </div>
+
+        <div class="phase-list">
+          <span *ngFor="let phase of workflow.phases">
+            {{ phase.name }}
+          </span>
+        </div>
+
+   <div class="card-actions">
+  <button
+    class="send-btn"
+    (click)="
+      $event.stopPropagation();
+      openSendModal(workflow.id)
+    "
+  >
+    Pošalji menadžeru
+  </button>
+
+  <button
+    class="delete-card-btn"
+    (click)="
+      $event.stopPropagation();
+      openDeleteModal(workflow.id)
+    "
+  >
+    Obriši
+  </button>
+</div>
+      </article>
+      <div class="modal-backdrop" *ngIf="showDeleteModal">
+  <div class="confirm-modal">
+    <h2>Brisanje radnog toka</h2>
+
+    <p>Da li ste sigurni da želite da obrišete ovaj radni tok?</p>
+
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="closeDeleteModal()">
+        Ne
+      </button>
+
+      <button class="delete-btn" (click)="confirmDeleteWorkflow()">
+        Da
+      </button>
+    </div>
+  </div>
+</div>
+    </div>
+
+    <div class="modal-backdrop" *ngIf="showSendModal">
+  <div class="confirm-modal">
+    <h2>Slanje radnog toka</h2>
+
+    <p>Unesi korisničko ime menadžera kome šalješ radni tok.</p>
+
+    <input
+      class="manager-input"
+      type="text"
+      [(ngModel)]="managerUsername"
+      placeholder="npr. srdjan"
+    />
+
+    <div class="modal-actions">
+      <button class="cancel-btn" (click)="closeSendModal()">
+        Otkaži
+      </button>
+
+      <button class="delete-btn" (click)="confirmSendToManager()">
+        Potvrdi
+      </button>
+    </div>
+  </div>
+</div>
+  </main>
+</div>

@@ -1,0 +1,194 @@
+.workflow-list-page {
+  min-height: 100dvh;
+  background: #f7f3eb;
+}
+
+.workflow-list-page app-sidebar-menu {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+}
+
+.content {
+  padding: 54px 8vw;
+}
+
+.page-header p {
+  margin: 0 0 8px;
+  color: #a88b5b;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 3px;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 44px;
+}
+
+.page-header span {
+  display: block;
+  margin-top: 12px;
+  color: #6f6a61;
+}
+
+.empty {
+  margin-top: 40px;
+  color: #6f6a61;
+}
+
+.workflow-grid {
+  margin-top: 34px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 22px;
+}
+
+.workflow-card {
+  padding: 26px;
+  border-radius: 26px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(17, 17, 17, 0.08);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.08);
+}
+
+.workflow-card h2 {
+  margin: 0;
+  font-size: 24px;
+}
+
+.workflow-card p {
+  color: #7a746b;
+}
+
+.phase-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 22px 0;
+}
+
+.phase-list span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: #ded8ce;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.workflow-card button {
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: #111;
+  color: white;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.workflow-card button:hover {
+  background: #d8c19b;
+  color: #111;
+}
+
+.success-message,
+.error-message {
+  margin-bottom: 22px;
+  padding: 16px 22px;
+  border-radius: 18px;
+  font-weight: 700;
+}
+
+.success-message {
+  background: #e8f7ea;
+  color: #1d6b34;
+  border: 1px solid #b7e4c2;
+}
+
+.error-message {
+  background: #fdeaea;
+  color: #a12626;
+  border: 1px solid #efb2b2;
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.confirm-modal {
+  width: 420px;
+  max-width: calc(100% - 32px);
+  padding: 34px;
+  border-radius: 28px;
+  background: #fffaf2;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
+  text-align: center;
+}
+
+.confirm-modal h2 {
+  margin: 0 0 14px;
+}
+
+.confirm-modal p {
+  color: #6f6a61;
+  margin-bottom: 28px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+}
+
+.cancel-btn,
+.delete-btn {
+  min-width: 110px;
+  height: 46px;
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #ded8ce;
+  color: #111;
+}
+
+.delete-btn {
+  background: #111;
+  color: white;
+}
+
+.send-btn {
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 999px;
+  background: #ded8ce;
+  color: #111;
+  cursor: pointer;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.send-btn:hover {
+  background: #cdbb9c;
+}
+
+.manager-input {
+  width: 100%;
+  height: 46px;
+  border: 1px solid rgba(17, 17, 17, 0.14);
+  border-radius: 14px;
+  padding: 0 16px;
+  margin: 18px 0 24px;
+  outline: none;
+}

@@ -1,0 +1,34 @@
+<div class="workflow-list-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <main class="content">
+    <section class="page-header">
+      <p>LUXTRAVEL MANAGER</p>
+      <h1>Primljeni radni tokovi</h1>
+      <span>Radni tokovi koje ti je administrator poslao.</span>
+    </section>
+
+    <p class="empty" *ngIf="workflows.length === 0">
+      Nema primljenih radnih tokova.
+    </p>
+
+    <div class="workflow-grid">
+      <article
+        class="workflow-card"
+        *ngFor="let workflow of workflows"
+        [routerLink]="['/workflows', workflow.id]"
+      >
+        <div>
+          <h2>{{ workflow.name }}</h2>
+          <p>{{ workflow.createdAt | date:'dd.MM.yyyy. HH:mm' }}</p>
+        </div>
+
+        <div class="phase-list">
+          <span *ngFor="let phase of workflow.phases">
+            {{ phase.name }}
+          </span>
+        </div>
+      </article>
+    </div>
+  </main>
+</div>

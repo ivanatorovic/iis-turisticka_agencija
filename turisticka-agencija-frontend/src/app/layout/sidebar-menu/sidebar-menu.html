@@ -31,6 +31,21 @@
   <div class="menu-links">
 
     <!-- POČETNA -->
+      <a
+    routerLink="/workflows/create"
+    *ngIf="isAdmin()"
+    (click)="closeMenu()"
+  >
+    Kreiraj novi radni tok
+  </a>
+
+  <a
+    routerLink="/workflows"
+    *ngIf="isAdmin()"
+    (click)="closeMenu()"
+  >
+    Prikaži radne tokove
+  </a>
 
     <a
       class="home-link"
@@ -79,6 +94,22 @@
     >
       Analitika prodaje
     </a>
+
+    <!-- MANAGER -->
+
+<a
+  routerLink="/arrangements"
+  *ngIf="isManager()"
+>
+  Aranžmani
+</a>
+
+<a
+  routerLink="/received-workflows"
+  *ngIf="isManager()"
+>
+  Primljeni radni tokovi
+</a>
 
     <!-- SVI -->
 

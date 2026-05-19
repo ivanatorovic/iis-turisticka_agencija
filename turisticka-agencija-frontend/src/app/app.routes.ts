@@ -7,6 +7,10 @@ import { ArrangementSearch } from './features/arrangements/arrangement-search/ar
 import { ArrangementDetails } from './features/arrangements/arrangement-details/arrangement-details';
 import { ReservationsOverview } from './features/reservations/reservations-overview/reservations-overview';
 import { SalesAnalytics } from './features/sales-analytics/sales-analytics/sales-analytics';
+import { WorkflowCreate } from './features/workflows/workflow-create/workflow-create';
+import { WorkflowList } from './features/workflows/workflow-list/workflow-list';
+import { WorkflowDetails } from './features/workflows/workflow-details/workflow-details';
+import { ReceivedWorkflows } from './features/workflows/received-workflows/received-workflows';
 
 export const routes: Routes = [
   {
@@ -41,4 +45,20 @@ export const routes: Routes = [
     path: 'arrangements',
     component: ArrangementSearch,
   },
+  {
+  path: 'workflows/create',
+  component: WorkflowCreate,
+},
+{
+  path: 'workflows',
+  component: WorkflowList,
+},
+{
+  path: 'workflows/:id',
+  component: WorkflowDetails,
+},
+{
+  path: 'received-workflows',
+  component: ReceivedWorkflows,
+}
 ];

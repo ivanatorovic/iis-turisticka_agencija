@@ -54,4 +54,8 @@ isSalesAgent(): boolean {
 isManager(): boolean {
   return this.getRole() === 'MANAGER';
 }
+
+isAdmin(): boolean {
+  return this.getRole() === 'ADMIN';
+}
 }

@@ -108,7 +108,38 @@ VALUES
     '$2a$12$8t9.26FFCQvLb2M2ZIuE3Ovfjary6v//q2MkeNQP1/bYmldLd64ym',
     '0641111111',
     'MANAGER'
-);
+),
+    (
+        4,
+        'Pera',
+        'Peric',
+        'pera',
+        'pera@gmail.com',
+        '$2a$12$i.mgoLN5DPZoA4uyN3GRDe9EE6BF9MUEkVEhMZboFEd0hYQ8vGBNW',
+        '0641111111',
+        'ADMIN'
+    ),
+    (
+        5,
+        'Zika',
+        'Zikic',
+        'zika',
+        'zika@gmail.com',
+        '$2a$12$3sz5kLVM6c6C89MLHFKwVeCDh7IKUkZxsGaqV19JAtih4/VX0/oGW',
+        '0641111111',
+        'DIRECTOR'
+    ),
+
+    (
+        6,
+        'Mika',
+        'Mikic',
+        'mika',
+        'mika@gmail.com',
+        '$2a$12$I2G9oURzwaIngC4AW226CetjqAzs3dOrZk4/0i5psVCI3KGOAyLHq',
+        '0641111111',
+        'MANAGER'
+    );;
 
 INSERT INTO reservation
 (id, user_id, arrangement_id, arrangement_term_id, number_of_passengers, total_price, reservation_date, status, payment_type, number_of_installments, installment_amount)
@@ -127,6 +158,17 @@ VALUES
 -- 2024
     (9, 1, 4, 10, 3, 2100, '2024-04-10 10:00:00', 'CONFIRMED', 'INSTALLMENTS', 6, 350),
     (10, 1, 3, 11, 1, 300, '2024-11-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 300);
+
+INSERT INTO workflow (id, name, created_at, admin_id)
+VALUES
+    (1, 'Letovanje Evropa', NOW(), 4);
+
+INSERT INTO workflow_phase (id, name, type, workflow_id)
+VALUES
+    (1, 'DESTINATION', 'RECOMMENDED', 1),
+    (2, 'ACCOMMODATION', 'RECOMMENDED', 1),
+    (3, 'TRANSPORT', 'RECOMMENDED', 1);
+
 SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 SELECT setval('destination_id_seq', (SELECT MAX(id) FROM destination));
 SELECT setval('accommodation_id_seq', (SELECT MAX(id) FROM accommodation));
@@ -136,6 +178,8 @@ SELECT setval('arrangement_id_seq', (SELECT MAX(id) FROM arrangement));
 SELECT setval('term_id_seq', (SELECT MAX(id) FROM term));
 SELECT setval('arrangement_term_id_seq', (SELECT MAX(id) FROM arrangement_term));
 SELECT setval('reservation_id_seq', (SELECT MAX(id) FROM reservation));
+SELECT setval('workflow_id_seq', (SELECT MAX(id) FROM workflow));
+SELECT setval('workflow_phase_id_seq', (SELECT MAX(id) FROM workflow_phase));
 
 UPDATE arrangement_term SET reserved_spots = 4 WHERE id = 1;
 UPDATE arrangement_term SET reserved_spots = 3 WHERE id = 2;
@@ -143,3 +187,4 @@ UPDATE arrangement_term SET reserved_spots = 3 WHERE id = 3;
 UPDATE arrangement_term SET reserved_spots = 3 WHERE id = 4;
 UPDATE arrangement_term SET reserved_spots = 5 WHERE id = 5;
 UPDATE arrangement_term SET reserved_spots = 2 WHERE id = 6;
+
