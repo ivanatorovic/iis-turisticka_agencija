@@ -6,6 +6,14 @@ VALUES
     (4, 'EGZOTIKA','Hurgada', 'Egipat', 'Hurgada je popularno letovalište na Crvenom moru, poznato po all inclusive hotelima, ronjenju i toploj klimi.'),
     (5, 'IZLET','Pariz', 'Francuska', 'Pariz je grad umetnosti, mode, romantike i znamenitosti kao što su Ajfelov toranj, Luvr i Jelisejska polja.');
 
+INSERT INTO destination_calendar
+(id, name, start_date, end_date, season_type, status, destination_id)
+VALUES
+    (1, 'Letnja sezona Krf 2026', '2026-06-01', '2026-09-30', 'HIGH', 'ACTIVE', 1),
+    (2, 'Jesenji city break Rim 2026', '2026-09-01', '2026-11-30', 'LOW', 'ACTIVE', 2),
+    (3, 'Zimska sezona Kopaonik 2026', '2026-12-01', '2027-03-15', 'HIGH', 'ACTIVE', 3),
+    (4, 'Egzotika Hurgada 2026', '2026-05-01', '2026-10-31', 'HIGH', 'ACTIVE', 4),
+    (5, 'Prolećni Pariz 2026', '2026-03-01', '2026-06-30', 'LOW', 'ACTIVE', 5);
 INSERT INTO accommodation (id, name, category)
 VALUES
     (1, 'Hotel Ionian View', 'HOTEL_4'),
@@ -180,6 +188,7 @@ SELECT setval('arrangement_term_id_seq', (SELECT MAX(id) FROM arrangement_term))
 SELECT setval('reservation_id_seq', (SELECT MAX(id) FROM reservation));
 SELECT setval('workflow_id_seq', (SELECT MAX(id) FROM workflow));
 SELECT setval('workflow_phase_id_seq', (SELECT MAX(id) FROM workflow_phase));
+SELECT setval('destination_calendar_id_seq', (SELECT MAX(id) FROM destination_calendar));
 
 UPDATE arrangement_term SET reserved_spots = 4 WHERE id = 1;
 UPDATE arrangement_term SET reserved_spots = 3 WHERE id = 2;

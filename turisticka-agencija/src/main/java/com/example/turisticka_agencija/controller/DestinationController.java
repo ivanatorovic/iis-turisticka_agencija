@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/destinations")
@@ -42,15 +43,29 @@ public class DestinationController {
     }
 
 
-    @PutMapping("/{id}")
-    public Destination updateDestination(@PathVariable Long id, @RequestBody Destination updatedDestination) {
+    @PatchMapping("/{id}")
+    public Destination patchDestination(
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> updates
+    ) {
         Destination destination = destinationRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Destinacija nije pronađena"));
 
-        destination.setCategory(updatedDestination.getCategory());
-        destination.setCountry(updatedDestination.getCountry());
-        destination.setName(updatedDestination.getName());
-        destination.setDescription(updatedDestination.getDescription());
+        if (updates.containsKey("category")) {
+            destination.setCategory((String) updates.get("category"));
+        }
+
+        if (updates.containsKey("country")) {
+            destination.setCountry((String) updates.get("country"));
+        }
+
+        if (updates.containsKey("name")) {
+            destination.setName((String) updates.get("name"));
+        }
+
+        if (updates.containsKey("description")) {
+            destination.setDescription((String) updates.get("description"));
+        }
 
         return destinationRepository.save(destination);
     }

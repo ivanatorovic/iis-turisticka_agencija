@@ -118,6 +118,14 @@
 >
   Destinacije
 </a>
+
+<a
+  routerLink="/manager/calendars"
+  *ngIf="isManager()"
+  (click)="closeMenu()"
+>
+  Kalendari
+</a>
     <!-- SVI -->
 
     <a

@@ -12,6 +12,8 @@ import { WorkflowList } from './features/workflows/workflow-list/workflow-list';
 import { WorkflowDetails } from './features/workflows/workflow-details/workflow-details';
 import { ReceivedWorkflows } from './features/workflows/received-workflows/received-workflows';
 import { ManagerDestinations } from './features/destinations/manager-destinations/manager-destinations';
+import { ManagerCalendars } from './features/calendars/manager-calendars/manager-calendars';
+
 export const routes: Routes = [
   {
     path: '',
@@ -64,7 +66,12 @@ export const routes: Routes = [
  {
     path: 'manager-destinations',
     component: ManagerDestinations
-  }
+  },
+
+  {
+  path: 'manager/calendars',
+  component: ManagerCalendars
+}
 
 
 ];
