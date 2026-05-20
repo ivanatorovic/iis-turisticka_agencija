@@ -1,0 +1,154 @@
+<div class="manager-destinations-page">
+     <app-sidebar-menu></app-sidebar-menu>
+  <div class="content">
+
+    <div class="page-header">
+      <p class="subtitle-label">LUXTRAVEL</p>
+      <h1>Destinacije</h1>
+      <p class="description">
+        Upravljanje kategorijama, državama i gradovima koji se koriste pri kreiranju aranžmana.
+      </p>
+    </div>
+
+  <div class="forms-grid">
+
+    <div class="form-card">
+      <h2>Dodaj kategoriju</h2>
+
+      <input
+        type="text"
+        placeholder="Npr. LETOVANJE"
+        [(ngModel)]="newCategory"
+      >
+
+      <button (click)="addCategory()">Dodaj kategoriju</button>
+    </div>
+
+    <div class="form-card">
+      <h2>Dodaj državu</h2>
+
+      <select [(ngModel)]="selectedCategoryForCountry">
+        <option value="">Izaberi kategoriju</option>
+        <option *ngFor="let category of getCategories()" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+
+      <input
+        type="text"
+        placeholder="Država, npr. Grčka"
+        [(ngModel)]="newCountry"
+      >
+
+      <input
+        type="text"
+        placeholder="Prvi grad, npr. Krf"
+        [(ngModel)]="firstCityForCountry"
+      >
+
+      <textarea
+        placeholder="Opis grada"
+        [(ngModel)]="firstCityDescription">
+      </textarea>
+
+      <button (click)="addCountry()">Dodaj državu</button>
+    </div>
+
+    <div class="form-card">
+      <h2>Dodaj grad</h2>
+
+      <select [(ngModel)]="selectedCategoryForCity">
+        <option value="">Izaberi kategoriju</option>
+        <option *ngFor="let category of getCategories()" [value]="category">
+          {{ category }}
+        </option>
+      </select>
+
+      <select [(ngModel)]="selectedCountryForCity">
+        <option value="">Izaberi državu</option>
+        <option
+          *ngFor="let country of getCountries(selectedCategoryForCity)"
+          [value]="country"
+        >
+          {{ country }}
+        </option>
+      </select>
+
+      <input
+        type="text"
+        placeholder="Grad, npr. Atina"
+        [(ngModel)]="newCity"
+      >
+
+      <textarea
+        placeholder="Opis grada"
+        [(ngModel)]="newCityDescription">
+      </textarea>
+
+      <button (click)="addCity()">Dodaj grad</button>
+    </div>
+
+  </div>
+
+  <div class="tree-card">
+
+    <h2>Pregled destinacija</h2>
+
+    <div class="empty-state" *ngIf="getCategories().length === 0">
+      Nema dodatih destinacija.
+    </div>
+
+    <div class="category-item" *ngFor="let category of getCategories()">
+
+      <div class="category-row">
+        <button class="expand-btn" (click)="toggleCategory(category)">
+          {{ isCategoryExpanded(category) ? '−' : '+' }}
+        </button>
+
+        <span class="category-name">{{ category }}</span>
+
+        <button class="delete-outline" (click)="deleteCategory(category)">
+          Obriši kategoriju
+        </button>
+      </div>
+
+      <div class="countries-wrapper" *ngIf="isCategoryExpanded(category)">
+
+        <div class="country-item" *ngFor="let country of getCountries(category)">
+
+          <div class="country-row">
+            <button class="expand-btn small" (click)="toggleCountry(category, country)">
+              {{ isCountryExpanded(category, country) ? '−' : '+' }}
+            </button>
+
+            <span class="country-name">{{ country }}</span>
+
+            <button class="delete-outline" (click)="deleteCountry(category, country)">
+              Obriši državu
+            </button>
+          </div>
+
+          <div class="cities-wrapper" *ngIf="isCountryExpanded(category, country)">
+
+            <div class="city-item" *ngFor="let city of getCities(category, country)">
+              <div>
+                <h3>{{ city.name }}</h3>
+                <p>{{ city.description || 'Nema opisa.' }}</p>
+              </div>
+
+              <button class="delete-city" (click)="deleteCity(city.id)">
+                Obriši grad
+              </button>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>

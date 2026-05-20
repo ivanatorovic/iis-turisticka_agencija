@@ -111,6 +111,13 @@
   Primljeni radni tokovi
 </a>
 
+<a
+  routerLink="/manager-destinations"
+  *ngIf="isManager()"
+  (click)="closeMenu()"
+>
+  Destinacije
+</a>
     <!-- SVI -->
 
     <a

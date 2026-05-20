@@ -9,6 +9,8 @@ public class Destination {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private String category;
+
     private String name;
     private String country;
 
@@ -22,6 +24,10 @@ public class Destination {
         return id;
     }
 
+    public String getCategory() {
+        return category;
+    }
+
     public String getName() {
         return name;
     }
@@ -32,6 +38,10 @@ public class Destination {
 
     public String getDescription() {
         return description;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     public void setName(String name) {

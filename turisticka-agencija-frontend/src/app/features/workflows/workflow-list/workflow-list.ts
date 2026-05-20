@@ -19,6 +19,7 @@ export class WorkflowList implements OnInit {
 
   successMessage = '';
   errorMessage = '';
+
   showSendModal = false;
   selectedWorkflowForSend: number | null = null;
   managerUsername = '';
@@ -82,35 +83,53 @@ export class WorkflowList implements OnInit {
   }
 
   openSendModal(id: number): void {
-  this.selectedWorkflowForSend = id;
-  this.managerUsername = '';
-  this.showSendModal = true;
-}
-
-closeSendModal(): void {
-  this.selectedWorkflowForSend = null;
-  this.managerUsername = '';
-  this.showSendModal = false;
-}
-
-confirmSendToManager(): void {
-  if (this.selectedWorkflowForSend === null || !this.managerUsername.trim()) {
-    return;
+    this.selectedWorkflowForSend = id;
+    this.managerUsername = '';
+    this.showSendModal = true;
   }
 
-  this.workflowService
-    .sendToManager(this.selectedWorkflowForSend, this.managerUsername)
-    .subscribe({
+  closeSendModal(): void {
+    this.selectedWorkflowForSend = null;
+    this.managerUsername = '';
+    this.showSendModal = false;
+  }
+
+  confirmSendToManager(): void {
+    if (this.selectedWorkflowForSend === null || !this.managerUsername.trim()) {
+      return;
+    }
+
+    const workflowId = this.selectedWorkflowForSend;
+    const manager = this.managerUsername.trim();
+
+    this.workflowService.sendToManager(workflowId, manager).subscribe({
       next: () => {
+        const workflow = this.workflows.find((w) => w.id === workflowId);
+
+        if (workflow) {
+          workflow.sentToManager = true;
+          workflow.managerUsername = manager;
+        }
+
         this.closeSendModal();
+
         this.successMessage = 'Radni tok je poslat menadžeru.';
-        setTimeout(() => this.successMessage = '', 3000);
+        this.errorMessage = '';
+
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
       },
       error: (err) => {
         console.error(err);
+
         this.errorMessage = 'Greška pri slanju radnog toka.';
-        setTimeout(() => this.errorMessage = '', 3000);
+        this.successMessage = '';
+
+        setTimeout(() => {
+          this.errorMessage = '';
+        }, 3000);
       },
     });
-}
+  }
 }

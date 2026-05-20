@@ -16,6 +16,8 @@ export interface Workflow {
   name: string;
   createdAt: string;
   phases: WorkflowPhase[];
+  sentToManager?: boolean;
+managerUsername?: string;
 }
 
 export interface CreateWorkflowRequest {

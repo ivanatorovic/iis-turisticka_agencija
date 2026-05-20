@@ -1,64 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
 .workflow-list-page {
-  min-height: 100dvh;
-  background: #f7f3eb;
+  min-height: 100vh;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.74)),
+    url('../../../../assets/plaza.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  font-family: 'Inter', sans-serif;
 }
 
 .workflow-list-page app-sidebar-menu {
   position: fixed;
   top: 24px;
   left: 24px;
+  z-index: 10;
 }
 
 .content {
-  padding: 54px 8vw;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 40px 28px 70px;
+}
+
+.page-header {
+  margin-bottom: 32px;
 }
 
 .page-header p {
-  margin: 0 0 8px;
-  color: #a88b5b;
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 3px;
+  color: #d8c19b;
+  letter-spacing: 5px;
+  font-size: 13px;
+  margin: 0 0 14px;
+  text-transform: uppercase;
 }
 
 .page-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 64px;
+  font-weight: 600;
   margin: 0;
-  font-size: 44px;
 }
 
 .page-header span {
   display: block;
+  max-width: 700px;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
+  font-size: 17px;
   margin-top: 12px;
-  color: #6f6a61;
 }
 
 .empty {
-  margin-top: 40px;
-  color: #6f6a61;
+  margin-top: 34px;
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.38);
+  color: rgba(255, 255, 255, 0.75);
 }
 
 .workflow-grid {
   margin-top: 34px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
   gap: 22px;
 }
 
 .workflow-card {
-  padding: 26px;
-  border-radius: 26px;
-  background: rgba(255, 255, 255, 0.72);
-  border: 1px solid rgba(17, 17, 17, 0.08);
-  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px);
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.workflow-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(216, 193, 155, 0.55);
 }
 
 .workflow-card h2 {
+  font-family: 'Cormorant Garamond', serif;
   margin: 0;
-  font-size: 24px;
+  font-size: 34px;
+  font-weight: 600;
 }
 
 .workflow-card p {
-  color: #7a746b;
+  color: rgba(255, 255, 255, 0.72);
+  margin: 10px 0 0;
 }
 
 .phase-list {
@@ -71,9 +109,16 @@
 .phase-list span {
   padding: 8px 12px;
   border-radius: 999px;
-  background: #ded8ce;
+  background: #d8c19b;
+  color: #111;
   font-size: 12px;
   font-weight: 800;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .workflow-card button {
@@ -81,15 +126,25 @@
   height: 44px;
   border: none;
   border-radius: 999px;
-  background: #111;
-  color: white;
   cursor: pointer;
   font-weight: 700;
+  transition: 0.25s ease;
+  font-family: 'Inter', sans-serif;
 }
 
-.workflow-card button:hover {
+.send-btn {
   background: #d8c19b;
   color: #111;
+}
+
+.delete-card-btn {
+  background: rgba(255, 255, 255, 0.96);
+  color: #111;
+}
+
+.send-btn:hover,
+.delete-card-btn:hover {
+  transform: translateY(-2px);
 }
 
 .success-message,
@@ -98,6 +153,7 @@
   padding: 16px 22px;
   border-radius: 18px;
   font-weight: 700;
+  animation: fadeIn 0.25s ease;
 }
 
 .success-message {
@@ -115,11 +171,11 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(17, 17, 17, 0.35);
+  background: rgba(17, 17, 17, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 20;
+  z-index: 30;
 }
 
 .confirm-modal {
@@ -128,17 +184,22 @@
   padding: 34px;
   border-radius: 28px;
   background: #fffaf2;
-  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.18);
+  color: #111;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
   text-align: center;
 }
 
 .confirm-modal h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 34px;
+  font-weight: 600;
   margin: 0 0 14px;
 }
 
 .confirm-modal p {
   color: #6f6a61;
   margin-bottom: 28px;
+  line-height: 1.5;
 }
 
 .modal-actions {
@@ -155,6 +216,7 @@
   border-radius: 999px;
   font-weight: 700;
   cursor: pointer;
+  transition: 0.25s ease;
 }
 
 .cancel-btn {
@@ -167,28 +229,79 @@
   color: white;
 }
 
-.send-btn {
-  width: 100%;
-  height: 44px;
-  border: none;
-  border-radius: 999px;
-  background: #ded8ce;
-  color: #111;
-  cursor: pointer;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.send-btn:hover {
-  background: #cdbb9c;
+.cancel-btn:hover,
+.delete-btn:hover {
+  transform: translateY(-2px);
 }
 
 .manager-input {
   width: 100%;
   height: 46px;
   border: 1px solid rgba(17, 17, 17, 0.14);
-  border-radius: 14px;
-  padding: 0 16px;
+  border-radius: 999px;
+  padding: 0 18px;
   margin: 18px 0 24px;
   outline: none;
+  background: white;
+  color: #111;
+  font-family: 'Inter', sans-serif;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 1000px) {
+  .page-header h1 {
+    font-size: 48px;
+  }
+
+  .content {
+    padding-top: 90px;
+  }
+
+  .workflow-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.workflow-card {
+  padding: 24px;
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px);
+  cursor: pointer;
+  transition: 0.25s ease;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.content {
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 90px 28px 70px;
+}
+
+.send-btn.sent {
+  background: #8eb486;
+  color: white;
+  cursor: default;
 }

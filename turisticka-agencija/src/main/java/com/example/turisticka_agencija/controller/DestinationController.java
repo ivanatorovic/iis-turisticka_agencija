@@ -30,4 +30,30 @@ public class DestinationController {
     public void deleteDestination(@PathVariable Long id) {
         destinationRepository.deleteById(id);
     }
+
+    @GetMapping("/category/{category}")
+    public List<Destination> getByCategory(@PathVariable String category) {
+        return destinationRepository.findByCategory(category);
+    }
+
+    @GetMapping("/country/{country}")
+    public List<Destination> getByCountry(@PathVariable String country) {
+        return destinationRepository.findByCountry(country);
+    }
+
+
+    @PutMapping("/{id}")
+    public Destination updateDestination(@PathVariable Long id, @RequestBody Destination updatedDestination) {
+        Destination destination = destinationRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Destinacija nije pronađena"));
+
+        destination.setCategory(updatedDestination.getCategory());
+        destination.setCountry(updatedDestination.getCountry());
+        destination.setName(updatedDestination.getName());
+        destination.setDescription(updatedDestination.getDescription());
+
+        return destinationRepository.save(destination);
+    }
+
+
 }
