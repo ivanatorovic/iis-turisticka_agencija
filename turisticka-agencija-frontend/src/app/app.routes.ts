@@ -71,6 +71,24 @@ export const routes: Routes = [
   {
   path: 'manager/calendars',
   component: ManagerCalendars
+},
+{
+  path: 'workflows/:workflowId/create-arrangement',
+  loadComponent: () =>
+    import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form')
+      .then(m => m.ManagerArrangementForm)
+},
+{
+  path: 'workflows/:workflowId/edit-arrangement/:arrangementId',
+  loadComponent: () =>
+    import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form')
+      .then(m => m.ManagerArrangementForm)
+},
+{
+  path: 'my-manager-arrangements',
+  loadComponent: () =>
+    import('./features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list')
+      .then(m => m.ManagerArrangementsList)
 }
 
 

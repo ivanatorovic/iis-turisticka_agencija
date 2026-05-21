@@ -1,0 +1,190 @@
+.manager-arrangements-page {
+  min-height: 100vh;
+  background: #f7f1ea;
+  color: #2f261f;
+}
+
+.content {
+  margin-left: 260px;
+  padding: 48px;
+}
+
+.page-header {
+  margin-bottom: 30px;
+}
+
+.page-header p {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #a17855;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.page-header h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 46px;
+  margin: 0;
+}
+
+.page-header span {
+  display: block;
+  color: #7a6a5d;
+  margin-top: 10px;
+  max-width: 720px;
+  line-height: 1.6;
+}
+
+.arrangement-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 24px;
+}
+
+.arrangement-card {
+  background: #fffaf5;
+  border: 1px solid #ead8c7;
+  border-radius: 24px;
+  padding: 26px;
+  box-shadow: 0 18px 45px rgba(80, 55, 35, 0.08);
+}
+
+.workflow-name {
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: #a17855;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0 0 6px;
+}
+
+.arrangement-card h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px;
+  margin: 0 0 12px;
+}
+
+.status {
+  display: inline-block;
+  background: #ead8c7;
+  color: #5b3f2c;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.description {
+  color: #6f5d50;
+  line-height: 1.6;
+  margin: 18px 0;
+}
+
+.details {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.details span {
+  color: #7a6a5d;
+}
+
+.details b {
+  color: #2f261f;
+}
+
+.actions,
+.send-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+button {
+  border: none;
+  border-radius: 14px;
+  padding: 11px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.view-btn {
+  background: #ead8c7;
+  color: #5b3f2c;
+}
+
+.edit-btn {
+  background: #8c5b3e;
+  color: white;
+}
+
+.send-btn {
+  background: #47624f;
+  color: white;
+}
+
+.delete-btn,
+.cancel-btn {
+  background: #b84a3a;
+  color: white;
+}
+
+button:disabled {
+  background: #cdb7a5;
+  color: #fff;
+  cursor: not-allowed;
+}
+
+.send-box {
+  margin: 18px 0;
+  padding: 16px;
+  border-radius: 18px;
+  background: #f3e5d8;
+}
+
+.send-box input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 13px 15px;
+  border-radius: 14px;
+  border: 1px solid #dec8b5;
+  margin-bottom: 12px;
+}
+
+.success-message,
+.error-message,
+.empty {
+  padding: 14px 18px;
+  border-radius: 14px;
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+
+.success-message {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.error-message {
+  background: #fdecea;
+  color: #b3261e;
+}
+
+.empty {
+  background: #fffaf5;
+  border: 1px solid #ead8c7;
+  color: #7a6a5d;
+}
+
+@media (max-width: 900px) {
+  .content {
+    margin-left: 0;
+    padding: 28px;
+  }
+
+  .arrangement-grid {
+    grid-template-columns: 1fr;
+  }
+}

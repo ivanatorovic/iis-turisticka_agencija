@@ -1,0 +1,141 @@
+<div class="manager-arrangement-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <main class="content">
+    <section class="page-header">
+      <p>LUXTRAVEL</p>
+
+      <h1>
+        {{ isEditMode ? 'Izmena aranžmana' : 'Kreiranje aranžmana' }}
+      </h1>
+
+      <span>
+        Popuni podatke za aranžman na osnovu faza koje je administrator definisao u radnom toku.
+      </span>
+    </section>
+
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <section class="form-card">
+      <div class="workflow-box" *ngIf="workflow">
+        <p>Radni tok</p>
+        <h2>{{ workflow.name }}</h2>
+
+        <div class="phase-list">
+          <span *ngFor="let phase of workflow.phases">
+            {{ phase.name }}
+          </span>
+        </div>
+      </div>
+
+      <input
+        type="text"
+        placeholder="Naziv aranžmana"
+        [(ngModel)]="arrangement.name"
+      />
+
+      <textarea
+        placeholder="Opis aranžmana"
+        [(ngModel)]="arrangement.description"
+      ></textarea>
+
+      <div class="form-grid">
+        <input
+          type="number"
+          placeholder="Osnovna cena"
+          [(ngModel)]="arrangement.basePrice"
+        />
+
+        <input
+          type="number"
+          placeholder="Broj noćenja"
+          [(ngModel)]="arrangement.numberOfNights"
+        />
+      </div>
+
+      <input
+        type="text"
+        placeholder="URL slike, npr. /arrangements/krf.jpg"
+        [(ngModel)]="arrangement.imageUrl"
+      />
+
+      <div class="form-section" *ngIf="hasPhase('DESTINATION')">
+        <h3>Destinacija</h3>
+
+        <div class="form-grid">
+          <select
+            [(ngModel)]="selectedCountry"
+            (ngModelChange)="onCountryChange()"
+          >
+            <option [ngValue]="null">Izaberi državu</option>
+
+            <option
+              *ngFor="let country of countries"
+              [ngValue]="country"
+            >
+              {{ country }}
+            </option>
+          </select>
+
+          <select
+            [(ngModel)]="arrangement.destinationId"
+            [disabled]="!selectedCountry"
+          >
+            <option [ngValue]="null">Izaberi grad</option>
+
+            <option
+              *ngFor="let destination of filteredDestinations"
+              [ngValue]="destination.id"
+            >
+              {{ destination.name }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section" *ngIf="hasPhase('ACCOMMODATION')">
+        <h3>Smeštaj</h3>
+
+        <select [(ngModel)]="arrangement.accommodationId">
+          <option [ngValue]="null">Izaberi smeštaj</option>
+
+          <option
+            *ngFor="let accommodation of accommodations"
+            [ngValue]="accommodation.id"
+          >
+            {{ accommodation.name }} - {{ accommodation.category }}
+          </option>
+        </select>
+      </div>
+
+      <div class="form-section" *ngIf="hasPhase('TRANSPORT')">
+        <h3>Transport</h3>
+
+        <select [(ngModel)]="arrangement.transportId">
+          <option [ngValue]="null">Izaberi prevoz</option>
+
+          <option
+            *ngFor="let transport of transports"
+            [ngValue]="transport.id"
+          >
+            {{ transport.type }} - {{ transport.company }}
+          </option>
+        </select>
+      </div>
+
+      <button
+        type="button"
+        [disabled]="!isFormValid()"
+        (click)="saveArrangement()"
+      >
+        {{ isEditMode ? 'Sačuvaj izmene' : 'Sačuvaj aranžman' }}
+      </button>
+    </section>
+  </main>
+</div>
