@@ -1,11 +1,14 @@
-import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
+import { CommonModule, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+
 import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
+
 import {
   DestinationCalendar,
-  DestinationCalendarService,
+  DestinationCalendarService
 } from '../../../core/services/destination-calendar';
+
 import { DestinationService } from '../../../core/services/destination';
 
 interface Destination {
@@ -18,36 +21,33 @@ interface Destination {
 
 @Component({
   selector: 'app-manager-calendars',
-  imports: [CommonModule, FormsModule, SidebarMenu],
+  standalone: true,
+  imports: [CommonModule, FormsModule, NgIf, NgFor, SidebarMenu],
   templateUrl: './manager-calendars.html',
-  styleUrl: './manager-calendars.css',
+  styleUrls: ['./manager-calendars.css']
 })
-export class ManagerCalendars implements OnInit {
+export class ManagerCalendarsComponent implements OnInit {
   calendars: DestinationCalendar[] = [];
   destinations: Destination[] = [];
 
-  newCalendar = {
-    name: '',
-    startDate: '',
-    endDate: '',
-    seasonType: 'HIGH',
-    status: 'ACTIVE',
-    destinationId: null as number | null,
-  };
+  successMessage = '';
+  errorMessage = '';
 
   editingCalendarId: number | null = null;
 
-  editCalendar = {
+  newCalendar = {
     name: '',
-    startDate: '',
-    endDate: '',
-    seasonType: 'HIGH',
-    status: 'ACTIVE',
     destinationId: null as number | null,
+    startDate: '',
+    endDate: ''
   };
 
-  successMessage = '';
-  errorMessage = '';
+  editCalendar = {
+    name: '',
+    destinationId: null as number | null,
+    startDate: '',
+    endDate: ''
+  };
 
   constructor(
     private calendarService: DestinationCalendarService,
@@ -61,60 +61,64 @@ export class ManagerCalendars implements OnInit {
 
   loadCalendars(): void {
     this.calendarService.getAll().subscribe({
-      next: (data: DestinationCalendar[]) => {
+      next: (data) => {
         this.calendars = data;
       },
-      error: (err: any) => {
-        console.error(err);
-        this.showError('Greška pri učitavanju kalendara.');
-      },
+      error: () => {
+        this.errorMessage = 'Greška pri učitavanju kalendara.';
+      }
     });
   }
 
   loadDestinations(): void {
     this.destinationService.getAll().subscribe({
-      next: (data: Destination[]) => {
+      next: (data) => {
         this.destinations = data;
       },
-      error: (err: any) => {
-        console.error(err);
-        this.showError('Greška pri učitavanju destinacija.');
-      },
+      error: () => {
+        this.errorMessage = 'Greška pri učitavanju destinacija.';
+      }
     });
   }
 
   addCalendar(): void {
     if (
-      !this.newCalendar.name.trim() ||
+      !this.newCalendar.name ||
+      !this.newCalendar.destinationId ||
       !this.newCalendar.startDate ||
-      !this.newCalendar.endDate ||
-      this.newCalendar.destinationId === null
+      !this.newCalendar.endDate
     ) {
-      this.showError('Popuni sva obavezna polja.');
+      this.errorMessage = 'Popuni sva polja.';
       return;
     }
 
-    const request = {
-      name: this.newCalendar.name.trim(),
+    const calendar = {
+      name: this.newCalendar.name,
       startDate: this.newCalendar.startDate,
       endDate: this.newCalendar.endDate,
-      seasonType: this.newCalendar.seasonType,
-      status: this.newCalendar.status,
       destination: {
-        id: this.newCalendar.destinationId,
-      },
+        id: this.newCalendar.destinationId
+      }
     };
 
-    this.calendarService.create(request).subscribe({
+    this.calendarService.create(calendar).subscribe({
       next: () => {
+        this.successMessage = 'Kalendar je uspešno dodat.';
+        this.errorMessage = '';
+
+        this.newCalendar = {
+          name: '',
+          destinationId: null,
+          startDate: '',
+          endDate: ''
+        };
+
         this.loadCalendars();
-        this.resetNewCalendar();
-        this.showSuccess('Kalendar je uspešno dodat.');
       },
-      error: (err: any) => {
-        console.error(err);
-        this.showError('Greška pri dodavanju kalendara.');
-      },
+      error: () => {
+        this.errorMessage = 'Greška pri dodavanju kalendara.';
+        this.successMessage = '';
+      }
     });
   }
 
@@ -123,108 +127,61 @@ export class ManagerCalendars implements OnInit {
 
     this.editCalendar = {
       name: calendar.name,
-      startDate: calendar.startDate,
-      endDate: calendar.endDate,
-      seasonType: calendar.seasonType,
-      status: calendar.status,
       destinationId: calendar.destination.id,
+      startDate: calendar.startDate,
+      endDate: calendar.endDate
     };
+  }
+
+  saveEdit(id: number): void {
+    if (
+      !this.editCalendar.name ||
+      !this.editCalendar.destinationId ||
+      !this.editCalendar.startDate ||
+      !this.editCalendar.endDate
+    ) {
+      this.errorMessage = 'Popuni sva polja.';
+      return;
+    }
+
+    const updates = {
+      name: this.editCalendar.name,
+      startDate: this.editCalendar.startDate,
+      endDate: this.editCalendar.endDate,
+      destination: {
+        id: this.editCalendar.destinationId
+      }
+    };
+
+    this.calendarService.patch(id, updates).subscribe({
+      next: () => {
+        this.successMessage = 'Kalendar je uspešno izmenjen.';
+        this.errorMessage = '';
+        this.editingCalendarId = null;
+        this.loadCalendars();
+      },
+      error: () => {
+        this.errorMessage = 'Greška pri izmeni kalendara.';
+        this.successMessage = '';
+      }
+    });
   }
 
   cancelEdit(): void {
     this.editingCalendarId = null;
   }
 
-  saveEdit(calendarId: number): void {
-    if (
-      !this.editCalendar.name.trim() ||
-      !this.editCalendar.startDate ||
-      !this.editCalendar.endDate ||
-      this.editCalendar.destinationId === null
-    ) {
-      this.showError('Popuni sva obavezna polja.');
-      return;
-    }
-
-    const updates = {
-      name: this.editCalendar.name.trim(),
-      startDate: this.editCalendar.startDate,
-      endDate: this.editCalendar.endDate,
-      seasonType: this.editCalendar.seasonType,
-      status: this.editCalendar.status,
-      destination: {
-        id: this.editCalendar.destinationId,
-      },
-    };
-
-    this.calendarService.patch(calendarId, updates).subscribe({
-      next: () => {
-        this.loadCalendars();
-        this.cancelEdit();
-        this.showSuccess('Kalendar je izmenjen.');
-      },
-      error: (err: any) => {
-        console.error(err);
-        this.showError('Greška pri izmeni kalendara.');
-      },
-    });
-  }
-
   deleteCalendar(id: number): void {
     this.calendarService.delete(id).subscribe({
       next: () => {
+        this.successMessage = 'Kalendar je obrisan.';
+        this.errorMessage = '';
         this.loadCalendars();
-        this.showSuccess('Kalendar je obrisan.');
       },
-      error: (err: any) => {
-        console.error(err);
-        this.showError('Greška pri brisanju kalendara.');
-      },
+      error: () => {
+        this.errorMessage = 'Greška pri brisanju kalendara.';
+        this.successMessage = '';
+      }
     });
-  }
-
-  resetNewCalendar(): void {
-    this.newCalendar = {
-      name: '',
-      startDate: '',
-      endDate: '',
-      seasonType: 'HIGH',
-      status: 'ACTIVE',
-      destinationId: null,
-    };
-  }
-
-  getSeasonLabel(season: string): string {
-    if (season === 'HIGH') {
-      return 'Visoka sezona';
-    }
-
-    if (season === 'LOW') {
-      return 'Niska sezona';
-    }
-
-    return 'Vansezona';
-  }
-
-  getStatusLabel(status: string): string {
-    return status === 'ACTIVE' ? 'Aktivan' : 'Zaključan';
-  }
-
-  showSuccess(message: string): void {
-    this.successMessage = message;
-    this.errorMessage = '';
-
-    setTimeout(() => {
-      this.successMessage = '';
-    }, 3000);
-  }
-
-  showError(message: string): void {
-    this.errorMessage = message;
-    this.successMessage = '';
-
-    setTimeout(() => {
-      this.errorMessage = '';
-    }, 3000);
   }
 }

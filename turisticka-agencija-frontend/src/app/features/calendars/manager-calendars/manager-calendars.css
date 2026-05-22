@@ -219,8 +219,7 @@ button:hover {
     font-size: 48px;
   }
 
-  .date-grid,
-  .calendar-item {
+  .date-grid {
     grid-template-columns: 1fr;
   }
 

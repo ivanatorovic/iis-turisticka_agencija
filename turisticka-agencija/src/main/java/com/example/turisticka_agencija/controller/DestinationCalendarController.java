@@ -32,10 +32,6 @@ public class DestinationCalendarController {
 
     @PostMapping
     public DestinationCalendar createCalendar(@RequestBody DestinationCalendar calendar) {
-        if (calendar.getStatus() == null) {
-            calendar.setStatus(com.example.turisticka_agencija.model.CalendarStatus.ACTIVE);
-        }
-
         return destinationCalendarRepository.save(calendar);
     }
 
@@ -68,18 +64,8 @@ public class DestinationCalendarController {
             );
         }
 
-        if (updates.containsKey("seasonType")) {
-            calendar.setSeasonType(
-                    SeasonType.valueOf((String) updates.get("seasonType"))
-            );
-        }
-
-        if (updates.containsKey("status")) {
-            calendar.setStatus(
-                    CalendarStatus.valueOf((String) updates.get("status"))
-            );
-        }
-
         return destinationCalendarRepository.save(calendar);
     }
+
+
 }

@@ -15,8 +15,6 @@ export interface DestinationCalendar {
   name: string;
   startDate: string;
   endDate: string;
-  seasonType: 'LOW' | 'HIGH' | 'OFF_SEASON';
-  status: 'ACTIVE' | 'LOCKED';
   destination: Destination;
 }
 
@@ -28,15 +26,16 @@ export class DestinationCalendarService {
 
   constructor(private http: HttpClient) {}
 
-private getHeaders() {
-  const token = localStorage.getItem('token');
+  private getHeaders() {
+    const token = localStorage.getItem('token');
 
-  return {
-    headers: new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    }),
-  };
-}
+    return {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${token}`,
+      }),
+    };
+  }
+
   getAll(): Observable<DestinationCalendar[]> {
     return this.http.get<DestinationCalendar[]>(this.apiUrl, this.getHeaders());
   }

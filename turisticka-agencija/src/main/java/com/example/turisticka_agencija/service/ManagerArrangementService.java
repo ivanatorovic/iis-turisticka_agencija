@@ -41,9 +41,7 @@ public class ManagerArrangementService {
     }
 
     public List<ManagerArrangement> getPendingForDirector() {
-        return managerArrangementRepository.findByStatus(
-                ManagerArrangementStatus.SENT_TO_DIRECTOR
-        );
+        return managerArrangementRepository.findByStatus(ManagerArrangementStatus.SENT_TO_DIRECTOR);
     }
 
     public ManagerArrangement getById(Long id) {
@@ -52,63 +50,34 @@ public class ManagerArrangementService {
     }
 
     public ManagerArrangement create(ManagerArrangementRequestDto request) {
-        validateRequest(request);
-
         Workflow workflow = workflowRepository.findById(request.getWorkflowId())
                 .orElseThrow(() -> new RuntimeException("Workflow not found"));
 
         User manager = userRepository.findById(request.getManagerId())
                 .orElseThrow(() -> new RuntimeException("Manager not found"));
 
-        Destination destination = destinationRepository.findById(request.getDestinationId())
-                .orElseThrow(() -> new RuntimeException("Destination not found"));
-
-        Accommodation accommodation = accommodationRepository.findById(request.getAccommodationId())
-                .orElseThrow(() -> new RuntimeException("Accommodation not found"));
-
-        Transport transport = transportRepository.findById(request.getTransportId())
-                .orElseThrow(() -> new RuntimeException("Transport not found"));
+        validateRequest(request, workflow);
 
         ManagerArrangement arrangement = new ManagerArrangement();
-        arrangement.setName(request.getName());
-        arrangement.setDescription(request.getDescription());
-        arrangement.setBasePrice(request.getBasePrice());
-        arrangement.setNumberOfNights(request.getNumberOfNights());
-        arrangement.setImageUrl(request.getImageUrl());
 
+        fillBasicFields(arrangement, request);
         arrangement.setWorkflow(workflow);
         arrangement.setManager(manager);
-        arrangement.setDestination(destination);
-        arrangement.setAccommodation(accommodation);
-        arrangement.setTransport(transport);
         arrangement.setStatus(ManagerArrangementStatus.DRAFT);
+
+        fillPhaseFields(arrangement, request, workflow);
 
         return managerArrangementRepository.save(arrangement);
     }
 
     public ManagerArrangement update(Long id, ManagerArrangementRequestDto request) {
-        validateRequest(request);
-
         ManagerArrangement arrangement = getById(id);
+        Workflow workflow = arrangement.getWorkflow();
 
-        Destination destination = destinationRepository.findById(request.getDestinationId())
-                .orElseThrow(() -> new RuntimeException("Destination not found"));
+        validateRequest(request, workflow);
 
-        Accommodation accommodation = accommodationRepository.findById(request.getAccommodationId())
-                .orElseThrow(() -> new RuntimeException("Accommodation not found"));
-
-        Transport transport = transportRepository.findById(request.getTransportId())
-                .orElseThrow(() -> new RuntimeException("Transport not found"));
-
-        arrangement.setName(request.getName());
-        arrangement.setDescription(request.getDescription());
-        arrangement.setBasePrice(request.getBasePrice());
-        arrangement.setNumberOfNights(request.getNumberOfNights());
-        arrangement.setImageUrl(request.getImageUrl());
-
-        arrangement.setDestination(destination);
-        arrangement.setAccommodation(accommodation);
-        arrangement.setTransport(transport);
+        fillBasicFields(arrangement, request);
+        fillPhaseFields(arrangement, request, workflow);
 
         return managerArrangementRepository.save(arrangement);
     }
@@ -127,8 +96,6 @@ public class ManagerArrangementService {
         ManagerArrangement managerArrangement = getById(id);
 
         validateCompletedArrangement(managerArrangement);
-
-        managerArrangement.setStatus(ManagerArrangementStatus.APPROVED);
 
         Arrangement publishedArrangement = new Arrangement();
         publishedArrangement.setName(managerArrangement.getName());
@@ -149,9 +116,7 @@ public class ManagerArrangementService {
 
     public ManagerArrangement reject(Long id) {
         ManagerArrangement arrangement = getById(id);
-
         arrangement.setStatus(ManagerArrangementStatus.REJECTED);
-
         return managerArrangementRepository.save(arrangement);
     }
 
@@ -159,7 +124,45 @@ public class ManagerArrangementService {
         managerArrangementRepository.deleteById(id);
     }
 
-    private void validateRequest(ManagerArrangementRequestDto request) {
+    private void fillBasicFields(ManagerArrangement arrangement, ManagerArrangementRequestDto request) {
+        arrangement.setName(request.getName());
+        arrangement.setDescription(request.getDescription());
+        arrangement.setBasePrice(request.getBasePrice());
+        arrangement.setNumberOfNights(request.getNumberOfNights());
+        arrangement.setImageUrl(request.getImageUrl());
+    }
+
+    private void fillPhaseFields(
+            ManagerArrangement arrangement,
+            ManagerArrangementRequestDto request,
+            Workflow workflow
+    ) {
+        if (hasPhase(workflow, "DESTINATION")) {
+            Destination destination = destinationRepository.findById(request.getDestinationId())
+                    .orElseThrow(() -> new RuntimeException("Destination not found"));
+            arrangement.setDestination(destination);
+        } else {
+            arrangement.setDestination(null);
+        }
+
+        if (hasPhase(workflow, "ACCOMMODATION")) {
+            Accommodation accommodation = accommodationRepository.findById(request.getAccommodationId())
+                    .orElseThrow(() -> new RuntimeException("Accommodation not found"));
+            arrangement.setAccommodation(accommodation);
+        } else {
+            arrangement.setAccommodation(null);
+        }
+
+        if (hasPhase(workflow, "TRANSPORT")) {
+            Transport transport = transportRepository.findById(request.getTransportId())
+                    .orElseThrow(() -> new RuntimeException("Transport not found"));
+            arrangement.setTransport(transport);
+        } else {
+            arrangement.setTransport(null);
+        }
+    }
+
+    private void validateRequest(ManagerArrangementRequestDto request, Workflow workflow) {
         if (request.getName() == null || request.getName().isBlank()) {
             throw new RuntimeException("Naziv aranžmana je obavezan.");
         }
@@ -184,20 +187,22 @@ public class ManagerArrangementService {
             throw new RuntimeException("Menadžer je obavezan.");
         }
 
-        if (request.getDestinationId() == null) {
+        if (hasPhase(workflow, "DESTINATION") && request.getDestinationId() == null) {
             throw new RuntimeException("Destinacija je obavezna.");
         }
 
-        if (request.getAccommodationId() == null) {
+        if (hasPhase(workflow, "ACCOMMODATION") && request.getAccommodationId() == null) {
             throw new RuntimeException("Smeštaj je obavezan.");
         }
 
-        if (request.getTransportId() == null) {
+        if (hasPhase(workflow, "TRANSPORT") && request.getTransportId() == null) {
             throw new RuntimeException("Prevoz je obavezan.");
         }
     }
 
     private void validateCompletedArrangement(ManagerArrangement arrangement) {
+        Workflow workflow = arrangement.getWorkflow();
+
         if (arrangement.getName() == null || arrangement.getName().isBlank()) {
             throw new RuntimeException("Naziv aranžmana je obavezan.");
         }
@@ -214,16 +219,24 @@ public class ManagerArrangementService {
             throw new RuntimeException("Broj noćenja mora biti veći od 0.");
         }
 
-        if (arrangement.getDestination() == null) {
+        if (hasPhase(workflow, "DESTINATION") && arrangement.getDestination() == null) {
             throw new RuntimeException("Destinacija je obavezna.");
         }
 
-        if (arrangement.getAccommodation() == null) {
+        if (hasPhase(workflow, "ACCOMMODATION") && arrangement.getAccommodation() == null) {
             throw new RuntimeException("Smeštaj je obavezan.");
         }
 
-        if (arrangement.getTransport() == null) {
+        if (hasPhase(workflow, "TRANSPORT") && arrangement.getTransport() == null) {
             throw new RuntimeException("Prevoz je obavezan.");
         }
+    }
+
+    private boolean hasPhase(Workflow workflow, String phaseName) {
+        return workflow.getPhases()
+                .stream()
+                .anyMatch(phase ->
+                        phase.getName().name().equalsIgnoreCase(phaseName)
+                );
     }
 }

@@ -16,7 +16,7 @@
       <article
         class="workflow-card"
         *ngFor="let workflow of workflows"
-        [routerLink]="['/workflows', workflow.id]"
+        [routerLink]="['/workflows', workflow.id, 'create-arrangement']"
       >
         <div>
           <h2>{{ workflow.name }}</h2>
@@ -28,6 +28,8 @@
             {{ phase.name }}
           </span>
         </div>
+
+       
       </article>
     </div>
   </main>

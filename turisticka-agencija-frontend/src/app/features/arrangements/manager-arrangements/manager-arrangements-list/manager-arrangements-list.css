@@ -1,38 +1,61 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
 .manager-arrangements-page {
   min-height: 100vh;
-  background: #f7f1ea;
-  color: #2f261f;
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.74)),
+    url('/assets/plaza.jpg');
+  background-size: cover;
+  background-position: center;
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.manager-arrangements-page app-sidebar-menu {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 100;
 }
 
 .content {
-  margin-left: 260px;
-  padding: 48px;
+  width: 100%;
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 90px 28px 70px;
 }
 
 .page-header {
-  margin-bottom: 30px;
+  margin-bottom: 32px;
 }
 
 .page-header p {
-  font-size: 12px;
-  letter-spacing: 2px;
-  color: #a17855;
+  color: #d8c19b;
+  letter-spacing: 5px;
+  font-size: 13px;
+  margin-bottom: 14px;
+  text-transform: uppercase;
   font-weight: 600;
-  margin-bottom: 8px;
 }
 
 .page-header h1 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 46px;
+  font-size: 64px;
+  font-weight: 600;
   margin: 0;
 }
 
 .page-header span {
   display: block;
-  color: #7a6a5d;
+  max-width: 760px;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
+  font-size: 17px;
   margin-top: 10px;
-  max-width: 720px;
-  line-height: 1.6;
 }
 
 .arrangement-grid {
@@ -42,56 +65,64 @@
 }
 
 .arrangement-card {
-  background: #fffaf5;
-  border: 1px solid #ead8c7;
-  border-radius: 24px;
-  padding: 26px;
-  box-shadow: 0 18px 45px rgba(80, 55, 35, 0.08);
+  padding: 24px;
+  border-radius: 22px;
+  background: rgba(0, 0, 0, 0.46);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px);
+  color: white;
 }
 
 .workflow-name {
+  color: #d8c19b;
+  letter-spacing: 5px;
   font-size: 12px;
-  letter-spacing: 1.5px;
-  color: #a17855;
   font-weight: 600;
   text-transform: uppercase;
-  margin: 0 0 6px;
+  margin: 0 0 10px;
 }
 
 .arrangement-card h2 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 30px;
-  margin: 0 0 12px;
+  font-size: 34px;
+  font-weight: 600;
+  margin: 0 0 14px;
+  color: white;
 }
 
 .status {
   display: inline-block;
-  background: #ead8c7;
-  color: #5b3f2c;
-  padding: 7px 14px;
+  padding: 8px 12px;
   border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
+  background: #d8c19b;
+  color: #111;
+  font-size: 12px;
+  font-weight: 800;
 }
 
 .description {
-  color: #6f5d50;
-  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
   margin: 18px 0;
+  font-size: 15px;
 }
 
 .details {
   display: grid;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 22px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #111;
 }
 
 .details span {
-  color: #7a6a5d;
+  color: #6f6a61;
 }
 
 .details b {
-  color: #2f261f;
+  color: #111;
 }
 
 .actions,
@@ -102,86 +133,93 @@
 }
 
 button {
+  height: 46px;
   border: none;
-  border-radius: 14px;
-  padding: 11px 16px;
-  font-weight: 600;
+  border-radius: 999px;
   cursor: pointer;
-  transition: 0.2s;
+  font-weight: 700;
+  transition: 0.25s ease;
+  font-family: 'Inter', sans-serif;
+  padding: 0 18px;
 }
 
-.view-btn {
-  background: #ead8c7;
-  color: #5b3f2c;
+button:hover {
+  transform: translateY(-2px);
 }
 
-.edit-btn {
-  background: #8c5b3e;
-  color: white;
-}
-
+.view-btn,
+.edit-btn,
 .send-btn {
-  background: #47624f;
-  color: white;
+  background: #d8c19b;
+  color: #111;
 }
 
 .delete-btn,
 .cancel-btn {
-  background: #b84a3a;
+  background: #111;
   color: white;
 }
 
 button:disabled {
-  background: #cdb7a5;
-  color: #fff;
+  background: rgba(255, 255, 255, 0.38);
+  color: rgba(255, 255, 255, 0.65);
   cursor: not-allowed;
+  transform: none;
 }
 
 .send-box {
-  margin: 18px 0;
-  padding: 16px;
-  border-radius: 18px;
-  background: #f3e5d8;
+  margin: 20px 0;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #111;
 }
 
 .send-box input {
   width: 100%;
+  height: 46px;
   box-sizing: border-box;
-  padding: 13px 15px;
-  border-radius: 14px;
-  border: 1px solid #dec8b5;
+  padding: 0 18px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   margin-bottom: 12px;
+  background: white;
+  color: #111;
+  outline: none;
+  font-family: 'Inter', sans-serif;
 }
 
 .success-message,
 .error-message,
 .empty {
-  padding: 14px 18px;
-  border-radius: 14px;
-  margin-bottom: 18px;
-  font-weight: 500;
+  margin-bottom: 22px;
+  padding: 16px 22px;
+  border-radius: 18px;
+  font-weight: 700;
 }
 
 .success-message {
-  background: #e8f5e9;
-  color: #2e7d32;
+  background: #e8f7ea;
+  color: #1d6b34;
+  border: 1px solid #b7e4c2;
 }
 
 .error-message {
-  background: #fdecea;
-  color: #b3261e;
+  background: #fdeaea;
+  color: #a12626;
+  border: 1px solid #efb2b2;
 }
 
 .empty {
-  background: #fffaf5;
-  border: 1px solid #ead8c7;
-  color: #7a6a5d;
+  background: rgba(0, 0, 0, 0.38);
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px);
 }
 
 @media (max-width: 900px) {
-  .content {
-    margin-left: 0;
-    padding: 28px;
+  .page-header h1 {
+    font-size: 48px;
   }
 
   .arrangement-grid {

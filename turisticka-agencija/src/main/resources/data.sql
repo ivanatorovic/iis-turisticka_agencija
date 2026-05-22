@@ -7,13 +7,14 @@ VALUES
     (5, 'IZLET','Pariz', 'Francuska', 'Pariz je grad umetnosti, mode, romantike i znamenitosti kao što su Ajfelov toranj, Luvr i Jelisejska polja.');
 
 INSERT INTO destination_calendar
-(id, name, start_date, end_date, season_type, status, destination_id)
+(id, name, start_date, end_date, destination_id)
 VALUES
-    (1, 'Letnja sezona Krf 2026', '2026-06-01', '2026-09-30', 'HIGH', 'ACTIVE', 1),
-    (2, 'Jesenji city break Rim 2026', '2026-09-01', '2026-11-30', 'LOW', 'ACTIVE', 2),
-    (3, 'Zimska sezona Kopaonik 2026', '2026-12-01', '2027-03-15', 'HIGH', 'ACTIVE', 3),
-    (4, 'Egzotika Hurgada 2026', '2026-05-01', '2026-10-31', 'HIGH', 'ACTIVE', 4),
-    (5, 'Prolećni Pariz 2026', '2026-03-01', '2026-06-30', 'LOW', 'ACTIVE', 5);
+    (1, 'Krf dostupni termini 2026', '2026-05-01', '2026-09-01', 1),
+    (2, 'Rim dostupni termini 2026', '2026-09-01', '2026-11-30', 2),
+    (3, 'Kopaonik dostupni termini 2026', '2026-12-01', '2027-03-15', 3),
+    (4, 'Hurgada dostupni termini 2026', '2026-05-01', '2026-10-31', 4),
+    (5, 'Pariz dostupni termini 2026', '2026-03-01', '2026-06-30', 5);
+
 INSERT INTO accommodation (id, name, category)
 VALUES
     (1, 'Hotel Ionian View', 'HOTEL_4'),

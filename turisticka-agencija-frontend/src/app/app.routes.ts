@@ -12,8 +12,8 @@ import { WorkflowList } from './features/workflows/workflow-list/workflow-list';
 import { WorkflowDetails } from './features/workflows/workflow-details/workflow-details';
 import { ReceivedWorkflows } from './features/workflows/received-workflows/received-workflows';
 import { ManagerDestinations } from './features/destinations/manager-destinations/manager-destinations';
-import { ManagerCalendars } from './features/calendars/manager-calendars/manager-calendars';
-
+import { ManagerCalendarsComponent } from './features/calendars/manager-calendars/manager-calendars';
+import { ManagerArrangementsList } from './features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list';
 export const routes: Routes = [
   {
     path: '',
@@ -68,9 +68,9 @@ export const routes: Routes = [
     component: ManagerDestinations
   },
 
-  {
-  path: 'manager/calendars',
-  component: ManagerCalendars
+ {
+  path: 'manager-calendars',
+  component: ManagerCalendarsComponent
 },
 {
   path: 'workflows/:workflowId/create-arrangement',
@@ -89,6 +89,11 @@ export const routes: Routes = [
   loadComponent: () =>
     import('./features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list')
       .then(m => m.ManagerArrangementsList)
+},
+
+{
+  path: 'manager-arrangements',
+  component: ManagerArrangementsList
 }
 
 
