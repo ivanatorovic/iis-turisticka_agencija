@@ -1,0 +1,183 @@
+<div class="arrangements-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <div class="content">
+    <div class="page-header">
+      <p class="subtitle">LUXTRAVEL</p>
+      <h1>Pretraga aranžmana</h1>
+      <p class="description">
+        Pretraži aranžmane po destinaciji, datumu putovanja, broju osoba i okvirnom budžetu.
+      </p>
+    </div>
+
+    <div class="search-card">
+      <div class="form-group">
+        <label>Destinacija</label>
+        <input
+          type="text"
+          [(ngModel)]="searchRequest.destination"
+          placeholder="npr. Grcka"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Datum putovanja</label>
+        <input type="date" [(ngModel)]="searchRequest.travelDate" />
+      </div>
+
+      <div class="form-group">
+        <label>Broj osoba</label>
+        <input
+          type="number"
+          min="1"
+          [(ngModel)]="searchRequest.numberOfPassengers"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Budžet</label>
+        <input
+          type="number"
+          min="0"
+          [(ngModel)]="searchRequest.budget"
+          placeholder="npr. 1000"
+        />
+      </div>
+
+      <div class="actions">
+        <button class="primary-btn" (click)="search()">Pretraži</button>
+
+        <button class="filter-btn" (click)="toggleFilters()">
+          {{ filtersOpen ? 'Sakrij filtere' : 'Filteri' }}
+        </button>
+
+        <button class="secondary-btn" (click)="reset()">Resetuj</button>
+      </div>
+    </div>
+
+    <div class="filter-panel" *ngIf="filtersOpen">
+      <div class="form-group">
+        <label>Kategorija smeštaja</label>
+        <select [(ngModel)]="searchRequest.accommodationCategory">
+          <option [ngValue]="null">Sve kategorije</option>
+          <option value="HOTEL_3">Hotel 3*</option>
+          <option value="HOTEL_4">Hotel 4*</option>
+          <option value="HOTEL_5">Hotel 5*</option>
+          <option value="APARTMENT">Apartman</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Tip prevoza</label>
+        <select [(ngModel)]="searchRequest.transportType">
+          <option [ngValue]="null">Svi tipovi</option>
+          <option value="BUS">Autobus</option>
+          <option value="PLANE">Avion</option>
+          <option value="OWN_TRANSPORT">Sopstveni prevoz</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Broj noćenja</label>
+        <input
+          type="number"
+          min="1"
+          [(ngModel)]="searchRequest.numberOfNights"
+          placeholder="npr. 7"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Dodatna usluga</label>
+        <select [(ngModel)]="searchRequest.additionalService">
+          <option value="">Sve usluge</option>
+          <option value="Doručak">Doručak</option>
+          <option value="All inclusive">All inclusive</option>
+          <option value="Vodič">Vodič</option>
+          <option value="Spa">Spa</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Sortiranje po ceni</label>
+        <select [(ngModel)]="searchRequest.sortByPrice">
+          <option value="">Bez sortiranja</option>
+          <option value="ASC">Cena rastuće</option>
+          <option value="DESC">Cena opadajuće</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button class="primary-btn" (click)="search()">Primeni filtere</button>
+      </div>
+    </div>
+
+    <div class="results-header">
+      <h2>Rezultati</h2>
+      <span>{{ arrangements.length }} pronađenih aranžmana</span>
+    </div>
+
+    <p class="empty-message" *ngIf="arrangements.length === 0">
+      Nema aranžmana koji odgovaraju zadatim kriterijumima.
+    </p>
+
+    <div class="cards">
+      <div class="arrangement-card" *ngFor="let arrangement of arrangements">
+        <div class="image-wrapper">
+          <img [src]="getImageUrl(arrangement)" [alt]="arrangement.name" />
+        </div>
+
+        <div class="card-top">
+          <div>
+            <p class="destination">
+  {{ arrangement.destination.name }}, {{ arrangement.destination.country }}
+</p>
+            <h3>{{ arrangement.name }}</h3>
+          </div>
+
+          <div class="price">
+            <span>{{ arrangement.basePrice }} €</span>
+            <small>po osobi</small>
+          </div>
+        </div>
+
+        <p class="card-description">
+          {{ arrangement.description }}
+        </p>
+
+        <div class="details">
+          <p><b>Smeštaj:</b> {{ arrangement.accommodation?.name }}</p>
+          <p><b>Kategorija:</b> {{ arrangement.accommodation?.category }}</p>
+          <p><b>Prevoz:</b> {{ arrangement.transport?.type }}</p>
+          <p><b>Noćenja:</b> {{ arrangement.numberOfNights }}</p>
+        </div>
+
+        <div class="services" *ngIf="arrangement.additionalServices?.length">
+          <b>Dodatne usluge:</b>
+          <span *ngFor="let service of arrangement.additionalServices">
+            {{ service.name }}
+          </span>
+        </div>
+
+        <div class="total-price">
+          Ukupno za {{ searchRequest.numberOfPassengers }} osoba:
+          <b>{{ calculateTotalPrice(arrangement) }} €</b>
+        </div>
+
+        <div class="terms">
+  <b>Dostupni termini:</b>
+
+  <ul>
+    <li *ngFor="let arrangementTerm of arrangement.arrangementTerms">
+      {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
+      <span>({{ arrangementTerm.availableSpots }} slobodnih mesta)</span>
+    </li>
+  </ul>
+</div>
+        <button class="details-btn" [routerLink]="['/arrangements', arrangement.id]">
+  Pogledaj detalje
+</button>
+      </div>
+    </div>
+  </div>
+</div>

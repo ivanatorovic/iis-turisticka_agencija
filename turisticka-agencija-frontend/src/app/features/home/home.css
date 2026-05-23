@@ -1,0 +1,317 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  background: black;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transform: scale(1.08);
+  animation: heroSlider 30s infinite;
+}
+
+.slide-1 {
+  background-image: url('../../../assets/hotel.jpg');
+  animation-delay: 0s;
+}
+
+.slide-2 {
+  background-image: url('../../../assets/hotel2.jpg');
+  animation-delay: 6s;
+}
+
+.slide-3 {
+  background-image: url('../../../assets/plaza.jpg');
+  animation-delay: 12s;
+}
+
+.slide-4 {
+  background-image: url('../../../assets/safari.jpg');
+  animation-delay: 18s;
+}
+
+.slide-5 {
+  background-image: url('../../../assets/sneg.jpg');
+  animation-delay: 24s;
+}
+
+@keyframes heroSlider {
+  0% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+
+  6% {
+    opacity: 1;
+  }
+
+  20% {
+    opacity: 1;
+  }
+
+  26% {
+    opacity: 0;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.08);
+  }
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+
+  background:
+    linear-gradient(to right, rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.18)),
+    linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 50%);
+}
+
+.navbar {
+  position: relative;
+  z-index: 10;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 34px 60px;
+}
+
+.logo {
+  font-size: 15px;
+  letter-spacing: 6px;
+  font-weight: 600;
+}
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.login-btn,
+.register-btn,
+.logout-btn {
+  height: 50px;
+  padding: 0 30px;
+  border-radius: 999px;
+  cursor: pointer;
+  border: none;
+
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+
+  transition: 0.25s ease;
+}
+
+.login-btn,
+.logout-btn {
+  background: #111;
+  color: white;
+  border: 1px solid #2f2f2f;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.login-btn:hover,
+.logout-btn:hover {
+  background: #1b1b1b;
+
+  border-color: rgba(255, 255, 255, 0.22);
+
+  transform: translateY(-1px);
+}
+
+.register-btn {
+  background: white;
+  color: #111;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+}
+
+.register-btn:hover {
+  background: #d8c19b;
+  transform: translateY(-2px);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 5;
+
+  max-width: 850px;
+
+  padding: 110px 60px 0;
+}
+
+.subtitle {
+  color: #d8c19b;
+
+  letter-spacing: 5px;
+
+  font-size: 13px;
+
+  margin-bottom: 26px;
+}
+
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+
+  font-size: clamp(62px, 9vw, 110px);
+
+  line-height: 0.92;
+
+  font-weight: 600;
+
+  letter-spacing: -3px;
+}
+
+.description {
+  margin-top: 34px;
+
+  max-width: 620px;
+
+  font-size: 20px;
+
+  line-height: 1.8;
+
+  color: rgba(255, 255, 255, 0.82);
+}
+
+.hero-actions {
+  display: flex;
+  gap: 18px;
+
+  margin-top: 42px;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 18px 32px;
+
+  border-radius: 999px;
+
+  font-size: 15px;
+
+  font-weight: 500;
+}
+
+.features {
+  position: relative;
+  z-index: 5;
+
+  display: grid;
+
+  grid-template-columns: repeat(3, 1fr);
+
+  gap: 28px;
+
+  margin: 90px 60px 40px;
+
+  padding: 30px;
+
+  background: rgba(0, 0, 0, 0.42);
+
+  border: 1px solid rgba(255, 255, 255, 0.12);
+
+  backdrop-filter: blur(18px);
+}
+
+.feature span {
+  color: #d8c19b;
+
+  font-size: 14px;
+}
+
+.feature h3 {
+  margin: 16px 0 12px;
+
+  font-size: 28px;
+
+  font-family: 'Cormorant Garamond', serif;
+}
+
+.feature p {
+  color: rgba(255, 255, 255, 0.7);
+
+  line-height: 1.8;
+}
+
+@keyframes zoomEffect {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.06);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (max-width: 900px) {
+  .navbar {
+    padding: 24px;
+  }
+
+  .hero-content {
+    padding: 90px 24px 0;
+  }
+
+  .hero-actions {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .features {
+    grid-template-columns: 1fr;
+
+    margin: 60px 24px 30px;
+  }
+
+  h1 {
+    line-height: 1;
+  }
+}
+.left-nav {
+  position: relative;
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  padding: 28px 50px;
+}
+
+.spacer {
+  flex: 1;
+}
+
+.left-nav {
+  position: relative;
+  z-index: 999;
+
+  display: flex;
+  align-items: center;
+
+  padding: 28px 50px;
+}

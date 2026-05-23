@@ -1,0 +1,51 @@
+<section class="login-page">
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <div class="login-card">
+    <a routerLink="/" class="back-link">← Nazad na početnu</a>
+
+    <p class="subtitle">DOBRODOŠLI NAZAD</p>
+
+    <h1>Prijava</h1>
+
+    <p class="description">Prijavite se i nastavite planiranje svog sledećeg putovanja.</p>
+
+    <form (ngSubmit)="login()" #loginForm="ngForm">
+      <div class="form-group">
+        <label>Korisničko ime</label>
+        <input
+          type="text"
+          name="username"
+          [(ngModel)]="form.username"
+          required
+          placeholder="Unesi korisničko ime"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Lozinka</label>
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="form.password"
+          required
+          placeholder="Unesi lozinku"
+        />
+      </div>
+
+      <p class="error" *ngIf="errorMessage">
+        {{ errorMessage }}
+      </p>
+
+      <button type="submit" [disabled]="loginForm.invalid || loading">
+        {{ loading ? 'Prijava...' : 'Prijavi se' }}
+      </button>
+    </form>
+
+    <p class="register-text">
+      Nemaš nalog?
+      <a routerLink="/register">Registruj se</a>
+    </p>
+  </div>
+</section>

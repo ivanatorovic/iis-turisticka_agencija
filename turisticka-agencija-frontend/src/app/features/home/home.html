@@ -1,0 +1,71 @@
+<section class="hero">
+  <div class="slide slide-1"></div>
+  <div class="slide slide-2"></div>
+  <div class="slide slide-3"></div>
+  <div class="slide slide-4"></div>
+  <div class="slide slide-5"></div>
+
+  <div class="overlay"></div>
+
+  <div class="left-nav">
+    <app-sidebar-menu *ngIf="isLoggedIn()"></app-sidebar-menu>
+
+    <div class="logo">LUXTRAVEL</div>
+
+    <div class="spacer"></div>
+
+    <div class="buttons" *ngIf="!isLoggedIn()">
+      <button class="login-btn" routerLink="/login">Prijava</button>
+
+      <button class="register-btn" routerLink="/register">Registracija</button>
+    </div>
+  </div>
+
+  <div class="hero-content">
+    <p class="subtitle">LUKSUZNA PUTOVANJA I NEZABORAVNA ISKUSTVA</p>
+
+    <h1>
+      Otkrij svet<br />
+      na potpuno<br />
+      novi način
+    </h1>
+
+    <p class="description">
+      Istraži pažljivo odabrane destinacije, luksuzne hotele i jedinstvena iskustva kreirana za
+      putnike koji žele više od običnog odmora.
+    </p>
+
+    <div class="hero-actions" *ngIf="isLoggedIn()">
+  <button class="primary-btn" routerLink="/arrangements">
+    Pretraži aranžmane
+  </button>
+</div>
+  </div>
+
+  <section class="features">
+    <div class="feature">
+      <span>01</span>
+      <h3>Pažljivo odabrane destinacije</h3>
+
+      <p>
+        Otkrij najlepše lokacije širom sveta, od egzotičnih plaža do luksuznih gradskih avantura.
+      </p>
+    </div>
+
+    <div class="feature">
+      <span>02</span>
+      <h3>Premium iskustva</h3>
+
+      <p>Uživaj u ekskluzivnim turama, privatnim izletima i pažljivo organizovanim putovanjima.</p>
+    </div>
+
+    <div class="feature">
+      <span>03</span>
+      <h3>Jednostavno planiranje</h3>
+
+      <p>
+        Rezerviši putovanja i aktivnosti brzo, jednostavno i potpuno prilagođeno svojim željama.
+      </p>
+    </div>
+  </section>
+</section>

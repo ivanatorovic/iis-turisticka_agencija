@@ -1,0 +1,144 @@
+<button class="menu-btn" (click)="toggleMenu()">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<div
+  class="menu-backdrop"
+  *ngIf="menuOpen"
+  (click)="closeMenu()"
+></div>
+
+<aside
+  class="side-menu"
+  [class.open]="menuOpen"
+>
+
+  <div class="menu-header">
+
+    <div class="profile-avatar">
+      {{ getUsername().charAt(0).toUpperCase() }}
+    </div>
+
+    <div>
+      <p>Dobrodošli</p>
+      <h3>{{ getUsername() }}</h3>
+    </div>
+
+  </div>
+
+  <div class="menu-links">
+
+    <!-- POČETNA -->
+      <a
+    routerLink="/workflows/create"
+    *ngIf="isAdmin()"
+    (click)="closeMenu()"
+  >
+    Kreiraj novi radni tok
+  </a>
+
+  <a
+    routerLink="/workflows"
+    *ngIf="isAdmin()"
+    (click)="closeMenu()"
+  >
+    Prikaži radne tokove
+  </a>
+
+    <a
+      class="home-link"
+      routerLink="/"
+      (click)="closeMenu()"
+    >
+      Početna stranica
+    </a>
+
+    <!-- PRETRAGA -->
+
+    <a
+      routerLink="/arrangements"
+      *ngIf="isCustomer() || isSalesAgent()"
+      (click)="closeMenu()"
+    >
+      Pretraga aranžmana
+    </a>
+
+    <!-- CUSTOMER -->
+
+    <a
+      routerLink="/reservations"
+      *ngIf="isCustomer()"
+      (click)="closeMenu()"
+    >
+      Moje rezervacije
+    </a>
+
+    <!-- SALES AGENT -->
+
+    <a
+      routerLink="/reservations"
+      *ngIf="isSalesAgent()"
+      (click)="closeMenu()"
+    >
+      Sve rezervacije
+    </a>
+
+    <!-- MANAGER -->
+
+    <a
+      routerLink="/sales-analytics"
+      *ngIf="isManager()"
+      (click)="closeMenu()"
+    >
+      Analitika prodaje
+    </a>
+
+    <!-- MANAGER -->
+
+
+
+<a
+  routerLink="/received-workflows"
+  *ngIf="isManager()"
+>
+  Primljeni radni tokovi
+</a>
+
+<a
+  routerLink="/manager-destinations"
+  *ngIf="isManager()"
+  (click)="closeMenu()"
+>
+  Destinacije
+</a>
+
+<a routerLink="/manager-calendars" (click)="closeMenu()">
+  Kalendari
+</a>
+
+<a routerLink="/manager-arrangements">
+  Kreirani aranžmani
+</a>
+
+
+    <!-- SVI -->
+
+    <a
+      routerLink="/my-profile"
+      (click)="closeMenu()"
+    >
+      Moj profil
+    </a>
+
+  </div>
+
+  <button
+    class="menu-logout"
+    (click)="logout()"
+  >
+    Odjava
+  </button>
+
+</aside>

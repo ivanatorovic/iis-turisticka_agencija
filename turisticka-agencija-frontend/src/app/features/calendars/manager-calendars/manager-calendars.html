@@ -1,0 +1,109 @@
+<div class="manager-calendars-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <div class="content">
+    <div class="page-header">
+      <p class="subtitle-label">LUXTRAVEL MANAGER</p>
+      <h1>Kalendari destinacija</h1>
+      <p class="description">
+        Definiši vremenski opseg u kome se za određenu destinaciju mogu kasnije birati termini aranžmana.
+      </p>
+    </div>
+
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="form-card">
+      <h2>Dodaj kalendar</h2>
+
+      <input
+        type="text"
+        placeholder="Naziv, npr. Krf leto 2026"
+        [(ngModel)]="newCalendar.name"
+      />
+
+      <select [(ngModel)]="newCalendar.destinationId">
+        <option [ngValue]="null">Izaberi destinaciju</option>
+        <option *ngFor="let destination of destinations" [ngValue]="destination.id">
+          {{ destination.category }} - {{ destination.country }} - {{ destination.name }}
+        </option>
+      </select>
+
+      <div class="date-grid">
+        <input type="date" [(ngModel)]="newCalendar.startDate" />
+        <input type="date" [(ngModel)]="newCalendar.endDate" />
+      </div>
+
+      <button (click)="addCalendar()">Dodaj kalendar</button>
+    </div>
+
+    <div class="tree-card">
+      <h2>Pregled kalendara</h2>
+
+      <div class="empty-state" *ngIf="calendars.length === 0">
+        Nema dodatih kalendara.
+      </div>
+
+      <div class="calendar-item" *ngFor="let calendar of calendars">
+        <ng-container *ngIf="editingCalendarId !== calendar.id">
+          <div class="calendar-info">
+            <h3>{{ calendar.name }}</h3>
+
+            <p>
+              {{ calendar.destination.category }} -
+              {{ calendar.destination.country }} -
+              {{ calendar.destination.name }}
+            </p>
+
+            <div class="calendar-tags">
+              <span>{{ calendar.startDate }} - {{ calendar.endDate }}</span>
+            </div>
+          </div>
+
+          <div class="calendar-actions">
+            <button class="edit-btn" (click)="startEdit(calendar)">
+              Izmeni
+            </button>
+
+            <button class="delete-btn" (click)="deleteCalendar(calendar.id)">
+              Obriši
+            </button>
+          </div>
+        </ng-container>
+
+        <ng-container *ngIf="editingCalendarId === calendar.id">
+          <div class="edit-form">
+            <input type="text" [(ngModel)]="editCalendar.name" />
+
+            <select [(ngModel)]="editCalendar.destinationId">
+              <option [ngValue]="null">Izaberi destinaciju</option>
+              <option *ngFor="let destination of destinations" [ngValue]="destination.id">
+                {{ destination.category }} - {{ destination.country }} - {{ destination.name }}
+              </option>
+            </select>
+
+            <div class="date-grid">
+              <input type="date" [(ngModel)]="editCalendar.startDate" />
+              <input type="date" [(ngModel)]="editCalendar.endDate" />
+            </div>
+
+            <div class="edit-actions">
+              <button class="edit-btn" (click)="saveEdit(calendar.id)">
+                Sačuvaj
+              </button>
+
+              <button class="delete-btn" (click)="cancelEdit()">
+                Otkaži
+              </button>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+</div>

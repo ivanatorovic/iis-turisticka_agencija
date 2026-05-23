@@ -1,0 +1,228 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.reservations-page {
+  min-height: 100vh;
+
+  background:
+    linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.72)),
+    url('../../../../assets/plaza.jpg');
+
+  background-size: cover;
+  background-position: center;
+
+  color: white;
+  font-family: 'Inter', sans-serif;
+}
+
+.content {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 36px 24px 70px;
+}
+
+.page-header {
+  margin-bottom: 30px;
+}
+
+.subtitle {
+  color: #d8c19b;
+  letter-spacing: 5px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 64px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.description {
+  max-width: 650px;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.7;
+  font-size: 17px;
+}
+
+.empty-message,
+.error-message,
+.success-message {
+  padding: 16px 18px;
+  border-radius: 16px;
+  margin-bottom: 18px;
+}
+
+.empty-message {
+  background: rgba(0, 0, 0, 0.42);
+}
+
+.error-message {
+  background: rgba(198, 40, 40, 0.25);
+  color: #ffd0d0;
+}
+
+.success-message {
+  background: rgba(46, 125, 50, 0.25);
+  color: #d0ffd4;
+}
+
+.reservations-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.reservation-card {
+  padding: 22px;
+  border-radius: 24px;
+
+  background: rgba(255, 255, 255, 0.96);
+  color: #111;
+
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.28);
+}
+
+.reservation-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: flex-start;
+
+  margin-bottom: 18px;
+}
+
+.destination {
+  color: #9b7a45;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  font-size: 12px;
+  margin-bottom: 8px;
+}
+
+.reservation-card h2 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+  margin: 0 0 8px;
+}
+
+.term {
+  color: #555;
+}
+
+.status {
+  padding: 8px 14px;
+  border-radius: 999px;
+
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.status.confirmed {
+  background: #e4f6e7;
+  color: #2e7d32;
+}
+
+.status.pending {
+  background: #fff3cd;
+  color: #8a6d00;
+}
+
+.status.cancelled {
+  background: #fde2e2;
+  color: #c62828;
+}
+
+.reservation-details {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+
+  padding: 16px;
+
+  border-radius: 18px;
+
+  background: #f8f8f8;
+
+  margin-bottom: 14px;
+}
+
+.reservation-details span {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.reservation-details b {
+  font-size: 14px;
+}
+
+.capacity-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+
+  margin-top: 10px;
+}
+
+.capacity-info span {
+  padding: 7px 12px;
+
+  border-radius: 999px;
+
+  background: #f4efe6;
+
+  color: #6f5630;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.cancel-btn {
+  height: 42px;
+  padding: 0 22px;
+
+  margin-top: 18px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: #111;
+  color: white;
+
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.cancel-btn:hover {
+  background: #c62828;
+  transform: translateY(-2px);
+}
+
+@media (max-width: 900px) {
+  .reservation-details {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  h1 {
+    font-size: 48px;
+  }
+}
+
+@media (max-width: 600px) {
+  .reservation-main {
+    flex-direction: column;
+  }
+
+  .reservation-details {
+  grid-template-columns: repeat(5, 1fr);
+}
+}

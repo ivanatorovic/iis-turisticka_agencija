@@ -1,0 +1,155 @@
+<div class="workflow-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <main class="workflow-content">
+    <section class="page-header">
+      <p>LUXTRAVEL</p>
+      <h1>Kreiranje radnog toka</h1>
+      <span>Definiši šablon procesa kroz faze destinacije, smeštaja i prevoza.</span>
+    </section>
+    <div class="success-message" *ngIf="successMessage">
+  {{ successMessage }}
+</div>
+
+<div class="error-message" *ngIf="errorMessage">
+  {{ errorMessage }}
+</div>
+
+    <section class="name-card" *ngIf="step === 'name'">
+      <h2>Novi radni tok</h2>
+      <p>Unesi naziv radnog toka pre dodavanja faza.</p>
+
+      <label>Naziv radnog toka</label>
+      <input
+        type="text"
+        [(ngModel)]="workflowName"
+        placeholder="npr. Letovanje egzotika"
+      />
+
+      <button (click)="continueToBuilder()">Sačuvaj naziv</button>
+    </section>
+
+    <section class="builder-grid" *ngIf="step === 'builder'">
+      <div class="workflow-builder-card">
+        <div class="builder-title">
+          <h2>{{ workflowName }}</h2>
+          <p>Vizuelni prikaz faza</p>
+        </div>
+
+        <div class="graph-area" *ngIf="selectedPhases.length > 0">
+          <div
+            class="phase-node-wrapper"
+            *ngFor="let phase of selectedPhases; let last = last"
+          >
+         <button
+  class="phase-node"
+  [class.active]="selectedPhaseForDetails === phase"
+  (click)="selectPhaseForDetails(phase)"
+>
+              <span>{{ getPhaseIcon(phase) }}</span>
+              {{ getPhaseLabel(phase) }}
+            </button>
+
+            <div class="phase-dots" *ngIf="!last">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-graph" *ngIf="selectedPhases.length === 0">
+          <div class="empty-circle">+</div>
+          <p>Dodaj prvu fazu radnog toka</p>
+        </div>
+
+        <div class="builder-actions">
+          <div class="phase-menu-wrapper">
+            <button class="secondary-btn" (click)="togglePhaseMenu()">
+              + Dodaj fazu
+            </button>
+
+            <div class="phase-menu" *ngIf="menuOpen">
+              <ng-container *ngIf="phaseMenuStep === 'type'">
+                <div class="phase-menu-title">Tip faze</div>
+
+                <button (click)="showRecommendedPhases()">
+              
+                  Preporučena
+                </button>
+
+                <button (click)="showNewPhaseOption()">
+                
+                  Nova
+                </button>
+              </ng-container>
+
+              <ng-container *ngIf="phaseMenuStep === 'recommended'">
+                <div class="phase-menu-title">Preporučene faze</div>
+
+                <button
+                  *ngFor="let phase of recommendedPhases"
+                  (click)="addPhase(phase.name)"
+                  [disabled]="selectedPhases.includes(phase.name)"
+                >
+                  <span>{{ phase.icon }}</span>
+                  {{ phase.label }}
+                </button>
+              </ng-container>
+            </div>
+          </div>
+
+          <button class="primary-btn" (click)="saveWorkflow()">
+            Sačuvaj proces
+          </button>
+        </div>
+      </div>
+
+      <div class="workflow-info-card">
+        <h2>Detalji</h2>
+
+
+        <div class="info-row">
+          <span>Broj faza</span>
+          <strong>{{ selectedPhases.length }}</strong>
+        </div>
+
+        <div class="phase-template" *ngIf="selectedPhaseForDetails">
+  <h3>
+    {{ getPhaseLabel(selectedPhaseForDetails) }} ponuda
+  </h3>
+
+  <div
+    class="template-field"
+    *ngFor="let field of phaseTemplates[selectedPhaseForDetails].fields"
+  >
+    <label>{{ field }}</label>
+
+    <input type="text" placeholder="Polje za unos" readonly />
+  </div>
+
+  <div class="template-actions">
+    <button>+ Dodaj stavku</button>
+
+    <button>Obriši stavku</button>
+
+    <button>Sačuvaj fazu</button>
+  </div>
+</div>
+
+<div
+  class="selected-list"
+  *ngIf="!selectedPhaseForDetails && selectedPhases.length > 0"
+>
+  <h3>Dodate faze</h3>
+
+  <div class="selected-item" *ngFor="let phase of selectedPhases">
+    <span>{{ getPhaseIcon(phase) }}</span>
+
+    {{ getPhaseLabel(phase) }}
+  </div>
+</div>
+      </div>
+    </section>
+  </main>
+</div>

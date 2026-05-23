@@ -1,0 +1,61 @@
+import { Component } from '@angular/core';
+import { NgIf } from '@angular/common';
+import { Router, RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth';
+
+@Component({
+  selector: 'app-sidebar-menu',
+  imports: [NgIf, RouterLink],
+  templateUrl: './sidebar-menu.html',
+  styleUrl: './sidebar-menu.css',
+})
+export class SidebarMenu {
+  menuOpen = false;
+
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+  ) {}
+
+  isLoggedIn(): boolean {
+    return this.authService.isLoggedIn();
+  }
+
+  getUsername(): string {
+    return this.authService.getUsername();
+  }
+
+  toggleMenu(): void {
+    this.menuOpen = !this.menuOpen;
+  }
+
+  closeMenu(): void {
+    this.menuOpen = false;
+  }
+
+  logout(): void {
+    this.closeMenu();
+    this.authService.logout();
+    this.router.navigate(['/']);
+  }
+
+  getRole(): string | null {
+  return this.authService.getRole();
+}
+
+isCustomer(): boolean {
+  return this.getRole() === 'CUSTOMER';
+}
+
+isSalesAgent(): boolean {
+  return this.getRole() === 'SALES_AGENT';
+}
+
+isManager(): boolean {
+  return this.getRole() === 'MANAGER';
+}
+
+isAdmin(): boolean {
+  return this.getRole() === 'ADMIN';
+}
+}

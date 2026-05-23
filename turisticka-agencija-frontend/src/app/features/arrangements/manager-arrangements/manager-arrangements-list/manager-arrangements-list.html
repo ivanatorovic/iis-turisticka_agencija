@@ -1,0 +1,133 @@
+<div class="manager-arrangements-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <main class="content">
+    <section class="page-header">
+      <p>LUXTRAVEL</p>
+      <h1>Moji aranžmani</h1>
+      <span>
+        Pregled svih aranžmana koje si kreirala na osnovu primljenih radnih tokova.
+      </span>
+    </section>
+
+    <div class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <p class="empty" *ngIf="arrangements.length === 0">
+      Trenutno nema kreiranih aranžmana.
+    </p>
+
+    <section class="arrangement-grid">
+      <article class="arrangement-card" *ngFor="let arrangement of arrangements">
+        <div class="card-top">
+          <div>
+            <p class="workflow-name">
+              {{ arrangement.workflow?.name }}
+            </p>
+
+            <h2>{{ arrangement.name }}</h2>
+
+            <span class="status">
+              {{ getStatusLabel(arrangement.status) }}
+            </span>
+          </div>
+        </div>
+
+        <p class="description">
+          {{ arrangement.description }}
+        </p>
+
+        <div class="details">
+          <span>
+            Destinacija:
+            <b>
+              {{ arrangement.destination?.country }} -
+              {{ arrangement.destination?.name }}
+            </b>
+          </span>
+
+          <span>
+            Smeštaj:
+            <b>
+              {{ arrangement.accommodation?.name }}
+            </b>
+          </span>
+
+          <span>
+            Prevoz:
+            <b>
+              {{ arrangement.transport?.type }} -
+              {{ arrangement.transport?.company }}
+            </b>
+          </span>
+
+          <span>
+            Cena:
+            <b>{{ arrangement.basePrice }} €</b>
+          </span>
+
+          <span>
+            Noćenja:
+            <b>{{ arrangement.numberOfNights }}</b>
+          </span>
+        </div>
+
+        <div
+          class="send-box"
+          *ngIf="selectedArrangementId === arrangement.id"
+        >
+          <input
+            type="text"
+            placeholder="Username direktora"
+            [(ngModel)]="directorUsername"
+          />
+
+          <div class="send-actions">
+            <button class="send-btn" (click)="sendToDirector(arrangement.id)">
+              Potvrdi slanje
+            </button>
+
+            <button class="cancel-btn" (click)="cancelSend()">
+              Otkaži
+            </button>
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="view-btn" [routerLink]="['/manager-arrangements', arrangement.id]">
+            Pregled
+          </button>
+
+          <button
+            class="edit-btn"
+            (click)="editArrangement(arrangement)"
+            [disabled]="arrangement.status !== 'DRAFT' && arrangement.status !== 'REJECTED'"
+          >
+            Izmeni
+          </button>
+
+          <button
+            class="send-btn"
+            (click)="openSendForm(arrangement.id)"
+            [disabled]="arrangement.status !== 'DRAFT' && arrangement.status !== 'REJECTED'"
+          >
+            Pošalji direktoru
+          </button>
+
+          <button
+            class="delete-btn"
+            (click)="deleteArrangement(arrangement.id)"
+            [disabled]="arrangement.status === 'SENT_TO_DIRECTOR' || arrangement.status === 'PUBLISHED'"
+          >
+            Obriši
+          </button>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>

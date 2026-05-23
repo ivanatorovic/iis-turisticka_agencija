@@ -1,0 +1,79 @@
+<div class="workflow-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <main class="workflow-content" *ngIf="workflow">
+    <div class="workflow-shell">
+      <section class="page-header">
+        <p>LUXTRAVEL</p>
+
+        <h1>{{ workflow.name }}</h1>
+
+        <span>
+          Kreiran:
+          {{ workflow.createdAt | date:'dd.MM.yyyy. HH:mm' }}
+        </span>
+      </section>
+
+      <section class="builder-grid">
+        <div class="workflow-builder-card">
+          <div class="builder-title">
+            <h2>Vizuelni prikaz procesa</h2>
+            <p>Pregled svih faza radnog toka</p>
+          </div>
+
+          <div class="graph-area">
+            <div
+              class="phase-node-wrapper"
+              *ngFor="let phase of workflow.phases; let last = last"
+            >
+              <button
+                class="phase-node"
+                [class.active]="selectedPhaseForDetails === phase.name"
+                (click)="selectPhase(phase.name)"
+              >
+                <span>{{ getPhaseIcon(phase.name) }}</span>
+                {{ getPhaseLabel(phase.name) }}
+              </button>
+
+              <div class="phase-dots" *ngIf="!last">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="workflow-info-card">
+          <h2>Detalji procesa</h2>
+
+        
+
+          <div class="info-row">
+            <span>Broj faza</span>
+            <strong>{{ workflow.phases.length }}</strong>
+          </div>
+
+          <div class="phase-template" *ngIf="selectedPhaseForDetails">
+            <h3>
+              {{ getPhaseLabel(selectedPhaseForDetails) }} šablon
+            </h3>
+
+            <div
+              class="template-field"
+              *ngFor="let field of phaseTemplates[selectedPhaseForDetails].fields"
+            >
+              <label>{{ field }}</label>
+
+              <input
+                type="text"
+                placeholder="Polje za unos"
+                readonly
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

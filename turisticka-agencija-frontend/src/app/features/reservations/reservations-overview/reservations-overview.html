@@ -1,0 +1,99 @@
+<div class="reservations-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <div class="content">
+    <div class="page-header">
+      <p class="subtitle">LUXTRAVEL</p>
+      <h1>{{ getPageTitle() }}</h1>
+      <p class="description">
+        Pregled rezervacija, statusa i osnovnih podataka o aranžmanima.
+      </p>
+    </div>
+
+    <p class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </p>
+
+    <p class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+
+    <p class="empty-message" *ngIf="reservations.length === 0 && !errorMessage">
+      Nema rezervacija za prikaz.
+    </p>
+
+    <div class="reservations-list" *ngIf="reservations.length > 0">
+      <div class="reservation-card" *ngFor="let reservation of reservations">
+        <div class="reservation-main">
+          <div>
+            <p class="destination">
+              {{ reservation.arrangement.destination.name }},
+              {{ reservation.arrangement.destination.country }}
+            </p>
+
+            <h2>{{ reservation.arrangement.name }}</h2>
+
+            <p class="term">
+              {{ reservation.arrangementTerm.term.startDate }}
+              -
+              {{ reservation.arrangementTerm.term.endDate }}
+            </p>
+          </div>
+
+          <div class="status" [ngClass]="reservation.status.toLowerCase()">
+            {{ reservation.status }}
+          </div>
+        </div>
+
+        <div class="reservation-details">
+          <div>
+            <span>Broj osoba</span>
+            <b>{{ reservation.numberOfPassengers }}</b>
+          </div>
+
+          <div>
+            <span>Ukupna cena</span>
+            <b>{{ reservation.totalPrice }} €</b>
+          </div>
+          <div>
+  <span>Plaćanje</span>
+  <b>
+    {{
+      reservation.paymentType === 'INSTALLMENTS'
+        ? reservation.numberOfInstallments + ' rata po ' + (reservation.installmentAmount | number: '1.2-2') + ' €'
+        : 'Jednokratno'
+    }}
+  </b>
+</div>
+
+          <div>
+            <span>Datum rezervacije</span>
+            <b>{{ reservation.reservationDate | date: 'dd.MM.yyyy. HH:mm' }}</b>
+          </div>
+
+          <div *ngIf="isSalesAgent()">
+            <span>Kupac</span>
+            <b>
+              {{ reservation.user.firstName }} {{ reservation.user.lastName }}
+              ({{ reservation.user.username }})
+            </b>
+          </div>
+        </div>
+
+        <div class="capacity-info">
+          <span>Kapacitet: {{ reservation.arrangementTerm.capacity }}</span>
+          <span>Rezervisano: {{ reservation.arrangementTerm.reservedSpots }}</span>
+          <span>Slobodno: {{ reservation.arrangementTerm.availableSpots }}</span>
+        </div>
+
+        <button
+          class="cancel-btn"
+          *ngIf="isSalesAgent() && reservation.status !== 'CANCELLED'"
+          (click)="cancelReservation(reservation.id)"
+        >
+          Otkaži rezervaciju
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
