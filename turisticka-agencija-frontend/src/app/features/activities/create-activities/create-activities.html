@@ -1,0 +1,88 @@
+<section class="create-page">
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <nav class="navbar">
+    <div class="left-nav">
+      <app-sidebar-menu></app-sidebar-menu>
+      <a class="logo">LUXTRAVEL</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="header-row">
+      <div>
+        <p class="subtitle">MENADŽERSKI PANEL</p>
+        <h1>{{ isEditMode ? 'Izmena aktivnosti' : 'Kreiranje aktivnosti' }}</h1>
+        <p class="description">
+          Unesite podatke o dodatnoj aktivnosti koja će biti dostupna putnicima.
+        </p>
+      </div>
+
+      <button class="back-btn" routerLink="/additional-activities-manager">Nazad na pregled</button>
+    </div>
+
+    <div *ngIf="loading" class="message-box">Učitavanje podataka...</div>
+
+    <form *ngIf="!loading" class="activity-form" (ngSubmit)="saveActivity()">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>Naziv aktivnosti</label>
+          <input type="text" name="name" [(ngModel)]="form.name" />
+        </div>
+
+        <div class="form-field">
+          <label>Lokacija</label>
+          <input type="text" name="location" [(ngModel)]="form.location" />
+        </div>
+
+        <div class="form-field">
+          <label>Cena (€)</label>
+          <input type="number" name="price" [(ngModel)]="form.price" />
+        </div>
+
+        <div class="form-field">
+          <label>Trajanje u minutima</label>
+          <input type="number" name="durationMinutes" [(ngModel)]="form.durationMinutes" />
+        </div>
+
+        <div class="form-field full">
+          <label>Slika aktivnosti</label>
+
+          <label class="file-picker">
+            <input type="file" accept="image/*" (change)="onImageSelected($event)" />
+
+            <span>{{ selectedImage ? selectedImage.name : 'Izaberi sliku' }}</span>
+          </label>
+
+          <p class="selected-image" *ngIf="isEditMode && form.imageUrl && !selectedImage">
+            Trenutna slika: {{ form.imageUrl }}
+          </p>
+        </div>
+
+        <div class="form-field full">
+          <label>Opis aktivnosti</label>
+          <textarea name="description" rows="6" [(ngModel)]="form.description"></textarea>
+        </div>
+      </div>
+
+      <div *ngIf="errorMessage" class="message-box error">
+        {{ errorMessage }}
+      </div>
+
+      <div *ngIf="successMessage" class="message-box success">
+        {{ successMessage }}
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="secondary-btn" routerLink="/additional-activities-manager">
+          Otkaži
+        </button>
+
+        <button type="submit" class="save-btn" [disabled]="saving">
+          {{ saving ? 'Čuvanje...' : isEditMode ? 'Sačuvaj izmene' : 'Kreiraj aktivnost' }}
+        </button>
+      </div>
+    </form>
+  </main>
+</section>

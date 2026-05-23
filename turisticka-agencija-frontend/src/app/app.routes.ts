@@ -14,6 +14,8 @@ import { ReceivedWorkflows } from './features/workflows/received-workflows/recei
 import { ManagerDestinations } from './features/destinations/manager-destinations/manager-destinations';
 import { ManagerCalendarsComponent } from './features/calendars/manager-calendars/manager-calendars';
 import { ManagerArrangementsList } from './features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list';
+import { AdditionalActivitiesManager } from './features/activities/additional-activities-manager/additional-activities-manager';
+import { CreateActivities } from './features/activities/create-activities/create-activities';
 export const routes: Routes = [
   {
     path: '',
@@ -24,9 +26,9 @@ export const routes: Routes = [
     component: Register,
   },
   {
-  path: 'sales-analytics',
-  component: SalesAnalytics,
-},
+    path: 'sales-analytics',
+    component: SalesAnalytics,
+  },
   {
     path: 'login',
     component: Login,
@@ -36,65 +38,78 @@ export const routes: Routes = [
     component: MyProfile,
   },
   {
-  path: 'reservations',
-  component: ReservationsOverview,
-},
+    path: 'reservations',
+    component: ReservationsOverview,
+  },
   {
-  path: 'arrangements/:id',
-  component: ArrangementDetails,
-},
+    path: 'arrangements/:id',
+    component: ArrangementDetails,
+  },
   {
     path: 'arrangements',
     component: ArrangementSearch,
   },
   {
-  path: 'workflows/create',
-  component: WorkflowCreate,
-},
-{
-  path: 'workflows',
-  component: WorkflowList,
-},
-{
-  path: 'workflows/:id',
-  component: WorkflowDetails,
-},
-{
-  path: 'received-workflows',
-  component: ReceivedWorkflows,
-},
- {
+    path: 'workflows/create',
+    component: WorkflowCreate,
+  },
+  {
+    path: 'workflows',
+    component: WorkflowList,
+  },
+  {
+    path: 'workflows/:id',
+    component: WorkflowDetails,
+  },
+  {
+    path: 'received-workflows',
+    component: ReceivedWorkflows,
+  },
+  {
     path: 'manager-destinations',
-    component: ManagerDestinations
+    component: ManagerDestinations,
   },
 
- {
-  path: 'manager-calendars',
-  component: ManagerCalendarsComponent
-},
-{
-  path: 'workflows/:workflowId/create-arrangement',
-  loadComponent: () =>
-    import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form')
-      .then(m => m.ManagerArrangementForm)
-},
-{
-  path: 'workflows/:workflowId/edit-arrangement/:arrangementId',
-  loadComponent: () =>
-    import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form')
-      .then(m => m.ManagerArrangementForm)
-},
-{
-  path: 'my-manager-arrangements',
-  loadComponent: () =>
-    import('./features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list')
-      .then(m => m.ManagerArrangementsList)
-},
+  {
+    path: 'manager-calendars',
+    component: ManagerCalendarsComponent,
+  },
+  {
+    path: 'workflows/:workflowId/create-arrangement',
+    loadComponent: () =>
+      import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form').then(
+        (m) => m.ManagerArrangementForm,
+      ),
+  },
+  {
+    path: 'workflows/:workflowId/edit-arrangement/:arrangementId',
+    loadComponent: () =>
+      import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form').then(
+        (m) => m.ManagerArrangementForm,
+      ),
+  },
+  {
+    path: 'my-manager-arrangements',
+    loadComponent: () =>
+      import('./features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list').then(
+        (m) => m.ManagerArrangementsList,
+      ),
+  },
 
-{
-  path: 'manager-arrangements',
-  component: ManagerArrangementsList
-}
-
-
+  {
+    path: 'manager-arrangements',
+    component: ManagerArrangementsList,
+  },
+  {
+    path: 'additional-activities-manager',
+    component: AdditionalActivitiesManager,
+  },
+  {
+    path: 'create-additional-activity',
+    component: CreateActivities,
+  },
+  {
+    path: 'create-additional-activity/:id',
+    component: CreateActivities,
+  },
 ];

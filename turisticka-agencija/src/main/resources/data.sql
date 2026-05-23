@@ -198,3 +198,63 @@ UPDATE arrangement_term SET reserved_spots = 3 WHERE id = 4;
 UPDATE arrangement_term SET reserved_spots = 5 WHERE id = 5;
 UPDATE arrangement_term SET reserved_spots = 2 WHERE id = 6;
 
+INSERT INTO additional_activity
+(id, name, description, price, duration_minutes, location, image_url, created_by_id)
+VALUES
+    (
+        1,
+        'Izlet do ostrva Vido',
+        'Organizovan izlet brodom do ostrva Vido tokom letovanja na Krfu.',
+        35,
+        180,
+        'Krf, Grcka',
+        '/uploads/additional-activities/vido.jpg',
+        3
+    ),
+    (
+        2,
+        'Obilazak Koloseuma',
+        'Obilazak Koloseuma i Rimskog foruma uz lokalnog turističkog vodiča.',
+        45,
+        180,
+        'Rim, Italija',
+        '/uploads/additional-activities/koloseum.jpg',
+        3
+    ),
+    (
+        3,
+        'Ski škola za početnike',
+        'Osnovna ski obuka za početnike tokom zimovanja na Kopaoniku.',
+        70,
+        240,
+        'Kopaonik, Srbija',
+        '/uploads/additional-activities/ski-skola.jpg',
+        6
+    ),
+    (
+        4,
+        'Ronjenje u Crvenom moru',
+        'Ronjenje sa instruktorom i obilazak koralnih grebena tokom boravka u Hurgadi.',
+        90,
+        240,
+        'Hurgada, Egipat',
+        '/uploads/additional-activities/ronjenje.jpg',
+        6
+    ),
+    (
+        5,
+        'Krstarenje Senom',
+        'Večernje panoramsko krstarenje Senom tokom putovanja u Pariz.',
+        50,
+        120,
+        'Pariz, Francuska',
+        '/uploads/additional-activities/sena.jpg',
+        3
+    );
+
+SELECT setval(
+               'additional_activity_id_seq',
+               (SELECT MAX(id) FROM additional_activity)
+       );
+
+
