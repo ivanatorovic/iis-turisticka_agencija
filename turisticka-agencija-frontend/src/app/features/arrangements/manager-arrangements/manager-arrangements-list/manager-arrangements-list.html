@@ -5,9 +5,7 @@
     <section class="page-header">
       <p>LUXTRAVEL</p>
       <h1>Moji aranžmani</h1>
-      <span>
-        Pregled svih aranžmana koje si kreirala na osnovu primljenih radnih tokova.
-      </span>
+      <span> Pregled svih aranžmana koje si kreirao na osnovu primljenih radnih tokova. </span>
     </section>
 
     <div class="success-message" *ngIf="successMessage">
@@ -18,9 +16,7 @@
       {{ errorMessage }}
     </div>
 
-    <p class="empty" *ngIf="arrangements.length === 0">
-      Trenutno nema kreiranih aranžmana.
-    </p>
+    <p class="empty" *ngIf="arrangements.length === 0">Trenutno nema kreiranih aranžmana.</p>
 
     <section class="arrangement-grid">
       <article class="arrangement-card" *ngFor="let arrangement of arrangements">
@@ -77,24 +73,15 @@
           </span>
         </div>
 
-        <div
-          class="send-box"
-          *ngIf="selectedArrangementId === arrangement.id"
-        >
-          <input
-            type="text"
-            placeholder="Username direktora"
-            [(ngModel)]="directorUsername"
-          />
+        <div class="send-box" *ngIf="selectedArrangementId === arrangement.id">
+          <input type="text" placeholder="Username direktora" [(ngModel)]="directorUsername" />
 
           <div class="send-actions">
             <button class="send-btn" (click)="sendToDirector(arrangement.id)">
               Potvrdi slanje
             </button>
 
-            <button class="cancel-btn" (click)="cancelSend()">
-              Otkaži
-            </button>
+            <button class="cancel-btn" (click)="cancelSend()">Otkaži</button>
           </div>
         </div>
 
@@ -122,7 +109,9 @@
           <button
             class="delete-btn"
             (click)="deleteArrangement(arrangement.id)"
-            [disabled]="arrangement.status === 'SENT_TO_DIRECTOR' || arrangement.status === 'PUBLISHED'"
+            [disabled]="
+              arrangement.status === 'SENT_TO_DIRECTOR' || arrangement.status === 'PUBLISHED'
+            "
           >
             Obriši
           </button>

@@ -1,6 +1,7 @@
 package com.example.turisticka_agencija.controller;
 
 import com.example.turisticka_agencija.dto.AdditionalActivityResponse;
+import com.example.turisticka_agencija.dto.AdditionalActivityShortResponse;
 import com.example.turisticka_agencija.service.AdditionalActivityService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +55,10 @@ public class AdditionalActivityController {
             Principal principal
     ) {
         additionalActivityService.deleteAdditionalActivity(id, principal);
+    }
+
+    @GetMapping("/short")
+    public List<AdditionalActivityShortResponse> getAllShortActivities() {
+        return additionalActivityService.getAllShortActivities();
     }
 }

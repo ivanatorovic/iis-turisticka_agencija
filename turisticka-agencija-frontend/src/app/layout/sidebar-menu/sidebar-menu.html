@@ -60,6 +60,10 @@
 
     <a routerLink="/manager-arrangements"> Kreirani aranžmani </a>
 
+    <a routerLink="/manager-arrangement-terms" *ngIf="isManager()" (click)="closeMenu()">
+      Termini aranžmana
+    </a>
+
     <a routerLink="/additional-activities-manager" *ngIf="isManager()" (click)="closeMenu()">
       Dodatne aktivnosti
     </a>

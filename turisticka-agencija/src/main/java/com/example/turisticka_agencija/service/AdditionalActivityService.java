@@ -2,6 +2,7 @@ package com.example.turisticka_agencija.service;
 
 import com.example.turisticka_agencija.dto.AdditionalActivityRequest;
 import com.example.turisticka_agencija.dto.AdditionalActivityResponse;
+import com.example.turisticka_agencija.dto.AdditionalActivityShortResponse;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.AdditionalActivity;
 import com.example.turisticka_agencija.model.Role;
@@ -72,8 +73,6 @@ public class AdditionalActivityService {
 
             activity.setName(request.getName().trim());
             activity.setDescription(request.getDescription().trim());
-            activity.setPrice(request.getPrice());
-            activity.setDurationMinutes(request.getDurationMinutes());
             activity.setLocation(request.getLocation().trim());
             activity.setImageUrl(saveImage(image));
             activity.setCreatedBy(user);
@@ -82,10 +81,10 @@ public class AdditionalActivityService {
 
         } catch (BadRequestException e) {
             throw e;
-        }  catch (Exception e) {
-        e.printStackTrace();
-        throw new RuntimeException(e);
-    }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     public AdditionalActivityResponse updateAdditionalActivity(
@@ -125,20 +124,6 @@ public class AdditionalActivityService {
                 activity.setDescription(request.getDescription().trim());
             }
 
-            if (request.getPrice() != null) {
-                if (request.getPrice() < 0) {
-                    throw new BadRequestException("Price cannot be negative");
-                }
-                activity.setPrice(request.getPrice());
-            }
-
-            if (request.getDurationMinutes() != null) {
-                if (request.getDurationMinutes() <= 0) {
-                    throw new BadRequestException("Duration must be greater than 0");
-                }
-                activity.setDurationMinutes(request.getDurationMinutes());
-            }
-
             if (request.getLocation() != null) {
                 if (request.getLocation().isBlank()) {
                     throw new BadRequestException("Location cannot be empty");
@@ -155,7 +140,9 @@ public class AdditionalActivityService {
         } catch (BadRequestException e) {
             throw e;
         } catch (Exception e) {
-            throw new BadRequestException("Greška prilikom izmene aktivnosti: " + e.getMessage());
+            throw new BadRequestException(
+                    "Greška prilikom izmene aktivnosti: " + e.getMessage()
+            );
         }
     }
 
@@ -186,7 +173,9 @@ public class AdditionalActivityService {
                 && !extension.equals("jpeg")
                 && !extension.equals("png")
                 && !extension.equals("webp")) {
-            throw new BadRequestException("Only JPG, JPEG, PNG and WEBP images are allowed");
+            throw new BadRequestException(
+                    "Only JPG, JPEG, PNG and WEBP images are allowed"
+            );
         }
 
         String fileName = UUID.randomUUID() + "." + extension;
@@ -258,36 +247,25 @@ public class AdditionalActivityService {
     }
 
     private void validateRequiredFields(AdditionalActivityRequest request) {
+
         if (request.getName() == null || request.getName().isBlank()) {
             throw new BadRequestException("Name is required");
         }
 
-        if (request.getDescription() == null || request.getDescription().isBlank()) {
+        if (request.getDescription() == null
+                || request.getDescription().isBlank()) {
             throw new BadRequestException("Description is required");
         }
 
-        if (request.getPrice() == null) {
-            throw new BadRequestException("Price is required");
-        }
-
-        if (request.getPrice() < 0) {
-            throw new BadRequestException("Price cannot be negative");
-        }
-
-        if (request.getDurationMinutes() == null) {
-            throw new BadRequestException("Duration is required");
-        }
-
-        if (request.getDurationMinutes() <= 0) {
-            throw new BadRequestException("Duration must be greater than 0");
-        }
-
-        if (request.getLocation() == null || request.getLocation().isBlank()) {
+        if (request.getLocation() == null
+                || request.getLocation().isBlank()) {
             throw new BadRequestException("Location is required");
         }
     }
 
-    private AdditionalActivityResponse mapToResponse(AdditionalActivity activity) {
+    private AdditionalActivityResponse mapToResponse(
+            AdditionalActivity activity
+    ) {
         Long createdById = null;
         String createdByUsername = null;
 
@@ -300,12 +278,22 @@ public class AdditionalActivityService {
                 activity.getId(),
                 activity.getName(),
                 activity.getDescription(),
-                activity.getPrice(),
-                activity.getDurationMinutes(),
                 activity.getLocation(),
                 activity.getImageUrl(),
                 createdById,
                 createdByUsername
         );
+    }
+
+    public List<AdditionalActivityShortResponse> getAllShortActivities() {
+        return additionalActivityRepository.findAllByOrderByIdDesc()
+                .stream()
+                .map(activity -> new AdditionalActivityShortResponse(
+                        activity.getId(),
+                        activity.getName(),
+                        activity.getDescription(),
+                        activity.getLocation()
+                ))
+                .toList();
     }
 }

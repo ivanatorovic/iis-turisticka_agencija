@@ -17,6 +17,59 @@ export interface ArrangementTerm {
   availableSpots: number;
 }
 
+export interface ArrangementTermView {
+  arrangementTermId: number;
+
+  arrangementId: number;
+  arrangementName: string;
+  destinationName: string;
+  destinationCountry: string;
+  basePrice: number;
+  numberOfNights: number;
+
+  termId: number;
+  startDate: string;
+  endDate: string;
+
+  capacity: number;
+  reservedSpots: number;
+  availableSpots: number;
+}
+
+export interface ArrangementActivity {
+  id: number;
+
+  arrangementTermId: number;
+  additionalActivityId: number;
+
+  activityName: string;
+  activityDescription: string;
+  activityLocation: string;
+
+  imageUrl: string;
+
+  activityDate: string;
+  startTime: string;
+
+  durationMinutes: number;
+
+  capacity: number;
+  reservedSpots: number;
+  availableSpots: number;
+
+  price: number;
+}
+
+export interface AdditionalActivityExecutionRequest {
+  arrangementTermId: number;
+  additionalActivityId: number;
+  activityDate: string;
+  startTime: string;
+  durationMinutes: number | null;
+  capacity: number | null;
+  price: number | null;
+}
+
 export interface Destination {
   id: number;
   name: string;
@@ -74,6 +127,11 @@ export interface ArrangementSearchRequest {
 export class ArrangementService {
   private readonly apiUrl = 'http://localhost:8080/api/arrangements';
 
+  private readonly arrangementTermsUrl = 'http://localhost:8080/api/arrangement-terms';
+
+  private readonly additionalActivityExecutionsUrl =
+    'http://localhost:8080/api/additional-activity-executions';
+
   constructor(
     private http: HttpClient,
     private authService: AuthService,
@@ -101,6 +159,35 @@ export class ArrangementService {
 
   getById(id: number): Observable<Arrangement> {
     return this.http.get<Arrangement>(`${this.apiUrl}/${id}`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getAllArrangementTerms(): Observable<ArrangementTermView[]> {
+    return this.http.get<ArrangementTermView[]>(this.arrangementTermsUrl, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getActivitiesForArrangementTerm(arrangementTermId: number): Observable<ArrangementActivity[]> {
+    return this.http.get<ArrangementActivity[]>(
+      `${this.additionalActivityExecutionsUrl}/arrangement-term/${arrangementTermId}`,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  createActivityExecution(
+    request: AdditionalActivityExecutionRequest,
+  ): Observable<ArrangementActivity> {
+    return this.http.post<ArrangementActivity>(this.additionalActivityExecutionsUrl, request, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  deleteActivityExecution(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.additionalActivityExecutionsUrl}/${id}`, {
       headers: this.getHeaders(),
     });
   }

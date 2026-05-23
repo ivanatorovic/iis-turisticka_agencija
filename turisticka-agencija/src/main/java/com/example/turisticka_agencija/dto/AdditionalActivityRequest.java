@@ -4,32 +4,38 @@ public class AdditionalActivityRequest {
 
     private String name;
     private String description;
-    private Double price;
-    private Integer durationMinutes;
     private String location;
     private String imageUrl;
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+        return description;
+    }
 
-    public Double getPrice() { return price; }
+    public String getLocation() {
+        return location;
+    }
 
-    public Integer getDurationMinutes() { return durationMinutes; }
+    public String getImageUrl() {
+        return imageUrl;
+    }
 
-    public String getLocation() { return location; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public String getImageUrl() { return imageUrl; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public void setLocation(String location) {
+        this.location = location;
+    }
 
-    public void setDescription(String description) { this.description = description; }
-
-    public void setPrice(Double price) { this.price = price; }
-
-    public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
-
-    public void setLocation(String location) { this.location = location; }
-
-    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 }

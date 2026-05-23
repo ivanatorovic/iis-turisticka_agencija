@@ -28,8 +28,6 @@ export class CreateActivities implements OnInit {
   form: AdditionalActivityRequest = {
     name: '',
     description: '',
-    price: null as any,
-    durationMinutes: null as any,
     location: '',
     imageUrl: '',
   };
@@ -58,8 +56,6 @@ export class CreateActivities implements OnInit {
         this.form = {
           name: activity.name,
           description: activity.description,
-          price: activity.price,
-          durationMinutes: activity.durationMinutes,
           location: activity.location,
           imageUrl: activity.imageUrl,
         };
@@ -136,8 +132,6 @@ export class CreateActivities implements OnInit {
     const info = {
       name: this.form.name,
       description: this.form.description,
-      price: this.form.price,
-      durationMinutes: this.form.durationMinutes,
       location: this.form.location,
     };
 
@@ -160,26 +154,6 @@ export class CreateActivities implements OnInit {
 
     if (!this.form.description.trim()) {
       this.errorMessage = 'Opis aktivnosti je obavezan.';
-      return false;
-    }
-
-    if (this.form.price === null || this.form.price === undefined) {
-      this.errorMessage = 'Cena je obavezna.';
-      return false;
-    }
-
-    if (this.form.price < 0) {
-      this.errorMessage = 'Cena ne može biti negativna.';
-      return false;
-    }
-
-    if (this.form.durationMinutes === null || this.form.durationMinutes === undefined) {
-      this.errorMessage = 'Trajanje je obavezno.';
-      return false;
-    }
-
-    if (this.form.durationMinutes <= 0) {
-      this.errorMessage = 'Trajanje mora biti veće od 0.';
       return false;
     }
 

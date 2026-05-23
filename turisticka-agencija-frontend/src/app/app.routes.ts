@@ -16,6 +16,7 @@ import { ManagerCalendarsComponent } from './features/calendars/manager-calendar
 import { ManagerArrangementsList } from './features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list';
 import { AdditionalActivitiesManager } from './features/activities/additional-activities-manager/additional-activities-manager';
 import { CreateActivities } from './features/activities/create-activities/create-activities';
+import { ManagerArrangementTermsList } from './features/arrangements/manager-arrangements/manager-arrangement-terms-list/manager-arrangement-terms-list';
 export const routes: Routes = [
   {
     path: '',
@@ -111,5 +112,16 @@ export const routes: Routes = [
   {
     path: 'create-additional-activity/:id',
     component: CreateActivities,
+  },
+  {
+    path: 'manager-arrangement-terms',
+    component: ManagerArrangementTermsList,
+  },
+  {
+    path: 'manager-arrangements/:id/activities',
+    loadComponent: () =>
+      import('./features/arrangements/manager-arrangements/manager-arrangements-activities/manager-arrangements-activities').then(
+        (m) => m.ManagerArrangementsActivities,
+      ),
   },
 ];

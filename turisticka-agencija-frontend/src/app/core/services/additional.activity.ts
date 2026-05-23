@@ -1,13 +1,12 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth';
 
 export interface AdditionalActivityResponse {
   id: number;
   name: string;
   description: string;
-  price: number;
-  durationMinutes: number;
   location: string;
   imageUrl: string;
   createdById: number;
@@ -17,10 +16,15 @@ export interface AdditionalActivityResponse {
 export interface AdditionalActivityRequest {
   name: string;
   description: string;
-  price: number;
-  durationMinutes: number;
   location: string;
   imageUrl: string;
+}
+
+export interface AdditionalActivityShortResponse {
+  id: number;
+  name: string;
+  description: string;
+  location: string;
 }
 
 @Injectable({
@@ -29,55 +33,52 @@ export interface AdditionalActivityRequest {
 export class AdditionalActivityService {
   private readonly apiUrl = 'http://localhost:8080/api/additional-activities';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private authService: AuthService,
+  ) {}
+
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+  }
 
   getAll(): Observable<AdditionalActivityResponse[]> {
-    const token = localStorage.getItem('token') || localStorage.getItem('jwt');
-
     return this.http.get<AdditionalActivityResponse[]>(this.apiUrl, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this.getHeaders(),
     });
   }
 
   getById(id: number): Observable<AdditionalActivityResponse> {
-    const token = localStorage.getItem('token') || localStorage.getItem('jwt');
-
     return this.http.get<AdditionalActivityResponse>(`${this.apiUrl}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this.getHeaders(),
     });
   }
 
   create(formData: FormData): Observable<AdditionalActivityResponse> {
-    const token = localStorage.getItem('token') || localStorage.getItem('jwt');
-
     return this.http.post<AdditionalActivityResponse>(this.apiUrl, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this.getHeaders(),
     });
   }
 
   update(id: number, formData: FormData): Observable<AdditionalActivityResponse> {
-    const token = localStorage.getItem('token') || localStorage.getItem('jwt');
-
     return this.http.put<AdditionalActivityResponse>(`${this.apiUrl}/${id}`, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this.getHeaders(),
     });
   }
 
   delete(id: number): Observable<void> {
-    const token = localStorage.getItem('token') || localStorage.getItem('jwt');
-
     return this.http.delete<void>(`${this.apiUrl}/${id}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: this.getHeaders(),
+    });
+  }
+
+  getAllShort(): Observable<AdditionalActivityShortResponse[]> {
+    return this.http.get<AdditionalActivityShortResponse[]>(`${this.apiUrl}/short`, {
+      headers: this.getHeaders(),
     });
   }
 }
