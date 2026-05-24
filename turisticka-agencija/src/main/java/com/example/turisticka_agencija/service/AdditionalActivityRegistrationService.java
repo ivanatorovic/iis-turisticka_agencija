@@ -3,6 +3,7 @@ package com.example.turisticka_agencija.service;
 import com.example.turisticka_agencija.dto.AdditionalActivityParticipantResponse;
 import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationRequest;
 import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationResponse;
+import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationUpdateRequest;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.*;
 import com.example.turisticka_agencija.repository.*;
@@ -187,5 +188,52 @@ public class AdditionalActivityRegistrationService {
 
         return userRepository.findByUsername(principal.getName())
                 .orElseThrow(() -> new BadRequestException("Ulogovani korisnik nije pronađen"));
+    }
+
+    @Transactional
+    public AdditionalActivityRegistrationResponse updateRegistration(
+            Long registrationId,
+            AdditionalActivityRegistrationUpdateRequest request,
+            Principal principal
+    ) {
+        User user = getAuthenticatedUser(principal);
+
+        if (request == null || request.getNumberOfParticipants() == null) {
+            throw new BadRequestException("Morate uneti broj prijavljenih osoba");
+        }
+
+        if (request.getNumberOfParticipants() <= 0) {
+            throw new BadRequestException("Broj prijavljenih osoba mora biti veći od 0");
+        }
+
+        AdditionalActivityRegistration registration = registrationRepository.findById(registrationId)
+                .orElseThrow(() -> new BadRequestException("Prijava nije pronađena"));
+
+        if (!registration.getUser().getId().equals(user.getId())) {
+            throw new BadRequestException("Ne možete izmeniti tuđu prijavu");
+        }
+
+        if (registration.getStatus() != AdditionalActivityRegistrationStatus.ACTIVE) {
+            throw new BadRequestException("Možete menjati samo aktivne prijave");
+        }
+
+        AdditionalActivityExecution execution = registration.getAdditionalActivityExecution();
+
+        int oldParticipants = registration.getNumberOfParticipants();
+        int newParticipants = request.getNumberOfParticipants();
+
+        int difference = newParticipants - oldParticipants;
+
+        if (difference > 0 && execution.getAvailableSpots() < difference) {
+            throw new BadRequestException("Nema dovoljno slobodnih mesta za povećanje prijave");
+        }
+
+        execution.setReservedSpots(execution.getReservedSpots() + difference);
+        registration.setNumberOfParticipants(newParticipants);
+
+        executionRepository.save(execution);
+        registration = registrationRepository.save(registration);
+
+        return mapToResponse(registration);
     }
 }

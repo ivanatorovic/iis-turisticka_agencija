@@ -144,6 +144,10 @@ export interface AdditionalActivityRegistrationResponse {
   status: string;
 }
 
+export interface AdditionalActivityRegistrationUpdateRequest {
+  numberOfParticipants: number | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -244,6 +248,19 @@ export class ArrangementService {
     return this.http.put<void>(
       `${this.additionalActivityRegistrationsUrl}/${registrationId}/cancel`,
       {},
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  updateActivityRegistration(
+    registrationId: number,
+    request: AdditionalActivityRegistrationUpdateRequest,
+  ): Observable<AdditionalActivityRegistrationResponse> {
+    return this.http.put<AdditionalActivityRegistrationResponse>(
+      `${this.additionalActivityRegistrationsUrl}/${registrationId}`,
+      request,
       {
         headers: this.getHeaders(),
       },

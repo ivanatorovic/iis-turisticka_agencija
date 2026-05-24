@@ -28,7 +28,11 @@
     linear-gradient(to right, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.3));
 }
 
-.navbar,
+.navbar {
+  position: relative;
+  z-index: 50000;
+}
+
 .content {
   position: relative;
   z-index: 2;
@@ -513,4 +517,91 @@ h1 {
   opacity: 1;
   cursor: pointer;
   filter: invert(1);
+}
+
+.registered-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.update-registration-btn {
+  width: 100%;
+  padding: 13px 18px;
+  border: 1px solid rgba(216, 193, 155, 0.34);
+  background: rgba(216, 193, 155, 0.16);
+  color: #f3dfbe;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.update-registration-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(216, 193, 155, 0.24);
+}
+
+.update-form {
+  margin-top: 16px;
+  padding: 16px;
+  border: 1px solid rgba(216, 193, 155, 0.22);
+  background: rgba(216, 193, 155, 0.08);
+}
+
+.update-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.update-form input {
+  height: 46px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 14px;
+  outline: none;
+}
+
+.update-form input:focus {
+  border-color: rgba(216, 193, 155, 0.5);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.update-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.update-actions button {
+  flex: 1;
+}
+
+.update-form input[type='number'] {
+  appearance: textfield;
+}
+
+.update-form input[type='number']::-webkit-inner-spin-button,
+.update-form input[type='number']::-webkit-outer-spin-button {
+  opacity: 1;
+  cursor: pointer;
+  filter: invert(1);
+}
+
+@media (max-width: 600px) {
+  .registered-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .update-actions {
+    flex-direction: column;
+  }
 }

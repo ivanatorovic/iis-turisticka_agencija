@@ -2,6 +2,7 @@ package com.example.turisticka_agencija.service;
 
 import com.example.turisticka_agencija.dto.AdditionalActivityExecutionRequest;
 import com.example.turisticka_agencija.dto.AdditionalActivityExecutionResponse;
+import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationUpdateRequest;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.*;
 import com.example.turisticka_agencija.repository.*;
@@ -21,6 +22,7 @@ public class AdditionalActivityExecutionService {
     private final ActivityTermRepository activityTermRepository;
     private final AdditionalActivityPriceListRepository priceListRepository;
     private final UserRepository userRepository;
+    private final AdditionalActivityRegistrationRepository registrationRepository;
 
     public AdditionalActivityExecutionService(
             AdditionalActivityExecutionRepository executionRepository,
@@ -28,7 +30,8 @@ public class AdditionalActivityExecutionService {
             ArrangementTermRepository arrangementTermRepository,
             ActivityTermRepository activityTermRepository,
             AdditionalActivityPriceListRepository priceListRepository,
-            UserRepository userRepository
+            UserRepository userRepository,
+            AdditionalActivityRegistrationRepository registrationRepository
     ) {
         this.executionRepository = executionRepository;
         this.additionalActivityRepository = additionalActivityRepository;
@@ -36,6 +39,7 @@ public class AdditionalActivityExecutionService {
         this.activityTermRepository = activityTermRepository;
         this.priceListRepository = priceListRepository;
         this.userRepository = userRepository;
+        this.registrationRepository = registrationRepository;
     }
 
     public List<AdditionalActivityExecutionResponse> getByArrangementTerm(Long arrangementTermId) {
@@ -100,6 +104,8 @@ public class AdditionalActivityExecutionService {
 
         AdditionalActivityExecution execution = executionRepository.findById(id)
                 .orElseThrow(() -> new BadRequestException("Activity execution not found"));
+
+        registrationRepository.deleteByAdditionalActivityExecutionId(id);
 
         priceListRepository.deleteByAdditionalActivityExecutionId(id);
 

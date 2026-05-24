@@ -34,6 +34,9 @@ export class AdditionalActivitiesCustomer implements OnInit {
   errorMessage = '';
   successMessage = '';
 
+  registrationToUpdateId: number | null = null;
+  updatedNumberOfParticipants: number | null = null;
+
   constructor(
     private route: ActivatedRoute,
     private arrangementService: ArrangementService,
@@ -172,5 +175,45 @@ export class AdditionalActivitiesCustomer implements OnInit {
     }
 
     return `http://localhost:8080${imageUrl}`;
+  }
+
+  openUpdateForm(registration: AdditionalActivityRegistrationResponse): void {
+    this.registrationToUpdateId = registration.id;
+    this.updatedNumberOfParticipants = registration.numberOfParticipants;
+
+    this.errorMessage = '';
+    this.successMessage = '';
+  }
+
+  closeUpdateForm(): void {
+    this.registrationToUpdateId = null;
+    this.updatedNumberOfParticipants = null;
+  }
+
+  confirmUpdateRegistration(): void {
+    if (!this.registrationToUpdateId) {
+      return;
+    }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    this.arrangementService
+      .updateActivityRegistration(this.registrationToUpdateId, {
+        numberOfParticipants: this.updatedNumberOfParticipants,
+      })
+      .subscribe({
+        next: () => {
+          this.successMessage = 'Prijava je uspešno ažurirana.';
+
+          this.registrationToUpdateId = null;
+          this.updatedNumberOfParticipants = null;
+
+          this.loadPageData();
+        },
+        error: (error) => {
+          this.errorMessage = error.error?.message || 'Ažuriranje prijave nije uspelo.';
+        },
+      });
   }
 }

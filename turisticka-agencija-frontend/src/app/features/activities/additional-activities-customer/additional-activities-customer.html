@@ -108,12 +108,39 @@
 
             <div class="registered-actions">
               <button
+                class="update-registration-btn"
+                type="button"
+                *ngIf="registrationToUpdateId !== registration.id"
+                (click)="openUpdateForm(registration)"
+              >
+                Ažuriraj prijavu
+              </button>
+
+              <button
                 class="cancel-registration-btn"
                 type="button"
                 (click)="openCancelModal(registration.id)"
               >
                 Otkaži prijavu
               </button>
+            </div>
+
+            <div class="update-form" *ngIf="registrationToUpdateId === registration.id">
+              <label>
+                Broj trenutno prijavljenih
+
+                <input type="number" min="1" [(ngModel)]="updatedNumberOfParticipants" />
+              </label>
+
+              <div class="update-actions">
+                <button class="confirm-btn" type="button" (click)="confirmUpdateRegistration()">
+                  Potvrdi izmenu
+                </button>
+
+                <button class="cancel-btn" type="button" (click)="closeUpdateForm()">
+                  Odustani
+                </button>
+              </div>
             </div>
           </div>
         </article>

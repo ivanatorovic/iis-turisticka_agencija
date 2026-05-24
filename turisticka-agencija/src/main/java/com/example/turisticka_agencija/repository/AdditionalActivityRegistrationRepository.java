@@ -26,4 +26,6 @@ public interface AdditionalActivityRegistrationRepository
             Long executionId,
             AdditionalActivityRegistrationStatus status
     );
+
+    void deleteByAdditionalActivityExecutionId(Long executionId);
 }

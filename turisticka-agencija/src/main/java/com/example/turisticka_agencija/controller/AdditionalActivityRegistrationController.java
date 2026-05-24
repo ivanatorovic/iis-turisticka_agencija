@@ -3,6 +3,7 @@ package com.example.turisticka_agencija.controller;
 import com.example.turisticka_agencija.dto.AdditionalActivityParticipantResponse;
 import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationRequest;
 import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationResponse;
+import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationUpdateRequest;
 import com.example.turisticka_agencija.service.AdditionalActivityRegistrationService;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,5 +52,14 @@ public class AdditionalActivityRegistrationController {
             Principal principal
     ) {
         return registrationService.getParticipantsForExecution(executionId, principal);
+    }
+
+    @PutMapping("/{registrationId}")
+    public AdditionalActivityRegistrationResponse updateRegistration(
+            @PathVariable Long registrationId,
+            @RequestBody(required = false) AdditionalActivityRegistrationUpdateRequest request,
+            Principal principal
+    ) {
+        return registrationService.updateRegistration(registrationId, request, principal);
     }
 }
