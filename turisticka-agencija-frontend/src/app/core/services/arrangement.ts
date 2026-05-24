@@ -121,6 +121,29 @@ export interface ArrangementSearchRequest {
   sortByPrice: string;
 }
 
+export interface AdditionalActivityRegistrationRequest {
+  numberOfParticipants: number | null;
+}
+
+export interface AdditionalActivityRegistrationResponse {
+  id: number;
+  executionId: number;
+
+  activityName: string;
+  activityDescription: string;
+  activityLocation: string;
+  imageUrl: string;
+
+  activityDate: string;
+  startTime: string;
+  durationMinutes: number;
+
+  numberOfParticipants: number;
+  price: number;
+  registrationDate: string;
+  status: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -131,6 +154,9 @@ export class ArrangementService {
 
   private readonly additionalActivityExecutionsUrl =
     'http://localhost:8080/api/additional-activity-executions';
+
+  private readonly additionalActivityRegistrationsUrl =
+    'http://localhost:8080/api/additional-activity-registrations';
 
   constructor(
     private http: HttpClient,
@@ -190,5 +216,37 @@ export class ArrangementService {
     return this.http.delete<void>(`${this.additionalActivityExecutionsUrl}/${id}`, {
       headers: this.getHeaders(),
     });
+  }
+
+  getMyActivityRegistrations(): Observable<AdditionalActivityRegistrationResponse[]> {
+    return this.http.get<AdditionalActivityRegistrationResponse[]>(
+      `${this.additionalActivityRegistrationsUrl}/my`,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  registerForActivity(
+    executionId: number,
+    request: AdditionalActivityRegistrationRequest,
+  ): Observable<AdditionalActivityRegistrationResponse> {
+    return this.http.post<AdditionalActivityRegistrationResponse>(
+      `${this.additionalActivityRegistrationsUrl}/execution/${executionId}`,
+      request,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  cancelActivityRegistration(registrationId: number): Observable<void> {
+    return this.http.put<void>(
+      `${this.additionalActivityRegistrationsUrl}/${registrationId}/cancel`,
+      {},
+      {
+        headers: this.getHeaders(),
+      },
+    );
   }
 }
