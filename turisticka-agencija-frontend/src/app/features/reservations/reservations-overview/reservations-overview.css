@@ -8,8 +8,7 @@
   min-height: 100vh;
 
   background:
-    linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.72)),
-    url('../../../../assets/plaza.jpg');
+    linear-gradient(rgba(0, 0, 0, 0.58), rgba(0, 0, 0, 0.72)), url('../../../../assets/plaza.jpg');
 
   background-size: cover;
   background-position: center;
@@ -223,6 +222,110 @@ h1 {
   }
 
   .reservation-details {
-  grid-template-columns: repeat(5, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+  }
 }
+
+.activities-action {
+  margin-top: 18px;
+}
+
+.activities-btn {
+  height: 44px;
+
+  padding: 0 20px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: #d8c19b;
+
+  color: #111;
+
+  font-weight: 700;
+  font-size: 14px;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.activities-btn:hover {
+  transform: translateY(-2px);
+
+  background: #cdb184;
+
+  box-shadow: 0 10px 22px rgba(216, 193, 155, 0.35);
+}
+
+.capacity-row {
+  display: flex;
+
+  justify-content: space-between;
+  align-items: center;
+
+  gap: 16px;
+
+  margin-top: 10px;
+}
+
+.capacity-info {
+  display: flex;
+  flex-wrap: wrap;
+
+  gap: 10px;
+}
+
+.capacity-info span {
+  padding: 7px 12px;
+
+  border-radius: 999px;
+
+  background: #f4efe6;
+
+  color: #6f5630;
+
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.activities-btn {
+  height: 42px;
+
+  padding: 0 18px;
+
+  border: none;
+  border-radius: 999px;
+
+  background: #d8c19b;
+
+  color: #111;
+
+  font-size: 13px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+
+  white-space: nowrap;
+}
+
+.activities-btn:hover {
+  transform: translateY(-2px);
+
+  background: #ccb084;
+
+  box-shadow: 0 10px 22px rgba(216, 193, 155, 0.35);
+}
+
+@media (max-width: 700px) {
+  .capacity-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .activities-btn {
+    width: 100%;
+  }
 }

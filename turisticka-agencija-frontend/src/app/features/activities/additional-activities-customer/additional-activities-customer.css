@@ -1,0 +1,252 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.activities-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 34px 60px 70px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  background: #050505;
+}
+
+.background {
+  position: fixed;
+  inset: 0;
+  background: url('../../../../assets/plaza.jpg') center/cover no-repeat;
+  transform: scale(1.04);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0.88)),
+    linear-gradient(to right, rgba(0, 0, 0, 0.62), rgba(0, 0, 0, 0.3));
+}
+
+.navbar,
+.content {
+  position: relative;
+  z-index: 2;
+}
+
+.left-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.logo {
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+  letter-spacing: 6px;
+  font-weight: 600;
+}
+
+.content {
+  max-width: 1320px;
+  margin: 72px auto 0;
+}
+
+.header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 30px;
+  margin-bottom: 38px;
+}
+
+.page-header {
+  max-width: 760px;
+}
+
+.subtitle {
+  margin: 0 0 12px;
+  color: #d8c19b;
+  letter-spacing: 5px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(54px, 7vw, 82px);
+  line-height: 0.95;
+  font-weight: 600;
+}
+
+.description {
+  margin: 22px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.top-actions {
+  padding-top: 42px;
+}
+
+.back-btn {
+  padding: 14px 24px;
+  border: 1px solid rgba(216, 193, 155, 0.34);
+  background: rgba(216, 193, 155, 0.16);
+  color: #f3dfbe;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(216, 193, 155, 0.24);
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 26px;
+}
+
+.activity-card,
+.message-box {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 10, 10, 0.7);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.activity-card {
+  overflow: hidden;
+  transition: 0.25s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(216, 193, 155, 0.45);
+}
+
+.image-wrapper {
+  position: relative;
+  height: 230px;
+  overflow: hidden;
+}
+
+.image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: 0.35s ease;
+}
+
+.activity-card:hover img {
+  transform: scale(1.06);
+}
+
+.price-badge {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(216, 193, 155, 0.92);
+  color: #111;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.activity-content {
+  padding: 24px;
+}
+
+.title-row h2 {
+  margin: 0 0 14px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.activity-description {
+  min-height: 78px;
+  margin: 0 0 22px;
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.meta-grid div {
+  padding: 13px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.meta-grid span {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 12px;
+}
+
+.meta-grid strong {
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.message-box {
+  padding: 24px;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.message-box.error {
+  color: #ffb3b3;
+  border-color: rgba(255, 120, 120, 0.35);
+  background: rgba(255, 80, 80, 0.12);
+}
+
+@media (max-width: 1200px) {
+  .activities-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .header-row {
+    flex-direction: column;
+  }
+
+  .top-actions {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .activities-page {
+    padding: 26px 22px 50px;
+  }
+
+  .content {
+    margin-top: 56px;
+  }
+
+  .activities-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .meta-grid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,91 @@
+<section class="activities-page">
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <nav class="navbar">
+    <div class="left-nav">
+      <app-sidebar-menu></app-sidebar-menu>
+      <a class="logo">LUXTRAVEL</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="header-row">
+      <header class="page-header">
+        <p class="subtitle">DODATNE AKTIVNOSTI</p>
+
+        <h1>Aktivnosti za vaš aranžman</h1>
+
+        <p class="description">
+          Pregled dodatnih aktivnosti dostupnih za izabrani termin putovanja.
+        </p>
+      </header>
+
+      <div class="top-actions">
+        <button class="back-btn" routerLink="/reservations">Nazad na rezervacije</button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="message-box">Učitavanje dodatnih aktivnosti...</div>
+
+    <div *ngIf="errorMessage && !loading" class="message-box error">
+      {{ errorMessage }}
+    </div>
+
+    <section *ngIf="!loading && !errorMessage && activities.length > 0" class="activities-grid">
+      <article class="activity-card" *ngFor="let activity of activities">
+        <div class="image-wrapper">
+          <img [src]="getImageUrl(activity.imageUrl)" [alt]="activity.activityName" />
+
+          <div class="price-badge">{{ activity.price }} €</div>
+        </div>
+
+        <div class="activity-content">
+          <div class="title-row">
+            <h2>{{ activity.activityName }}</h2>
+          </div>
+
+          <p class="activity-description">
+            {{ activity.activityDescription }}
+          </p>
+
+          <div class="meta-grid">
+            <div>
+              <span>Lokacija</span>
+              <strong>{{ activity.activityLocation }}</strong>
+            </div>
+
+            <div>
+              <span>Datum</span>
+              <strong>{{ activity.activityDate | date: 'dd.MM.yyyy.' }}</strong>
+            </div>
+
+            <div>
+              <span>Početak</span>
+              <strong>{{ activity.startTime }}</strong>
+            </div>
+
+            <div>
+              <span>Trajanje</span>
+              <strong>{{ activity.durationMinutes }} min</strong>
+            </div>
+
+            <div>
+              <span>Kapacitet</span>
+              <strong>{{ activity.capacity }}</strong>
+            </div>
+
+            <div>
+              <span>Slobodna mesta</span>
+              <strong>{{ activity.availableSpots }}</strong>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div *ngIf="!loading && !errorMessage && activities.length === 0" class="message-box">
+      Za ovaj termin trenutno nema dostupnih dodatnih aktivnosti.
+    </div>
+  </main>
+</section>

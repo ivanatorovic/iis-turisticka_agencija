@@ -17,6 +17,7 @@ import { ManagerArrangementsList } from './features/arrangements/manager-arrange
 import { AdditionalActivitiesManager } from './features/activities/additional-activities-manager/additional-activities-manager';
 import { CreateActivities } from './features/activities/create-activities/create-activities';
 import { ManagerArrangementTermsList } from './features/arrangements/manager-arrangements/manager-arrangement-terms-list/manager-arrangement-terms-list';
+import { AdditionalActivitiesCustomer } from './features/activities/additional-activities-customer/additional-activities-customer';
 export const routes: Routes = [
   {
     path: '',
@@ -123,5 +124,9 @@ export const routes: Routes = [
       import('./features/arrangements/manager-arrangements/manager-arrangements-activities/manager-arrangements-activities').then(
         (m) => m.ManagerArrangementsActivities,
       ),
+  },
+  {
+    path: 'additional-activities-customer',
+    component: AdditionalActivitiesCustomer,
   },
 ];

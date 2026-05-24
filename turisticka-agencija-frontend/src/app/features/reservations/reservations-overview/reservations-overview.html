@@ -5,9 +5,7 @@
     <div class="page-header">
       <p class="subtitle">LUXTRAVEL</p>
       <h1>{{ getPageTitle() }}</h1>
-      <p class="description">
-        Pregled rezervacija, statusa i osnovnih podataka o aranžmanima.
-      </p>
+      <p class="description">Pregled rezervacija, statusa i osnovnih podataka o aranžmanima.</p>
     </div>
 
     <p class="success-message" *ngIf="successMessage">
@@ -56,15 +54,18 @@
             <b>{{ reservation.totalPrice }} €</b>
           </div>
           <div>
-  <span>Plaćanje</span>
-  <b>
-    {{
-      reservation.paymentType === 'INSTALLMENTS'
-        ? reservation.numberOfInstallments + ' rata po ' + (reservation.installmentAmount | number: '1.2-2') + ' €'
-        : 'Jednokratno'
-    }}
-  </b>
-</div>
+            <span>Plaćanje</span>
+            <b>
+              {{
+                reservation.paymentType === 'INSTALLMENTS'
+                  ? reservation.numberOfInstallments +
+                    ' rata po ' +
+                    (reservation.installmentAmount | number: '1.2-2') +
+                    ' €'
+                  : 'Jednokratno'
+              }}
+            </b>
+          </div>
 
           <div>
             <span>Datum rezervacije</span>
@@ -74,16 +75,32 @@
           <div *ngIf="isSalesAgent()">
             <span>Kupac</span>
             <b>
-              {{ reservation.user.firstName }} {{ reservation.user.lastName }}
-              ({{ reservation.user.username }})
+              {{ reservation.user.firstName }} {{ reservation.user.lastName }} ({{
+                reservation.user.username
+              }})
             </b>
           </div>
         </div>
 
-        <div class="capacity-info">
-          <span>Kapacitet: {{ reservation.arrangementTerm.capacity }}</span>
-          <span>Rezervisano: {{ reservation.arrangementTerm.reservedSpots }}</span>
-          <span>Slobodno: {{ reservation.arrangementTerm.availableSpots }}</span>
+        <div class="capacity-row">
+          <div class="capacity-info">
+            <span>Kapacitet: {{ reservation.arrangementTerm.capacity }}</span>
+
+            <span> Rezervisano: {{ reservation.arrangementTerm.reservedSpots }} </span>
+
+            <span> Slobodno: {{ reservation.arrangementTerm.availableSpots }} </span>
+          </div>
+
+          <button
+            class="activities-btn"
+            *ngIf="reservation.status === 'CONFIRMED'"
+            [routerLink]="['/additional-activities-customer']"
+            [queryParams]="{
+              arrangementTermId: reservation.arrangementTerm.id,
+            }"
+          >
+            Pogledaj dodatne aktivnosti za ovaj aranžman
+          </button>
         </div>
 
         <button

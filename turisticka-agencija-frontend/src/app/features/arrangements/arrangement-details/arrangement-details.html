@@ -2,9 +2,7 @@
   <app-sidebar-menu></app-sidebar-menu>
 
   <div class="content" *ngIf="arrangement; else loading">
-    <button class="back-btn" routerLink="/arrangements">
-      Nazad na aranžmane
-    </button>
+    <button class="back-btn" routerLink="/arrangements">Nazad na aranžmane</button>
 
     <div class="hero-card">
       <div class="image-wrapper">
@@ -37,56 +35,55 @@
       </div>
 
       <div class="reservation-form">
-  <div class="form-group">
-    <label>Termin putovanja</label>
-    <select [(ngModel)]="selectedArrangementTermId">
-      <option
-        *ngFor="let arrangementTerm of arrangement.arrangementTerms"
-        [ngValue]="arrangementTerm.id"
-      >
-        {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
-        | slobodno: {{ arrangementTerm.availableSpots }}
-      </option>
-    </select>
-  </div>
+        <div class="form-group">
+          <label>Termin putovanja</label>
+          <select
+            [(ngModel)]="selectedArrangementTermId"
+            (ngModelChange)="onArrangementTermChange()"
+          >
+            <option
+              *ngFor="let arrangementTerm of arrangement.arrangementTerms"
+              [ngValue]="arrangementTerm.id"
+            >
+              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }} | slobodno:
+              {{ arrangementTerm.availableSpots }}
+            </option>
+          </select>
+        </div>
 
-  <div class="form-group">
-    <label>Broj osoba</label>
-    <input type="number" min="1" [(ngModel)]="numberOfPassengers" />
-  </div>
+        <div class="form-group">
+          <label>Broj osoba</label>
+          <input type="number" min="1" [(ngModel)]="numberOfPassengers" />
+        </div>
 
-  <div class="form-group">
-    <label>Način plaćanja</label>
-    <select [(ngModel)]="paymentType">
-      <option value="ONE_TIME">Jednokratno</option>
-      <option value="INSTALLMENTS">Na rate</option>
-    </select>
-  </div>
+        <div class="form-group">
+          <label>Način plaćanja</label>
+          <select [(ngModel)]="paymentType">
+            <option value="ONE_TIME">Jednokratno</option>
+            <option value="INSTALLMENTS">Na rate</option>
+          </select>
+        </div>
 
-  <div class="form-group" *ngIf="paymentType === 'INSTALLMENTS'">
-    <label>Broj rata</label>
-    <input type="number" min="2" [(ngModel)]="numberOfInstallments" />
-  </div>
+        <div class="form-group" *ngIf="paymentType === 'INSTALLMENTS'">
+          <label>Broj rata</label>
+          <input type="number" min="2" [(ngModel)]="numberOfInstallments" />
+        </div>
 
-  <div class="reservation-price">
-    <span>Ukupna cena</span>
-    <b>{{ calculateTotalPrice() }} €</b>
+        <div class="reservation-price">
+          <span>Ukupna cena</span>
+          <b>{{ calculateTotalPrice() }} €</b>
 
-    <small *ngIf="paymentType === 'ONE_TIME'">
-      Jednokratno plaćanje
-    </small>
+          <small *ngIf="paymentType === 'ONE_TIME'">Jednokratno plaćanje</small>
 
-    <small *ngIf="paymentType === 'INSTALLMENTS' && numberOfInstallments">
-      {{ numberOfInstallments }} rata po
-      {{ calculateInstallmentAmount() | number: '1.2-2' }} €
-    </small>
-  </div>
-</div>
+          <small *ngIf="paymentType === 'INSTALLMENTS' && numberOfInstallments">
+            {{ numberOfInstallments }} rata po
+            {{ calculateInstallmentAmount() | number: '1.2-2' }} €
+          </small>
+        </div>
+      </div>
 
       <div class="reservation-actions">
-        <button class="check-btn" (click)="checkAvailability()">
-          Proveri dostupnost
-        </button>
+        <button class="check-btn" (click)="checkAvailability()">Proveri dostupnost</button>
 
         <button
           class="reserve-btn"
@@ -143,8 +140,8 @@
           <span>Termini putovanja</span>
           <ul>
             <li *ngFor="let arrangementTerm of arrangement.arrangementTerms">
-              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
-              — slobodno: {{ arrangementTerm.availableSpots }}
+              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }} — slobodno:
+              {{ arrangementTerm.availableSpots }}
             </li>
           </ul>
         </div>
@@ -166,10 +163,22 @@
 
         <div class="detail-row">
           <span>Sadržaj usluge</span>
+
           <div class="service-tags">
             <span *ngFor="let service of arrangement.additionalServices">
               {{ service.name }}
             </span>
+          </div>
+        </div>
+
+        <div class="detail-row" *ngIf="selectedArrangementActivities.length > 0">
+          <span>Dodatne aktivnosti uključene u aranžman</span>
+
+          <div class="activities-grid">
+            <div class="activity-card" *ngFor="let activity of selectedArrangementActivities">
+              <h4>{{ activity.activityName }}</h4>
+              <p>{{ activity.activityDescription }}</p>
+            </div>
           </div>
         </div>
       </div>
