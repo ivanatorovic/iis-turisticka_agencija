@@ -30,32 +30,51 @@ export class Login {
 
     this.authService.login(this.form).subscribe({
       next: (response) => {
-  this.loading = false;
+        this.loading = false;
 
-  if (response.token) {
-    localStorage.setItem('token', response.token);
-  }
+        if (response.token) {
+          localStorage.setItem('token', response.token);
+        }
 
-  if (response.username) {
-    localStorage.setItem('username', response.username);
-  }
+        if (response.username) {
+          localStorage.setItem('username', response.username);
+        }
 
-  if (response.id) {
-    localStorage.setItem('userId', response.id.toString());
-  }
+        if (response.id) {
+          localStorage.setItem('userId', response.id.toString());
+          localStorage.setItem('id', response.id.toString());
+        }
 
-  if (response.role) {
-    localStorage.setItem('role', response.role);
-  }
+        if (response.email) {
+          localStorage.setItem('email', response.email);
+        }
 
-  this.router.navigate(['/']);
+        if (response.role) {
+          localStorage.setItem('role', response.role);
+        }
 
+        if (this.isComplaintUser(response.role)) {
+          this.router.navigate(['/zalbe']);
+          return;
+        }
+
+        this.router.navigate(['/']);
       },
       error: (err) => {
         this.loading = false;
-
         this.errorMessage = err?.error?.message || err?.message || 'Prijava nije uspela.';
       },
     });
+  }
+
+  private isComplaintUser(role: string | undefined): boolean {
+    return role === 'COMPLAINT_OPERATOR'
+      || role === 'COMPLAINT_MANAGER'
+      || role === 'COMPLAINT_TEAM_ACCOMMODATION'
+      || role === 'COMPLAINT_TEAM_TRANSPORT'
+      || role === 'COMPLAINT_TEAM_DOCUMENTATION'
+      || role === 'COMPLAINT_TEAM_OTHER'
+      || role === 'ADMIN'
+      || role === 'DIRECTOR';
   }
 }

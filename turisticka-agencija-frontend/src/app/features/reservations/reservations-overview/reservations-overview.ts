@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { Reservation, ReservationService } from '../../../core/services/reservation';
 import { AuthService } from '../../../core/services/auth';
 import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
@@ -18,6 +19,7 @@ export class ReservationsOverview implements OnInit {
   constructor(
     private reservationService: ReservationService,
     private authService: AuthService,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -64,6 +66,28 @@ export class ReservationsOverview implements OnInit {
       error: (err) => {
         console.error(err);
         this.errorMessage = 'Greška pri učitavanju vaših rezervacija.';
+      },
+    });
+  }
+
+  canSubmitComplaint(reservation: Reservation): boolean {
+    if (this.isSalesAgent()) {
+      return false;
+    }
+
+    return reservation.status === 'CONFIRMED';
+  }
+
+  submitComplaint(reservation: Reservation): void {
+    const idTure =
+      reservation.arrangement?.id ||
+      reservation.arrangementTerm?.id ||
+      reservation.id;
+
+    this.router.navigate(['/zalbe'], {
+      queryParams: {
+        idTure: idTure,
+        reservationId: reservation.id,
       },
     });
   }

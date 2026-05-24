@@ -10,18 +10,29 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/zalbe")
-@CrossOrigin(origins = "*")
 public class ZalbaController {
 
     private final ZalbaService zalbaService;
 
     public ZalbaController(ZalbaService zalbaService) {
         this.zalbaService = zalbaService;
+
     }
 
     @PostMapping
     public Zalba kreirajZalbu(@RequestBody Zalba zalba) {
-        return zalbaService.kreirajZalbu(zalba);
+        try {
+            System.out.println("POZVAN ENDPOINT: POST /api/zalbe");
+            System.out.println("Naslov: " + zalba.getNaslov());
+            System.out.println("Tip: " + zalba.getTipZalbe());
+            System.out.println("Putnik ID: " + zalba.getPutnikId());
+
+            return zalbaService.kreirajZalbu(zalba);
+        } catch (Exception e) {
+            System.out.println("GRESKA U POST /api/zalbe:");
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @GetMapping
@@ -29,24 +40,24 @@ public class ZalbaController {
         return zalbaService.pronadjiSve();
     }
 
-    @GetMapping("/{id}")
-    public Zalba pronadjiPoId(@PathVariable Long id) {
-        return zalbaService.pronadjiPoId(id);
-    }
-
-    @GetMapping("/putnik/{putnikId}")
-    public List<Zalba> pronadjiPoPutniku(@PathVariable Long putnikId) {
-        return zalbaService.pronadjiPoPutniku(putnikId);
-    }
-
     @GetMapping("/nove")
     public List<Zalba> pronadjiNoveZalbe() {
-        return zalbaService.pronadjiNoveZalbe();
+        try {
+            return zalbaService.pronadjiNoveZalbe();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
     }
 
     @GetMapping("/hitne")
     public List<Zalba> pronadjiHitne() {
         return zalbaService.pronadjiHitne();
+    }
+
+    @GetMapping("/putnik/{putnikId}")
+    public List<Zalba> pronadjiPoPutniku(@PathVariable Long putnikId) {
+        return zalbaService.pronadjiPoPutniku(putnikId);
     }
 
     @GetMapping("/status/{status}")
@@ -57,6 +68,11 @@ public class ZalbaController {
     @GetMapping("/tim/{timZalbe}")
     public List<Zalba> pronadjiPoTimu(@PathVariable TimZalbe timZalbe) {
         return zalbaService.pronadjiPoTimu(timZalbe);
+    }
+
+    @GetMapping("/detalji/{id}")
+    public Zalba pronadjiPoId(@PathVariable Long id) {
+        return zalbaService.pronadjiPoId(id);
     }
 
     @PutMapping("/{id}")

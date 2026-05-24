@@ -1,0 +1,405 @@
+<div class="zalbe-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <div class="content">
+    <div class="page-header">
+      <p class="subtitle">LUXTRAVEL</p>
+      <h1>Žalbe putnika</h1>
+      <p class="description">
+        Upravljanje žalbama, kategorizacija, dodela timovima, rešavanje i analiza procesa obrade.
+      </p>
+    </div>
+
+    <p class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+
+    <p class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </p>
+
+    <!-- PUTNIK / CUSTOMER -->
+    <div class="analytics-grid" *ngIf="role === 'CUSTOMER'">
+      <div class="analytics-card">
+        <h2>Podnošenje žalbe</h2>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Naslov</label>
+            <input type="text" [(ngModel)]="novaZalba.naslov" />
+          </div>
+
+          <div class="form-group">
+            <label>Tip žalbe</label>
+            <select [(ngModel)]="novaZalba.tipZalbe">
+              <option value="SMESTAJ">Smeštaj</option>
+              <option value="PREVOZ">Prevoz</option>
+              <option value="DOKUMENTACIJA">Dokumentacija</option>
+              <option value="OSTALO">Ostalo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>ID ture</label>
+            <input type="number" [(ngModel)]="novaZalba.idTure" />
+          </div>
+
+          <div class="form-group wide-field">
+            <label>Opis problema</label>
+            <textarea [(ngModel)]="novaZalba.opis"></textarea>
+          </div>
+        </div>
+
+        <button class="primary-btn" (click)="kreirajZalbu()">
+          Podnesi žalbu
+        </button>
+      </div>
+
+      <div class="analytics-card wide">
+        <h2>Moje žalbe</h2>
+
+        <table>
+          <thead>
+          <tr>
+            <th>Naslov</th>
+            <th>Tip</th>
+            <th>Status</th>
+            <th>Ocena</th>
+            <th>Akcija</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let zalba of zalbe">
+            <td>{{ zalba.naslov }}</td>
+            <td>{{ zalba.tipZalbe }}</td>
+            <td>
+              <span class="status-badge">{{ zalba.status }}</span>
+            </td>
+            <td>{{ zalba.ocena || '-' }}</td>
+            <td>
+              <div class="inline-actions" *ngIf="zalba.status === 'ZATVORENO' && !zalba.ocena">
+                <select [(ngModel)]="ocena">
+                  <option [ngValue]="1">1</option>
+                  <option [ngValue]="2">2</option>
+                  <option [ngValue]="3">3</option>
+                  <option [ngValue]="4">4</option>
+                  <option [ngValue]="5">5</option>
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Komentar"
+                  [(ngModel)]="komentarOcene"
+                />
+
+                <button class="small-btn" (click)="oceni(zalba)">
+                  Oceni
+                </button>
+              </div>
+
+              <span *ngIf="zalba.status !== 'ZATVORENO' || zalba.ocena">
+                  -
+                </span>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- OPERATER ŽALBI -->
+    <div class="analytics-grid" *ngIf="role === 'COMPLAINT_OPERATOR'">
+      <div class="analytics-card wide">
+        <div class="card-header">
+          <div>
+            <h2>Nove žalbe</h2>
+            <p class="card-description">
+              Prijavljeni korisnik: {{ getRoleTitle() }}
+            </p>
+          </div>
+
+          <button class="primary-btn" (click)="loadNoveZalbe()">
+            Osveži
+          </button>
+        </div>
+
+        <table>
+          <thead>
+          <tr>
+            <th>Naslov</th>
+            <th>Opis</th>
+            <th>Tip</th>
+            <th>Status</th>
+            <th>Kategorizacija</th>
+            <th>Dodela</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let zalba of zalbe">
+            <td>{{ zalba.naslov }}</td>
+            <td>{{ zalba.opis }}</td>
+            <td>{{ zalba.tipZalbe }}</td>
+            <td>
+              <span class="status-badge">{{ zalba.status }}</span>
+            </td>
+
+            <td>
+              <div class="action-box">
+                <select [(ngModel)]="selectedTip">
+                  <option value="SMESTAJ">Smeštaj</option>
+                  <option value="PREVOZ">Prevoz</option>
+                  <option value="DOKUMENTACIJA">Dokumentacija</option>
+                  <option value="OSTALO">Ostalo</option>
+                </select>
+
+                <label class="checkbox-label">
+                  <input type="checkbox" [(ngModel)]="selectedHitna" />
+                  Hitno
+                </label>
+
+                <button class="small-btn" (click)="kategorizuj(zalba)">
+                  Kategorizuj
+                </button>
+              </div>
+            </td>
+
+            <td>
+              <div class="action-box">
+                <select [(ngModel)]="selectedTim">
+                  <option value="TIM_ZA_SMESTAJ">Tim za smeštaj</option>
+                  <option value="TIM_ZA_PREVOZ">Tim za prevoz</option>
+                  <option value="TIM_ZA_DOKUMENTACIJU">Tim za dokumentaciju</option>
+                  <option value="TIM_ZA_OSTALO">Tim za ostalo</option>
+                </select>
+
+                <button class="small-btn" (click)="dodeliTimu(zalba)">
+                  Dodeli
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TIMOVI ZA ŽALBE -->
+    <div class="analytics-grid" *ngIf="isComplaintTeam()">
+      <div class="analytics-card wide">
+        <div class="card-header">
+          <div>
+            <h2>Dodeljene žalbe</h2>
+            <p class="card-description">
+              Prijavljeni tim: {{ getRoleTitle() }}
+            </p>
+          </div>
+
+          <button class="primary-btn" (click)="loadZalbeZaTim()">
+            Osveži
+          </button>
+        </div>
+
+        <table>
+          <thead>
+          <tr>
+            <th>Naslov</th>
+            <th>Opis</th>
+            <th>Status</th>
+            <th>Hitna</th>
+            <th>Rešavanje</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let zalba of zalbe">
+            <td>{{ zalba.naslov }}</td>
+            <td>{{ zalba.opis }}</td>
+            <td>
+              <span class="status-badge">{{ zalba.status }}</span>
+            </td>
+            <td>{{ zalba.hitna ? 'Da' : 'Ne' }}</td>
+            <td>
+              <div class="team-form">
+                <input
+                  type="text"
+                  placeholder="Opis rešenja"
+                  [(ngModel)]="opisResenja"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Preduzete mere"
+                  [(ngModel)]="preduzeteMere"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Kontaktirana strana"
+                  [(ngModel)]="kontaktiranaStrana"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Alternativno rešenje"
+                  [(ngModel)]="alternativnoResenje"
+                />
+
+                <input
+                  type="text"
+                  placeholder="Najduži korak"
+                  [(ngModel)]="najduziKorak"
+                />
+
+                <button class="small-btn" (click)="unesiResenje(zalba)">
+                  Unesi rešenje
+                </button>
+
+                <button
+                  class="secondary-btn"
+                  *ngIf="zalba.status === 'RESENO'"
+                  (click)="zatvori(zalba)"
+                >
+                  Zatvori
+                </button>
+              </div>
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MENADŽER ŽALBI / DIREKTOR -->
+    <div class="analytics-grid" *ngIf="role === 'COMPLAINT_MANAGER' || role === 'DIRECTOR'">
+      <div class="summary-grid" *ngIf="statistikaStatusi">
+        <div class="summary-card">
+          <span>Novo</span>
+          <b>{{ statistikaStatusi.NOVO || 0 }}</b>
+        </div>
+
+        <div class="summary-card">
+          <span>U obradi</span>
+          <b>{{ statistikaStatusi.U_OBRADI || 0 }}</b>
+        </div>
+
+        <div class="summary-card">
+          <span>Čeka odgovor</span>
+          <b>{{ statistikaStatusi.CEKA_ODGOVOR || 0 }}</b>
+        </div>
+
+        <div class="summary-card">
+          <span>Rešeno</span>
+          <b>{{ statistikaStatusi.RESENO || 0 }}</b>
+        </div>
+
+        <div class="summary-card highlight">
+          <span>Prosečna ocena</span>
+          <b>{{ prosecnaOcena | number: '1.1-2' }}</b>
+        </div>
+      </div>
+
+      <div class="analytics-card">
+        <h2>Žalbe po timovima</h2>
+
+        <table *ngIf="statistikaTimovi">
+          <thead>
+          <tr>
+            <th>Tim</th>
+            <th>Broj žalbi</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr>
+            <td>Tim za smeštaj</td>
+            <td>{{ statistikaTimovi.TIM_ZA_SMESTAJ || 0 }}</td>
+          </tr>
+          <tr>
+            <td>Tim za prevoz</td>
+            <td>{{ statistikaTimovi.TIM_ZA_PREVOZ || 0 }}</td>
+          </tr>
+          <tr>
+            <td>Tim za dokumentaciju</td>
+            <td>{{ statistikaTimovi.TIM_ZA_DOKUMENTACIJU || 0 }}</td>
+          </tr>
+          <tr>
+            <td>Tim za ostalo</td>
+            <td>{{ statistikaTimovi.TIM_ZA_OSTALO || 0 }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="analytics-card">
+        <h2>Sve žalbe</h2>
+
+        <table>
+          <thead>
+          <tr>
+            <th>Naslov</th>
+            <th>Tip</th>
+            <th>Status</th>
+            <th>Tim</th>
+            <th>Ocena</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let zalba of zalbe">
+            <td>{{ zalba.naslov }}</td>
+            <td>{{ zalba.tipZalbe }}</td>
+            <td>{{ zalba.status }}</td>
+            <td>{{ zalba.dodeljeniTim || '-' }}</td>
+            <td>{{ zalba.ocena || '-' }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="analytics-grid" *ngIf="role === 'ADMIN'">
+      <div class="analytics-card wide">
+        <h2>Administracija žalbi</h2>
+
+        <p class="card-description">
+          Administrator ima uvid u žalbe, pravila kategorizacije i životni ciklus obrade žalbi.
+        </p>
+
+        <table>
+          <thead>
+          <tr>
+            <th>Naslov</th>
+            <th>Tip</th>
+            <th>Status</th>
+            <th>Tim</th>
+            <th>Hitna</th>
+          </tr>
+          </thead>
+
+          <tbody>
+          <tr *ngFor="let zalba of zalbe">
+            <td>{{ zalba.naslov }}</td>
+            <td>{{ zalba.tipZalbe }}</td>
+            <td>{{ zalba.status }}</td>
+            <td>{{ zalba.dodeljeniTim || '-' }}</td>
+            <td>{{ zalba.hitna ? 'Da' : 'Ne' }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+
+    <div class="analytics-grid" *ngIf="!role">
+      <div class="analytics-card wide">
+        <h2>Niste prijavljeni</h2>
+        <p class="card-description">
+          Molimo Vas da se prijavite kako biste pristupili funkcionalnostima za žalbe.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>

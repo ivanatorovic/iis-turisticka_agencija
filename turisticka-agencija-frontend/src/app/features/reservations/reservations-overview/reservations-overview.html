@@ -55,16 +55,17 @@
             <span>Ukupna cena</span>
             <b>{{ reservation.totalPrice }} €</b>
           </div>
+
           <div>
-  <span>Plaćanje</span>
-  <b>
-    {{
-      reservation.paymentType === 'INSTALLMENTS'
-        ? reservation.numberOfInstallments + ' rata po ' + (reservation.installmentAmount | number: '1.2-2') + ' €'
-        : 'Jednokratno'
-    }}
-  </b>
-</div>
+            <span>Plaćanje</span>
+            <b>
+              {{
+                reservation.paymentType === 'INSTALLMENTS'
+                  ? reservation.numberOfInstallments + ' rata po ' + (reservation.installmentAmount | number: '1.2-2') + ' €'
+                  : 'Jednokratno'
+              }}
+            </b>
+          </div>
 
           <div>
             <span>Datum rezervacije</span>
@@ -86,13 +87,23 @@
           <span>Slobodno: {{ reservation.arrangementTerm.availableSpots }}</span>
         </div>
 
-        <button
-          class="cancel-btn"
-          *ngIf="isSalesAgent() && reservation.status !== 'CANCELLED'"
-          (click)="cancelReservation(reservation.id)"
-        >
-          Otkaži rezervaciju
-        </button>
+        <div class="reservation-actions">
+          <button
+            class="complaint-btn"
+            *ngIf="canSubmitComplaint(reservation)"
+            (click)="submitComplaint(reservation)"
+          >
+            Podnesi žalbu
+          </button>
+
+          <button
+            class="cancel-btn"
+            *ngIf="isSalesAgent() && reservation.status !== 'CANCELLED'"
+            (click)="cancelReservation(reservation.id)"
+          >
+            Otkaži rezervaciju
+          </button>
+        </div>
       </div>
     </div>
   </div>

@@ -38,13 +38,17 @@ public class ZalbaService {
         validirajZalbu(zalba);
 
         zalba.setStatus(StatusZalbe.NOVO);
+        zalba.setHitna(false);
         zalba.setOperaterObavesten(true);
+        zalba.setTimObavesten(false);
+        zalba.setPutnikObavesten(false);
+        zalba.setDatumKreiranja(LocalDateTime.now());
 
         Zalba sacuvana = zalbaRepository.save(zalba);
 
         kreirajObavestenje(
                 sacuvana.getId(),
-                "OPERATER",
+                "COMPLAINT_OPERATOR",
                 null,
                 "Pristigla je nova žalba: " + sacuvana.getNaslov()
         );
@@ -180,7 +184,7 @@ public class ZalbaService {
 
         kreirajObavestenje(
                 sacuvana.getId(),
-                "PUTNIK",
+                "CUSTOMER",
                 sacuvana.getPutnikId(),
                 "Vaša žalba je prešla u status U_OBRADI."
         );
@@ -217,7 +221,7 @@ public class ZalbaService {
 
         kreirajObavestenje(
                 sacuvana.getId(),
-                "PUTNIK",
+                "CUSTOMER",
                 sacuvana.getPutnikId(),
                 "Vaša žalba je prešla u status ČEKA_ODGOVOR."
         );
@@ -275,7 +279,7 @@ public class ZalbaService {
 
         kreirajObavestenje(
                 sacuvana.getId(),
-                "PUTNIK",
+                "CUSTOMER",
                 sacuvana.getPutnikId(),
                 "Vaša žalba je rešena. Možete pogledati ishod rešavanja."
         );
@@ -298,7 +302,7 @@ public class ZalbaService {
 
         kreirajObavestenje(
                 sacuvana.getId(),
-                "PUTNIK",
+                "CUSTOMER",
                 sacuvana.getPutnikId(),
                 "Vaša žalba je zatvorena. Možete oceniti rešavanje."
         );
@@ -412,8 +416,12 @@ public class ZalbaService {
     }
 
     private void kreirajObavestenje(Long zalbaId, String primalacUloga, Long primalacId, String poruka) {
-        Obavestenje obavestenje = new Obavestenje(zalbaId, primalacUloga, primalacId, poruka);
-        obavestenjeRepository.save(obavestenje);
+        try {
+            Obavestenje obavestenje = new Obavestenje(zalbaId, primalacUloga, primalacId, poruka);
+            obavestenjeRepository.save(obavestenje);
+        } catch (Exception e) {
+            System.out.println("Obaveštenje nije sačuvano: " + e.getMessage());
+        }
     }
 
     private void validirajZalbu(Zalba zalba) {
