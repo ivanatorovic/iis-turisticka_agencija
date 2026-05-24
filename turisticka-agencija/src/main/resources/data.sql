@@ -198,3 +198,153 @@ UPDATE arrangement_term SET reserved_spots = 3 WHERE id = 4;
 UPDATE arrangement_term SET reserved_spots = 5 WHERE id = 5;
 UPDATE arrangement_term SET reserved_spots = 2 WHERE id = 6;
 
+INSERT INTO additional_activity
+(id, name, description, location, image_url, created_by_id)
+VALUES
+    (
+        1,
+        'Izlet do ostrva Vido',
+        'Organizovan izlet brodom do ostrva Vido tokom letovanja na Krfu.',
+        'Krf, Grcka',
+        '/uploads/additional-activities/vido.jpg',
+        3
+    ),
+    (
+        2,
+        'Obilazak Koloseuma',
+        'Obilazak Koloseuma i Rimskog foruma uz lokalnog turističkog vodiča.',
+        'Rim, Italija',
+        '/uploads/additional-activities/koloseum.jpg',
+        3
+    ),
+    (
+        3,
+        'Ski škola za početnike',
+        'Osnovna ski obuka za početnike tokom zimovanja na Kopaoniku.',
+        'Kopaonik, Srbija',
+        '/uploads/additional-activities/ski-skola.jpg',
+        6
+    ),
+    (
+        4,
+        'Ronjenje u Crvenom moru',
+        'Ronjenje sa instruktorom i obilazak koralnih grebena tokom boravka u Hurgadi.',
+        'Hurgada, Egipat',
+        '/uploads/additional-activities/ronjenje.jpg',
+        6
+    ),
+    (
+        5,
+        'Krstarenje Senom',
+        'Večernje panoramsko krstarenje Senom tokom putovanja u Pariz.',
+        'Pariz, Francuska',
+        '/uploads/additional-activities/sena.jpg',
+        3
+    ),
+    (
+        6,
+        'Grčko veče na Krfu',
+        'Večera uz tradicionalnu grčku muziku, ples i lokalne specijalitete.',
+        'Krf, Grcka',
+        '/uploads/additional-activities/grcko-vece.jpg',
+        3
+    ),
+    (
+        7,
+        'Obilazak Vatikana',
+        'Organizovan obilazak Vatikanskih muzeja i Trga Svetog Petra.',
+        'Rim, Italija',
+        '/uploads/additional-activities/vatikan.jpg',
+        3
+    ),
+    (
+        8,
+        'Motorne sanke',
+        'Vožnja motornim sankama uz pratnju instruktora na Kopaoniku.',
+        'Kopaonik, Srbija',
+        '/uploads/additional-activities/motorne-sanke.jpg',
+        6
+    ),
+    (
+        9,
+        'Safari pustinjom',
+        'Vožnja džipovima kroz pustinju i večera u beduinskom kampu.',
+        'Hurgada, Egipat',
+        '/uploads/additional-activities/safari.jpg',
+        6
+    ),
+    (
+        10,
+        'Obilazak Luvra',
+        'Vođeni obilazak najpoznatijih dela u muzeju Luvr.',
+        'Pariz, Francuska',
+        '/uploads/additional-activities/luvr.jpg',
+        3
+    );
+
+INSERT INTO activity_term
+(id, date, start_time)
+VALUES
+    (1, '2026-07-12', '10:00'),
+    (2, '2026-07-15', '20:00'),
+    (3, '2026-08-03', '09:30'),
+    (4, '2026-08-06', '20:30'),
+    (5, '2026-09-06', '11:00'),
+    (6, '2026-09-07', '10:00'),
+    (7, '2026-12-21', '12:00'),
+    (8, '2026-12-23', '14:00'),
+    (9, '2026-08-03', '09:00'),
+    (10, '2026-08-05', '15:00'),
+    (11, '2026-06-17', '19:30'),
+    (12, '2026-06-18', '10:00');
+
+INSERT INTO additional_activity_execution
+(id, additional_activity_id, arrangement_term_id, activity_term_id, duration_minutes, capacity, reserved_spots)
+VALUES
+    (1, 1, 1, 1, 180, 30, 8),
+    (2, 6, 1, 2, 150, 35, 10),
+
+    (3, 1, 2, 3, 180, 28, 5),
+    (4, 6, 2, 4, 150, 30, 7),
+
+    (5, 2, 3, 5, 120, 20, 4),
+    (6, 7, 3, 6, 180, 20, 6),
+
+    (7, 3, 4, 7, 120, 18, 3),
+    (8, 8, 4, 8, 90, 12, 2),
+
+    (9, 4, 5, 9, 180, 14, 5),
+    (10, 9, 5, 10, 240, 16, 6),
+
+    (11, 5, 6, 11, 90, 12, 4),
+    (12, 10, 6, 12, 150, 12, 3);
+
+INSERT INTO additional_activity_price_list
+(id, additional_activity_execution_id, price, valid_from, valid_to)
+VALUES
+    (1, 1, 35, '2026-07-10', '2026-07-20'),
+    (2, 2, 45, '2026-07-10', '2026-07-20'),
+
+    (3, 3, 35, '2026-08-01', '2026-08-10'),
+    (4, 4, 45, '2026-08-01', '2026-08-10'),
+
+    (5, 5, 30, '2026-09-05', '2026-09-09'),
+    (6, 6, 40, '2026-09-05', '2026-09-09'),
+
+    (7, 7, 25, '2026-12-20', '2026-12-27'),
+    (8, 8, 60, '2026-12-20', '2026-12-27'),
+
+    (9, 9, 55, '2026-08-01', '2026-08-10'),
+    (10, 10, 70, '2026-08-01', '2026-08-10'),
+
+    (11, 11, 35, '2026-06-15', '2026-06-22'),
+    (12, 12, 45, '2026-06-15', '2026-06-22');
+
+SELECT setval(
+               'additional_activity_id_seq',
+               (SELECT MAX(id) FROM additional_activity)
+       );
+
+SELECT setval('activity_term_id_seq', (SELECT MAX(id) FROM activity_term));
+SELECT setval('additional_activity_execution_id_seq', (SELECT MAX(id) FROM additional_activity_execution));
+SELECT setval('additional_activity_price_list_id_seq', (SELECT MAX(id) FROM additional_activity_price_list));

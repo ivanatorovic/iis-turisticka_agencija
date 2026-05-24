@@ -17,6 +17,59 @@ export interface ArrangementTerm {
   availableSpots: number;
 }
 
+export interface ArrangementTermView {
+  arrangementTermId: number;
+
+  arrangementId: number;
+  arrangementName: string;
+  destinationName: string;
+  destinationCountry: string;
+  basePrice: number;
+  numberOfNights: number;
+
+  termId: number;
+  startDate: string;
+  endDate: string;
+
+  capacity: number;
+  reservedSpots: number;
+  availableSpots: number;
+}
+
+export interface ArrangementActivity {
+  id: number;
+
+  arrangementTermId: number;
+  additionalActivityId: number;
+
+  activityName: string;
+  activityDescription: string;
+  activityLocation: string;
+
+  imageUrl: string;
+
+  activityDate: string;
+  startTime: string;
+
+  durationMinutes: number;
+
+  capacity: number;
+  reservedSpots: number;
+  availableSpots: number;
+
+  price: number;
+}
+
+export interface AdditionalActivityExecutionRequest {
+  arrangementTermId: number;
+  additionalActivityId: number;
+  activityDate: string;
+  startTime: string;
+  durationMinutes: number | null;
+  capacity: number | null;
+  price: number | null;
+}
+
 export interface Destination {
   id: number;
   name: string;
@@ -68,11 +121,46 @@ export interface ArrangementSearchRequest {
   sortByPrice: string;
 }
 
+export interface AdditionalActivityRegistrationRequest {
+  numberOfParticipants: number | null;
+}
+
+export interface AdditionalActivityRegistrationResponse {
+  id: number;
+  executionId: number;
+
+  activityName: string;
+  activityDescription: string;
+  activityLocation: string;
+  imageUrl: string;
+
+  activityDate: string;
+  startTime: string;
+  durationMinutes: number;
+
+  numberOfParticipants: number;
+  price: number;
+  registrationDate: string;
+  status: string;
+}
+
+export interface AdditionalActivityRegistrationUpdateRequest {
+  numberOfParticipants: number | null;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class ArrangementService {
   private readonly apiUrl = 'http://localhost:8080/api/arrangements';
+
+  private readonly arrangementTermsUrl = 'http://localhost:8080/api/arrangement-terms';
+
+  private readonly additionalActivityExecutionsUrl =
+    'http://localhost:8080/api/additional-activity-executions';
+
+  private readonly additionalActivityRegistrationsUrl =
+    'http://localhost:8080/api/additional-activity-registrations';
 
   constructor(
     private http: HttpClient,
@@ -103,5 +191,79 @@ export class ArrangementService {
     return this.http.get<Arrangement>(`${this.apiUrl}/${id}`, {
       headers: this.getHeaders(),
     });
+  }
+
+  getAllArrangementTerms(): Observable<ArrangementTermView[]> {
+    return this.http.get<ArrangementTermView[]>(this.arrangementTermsUrl, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getActivitiesForArrangementTerm(arrangementTermId: number): Observable<ArrangementActivity[]> {
+    return this.http.get<ArrangementActivity[]>(
+      `${this.additionalActivityExecutionsUrl}/arrangement-term/${arrangementTermId}`,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  createActivityExecution(
+    request: AdditionalActivityExecutionRequest,
+  ): Observable<ArrangementActivity> {
+    return this.http.post<ArrangementActivity>(this.additionalActivityExecutionsUrl, request, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  deleteActivityExecution(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.additionalActivityExecutionsUrl}/${id}`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getMyActivityRegistrations(): Observable<AdditionalActivityRegistrationResponse[]> {
+    return this.http.get<AdditionalActivityRegistrationResponse[]>(
+      `${this.additionalActivityRegistrationsUrl}/my`,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  registerForActivity(
+    executionId: number,
+    request: AdditionalActivityRegistrationRequest,
+  ): Observable<AdditionalActivityRegistrationResponse> {
+    return this.http.post<AdditionalActivityRegistrationResponse>(
+      `${this.additionalActivityRegistrationsUrl}/execution/${executionId}`,
+      request,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  cancelActivityRegistration(registrationId: number): Observable<void> {
+    return this.http.put<void>(
+      `${this.additionalActivityRegistrationsUrl}/${registrationId}/cancel`,
+      {},
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  updateActivityRegistration(
+    registrationId: number,
+    request: AdditionalActivityRegistrationUpdateRequest,
+  ): Observable<AdditionalActivityRegistrationResponse> {
+    return this.http.put<AdditionalActivityRegistrationResponse>(
+      `${this.additionalActivityRegistrationsUrl}/${registrationId}`,
+      request,
+      {
+        headers: this.getHeaders(),
+      },
+    );
   }
 }

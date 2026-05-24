@@ -15,6 +15,10 @@ import { ReceivedWorkflows } from './features/workflows/received-workflows/recei
 import { ManagerDestinations } from './features/destinations/manager-destinations/manager-destinations';
 import { ManagerCalendarsComponent } from './features/calendars/manager-calendars/manager-calendars';
 import { ManagerArrangementsList } from './features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list';
+import { AdditionalActivitiesManager } from './features/activities/additional-activities-manager/additional-activities-manager';
+import { CreateActivities } from './features/activities/create-activities/create-activities';
+import { ManagerArrangementTermsList } from './features/arrangements/manager-arrangements/manager-arrangement-terms-list/manager-arrangement-terms-list';
+import { AdditionalActivitiesCustomer } from './features/activities/additional-activities-customer/additional-activities-customer';
 
 export const routes: Routes = [
   {
@@ -81,22 +85,48 @@ export const routes: Routes = [
     path: 'workflows/:workflowId/create-arrangement',
     loadComponent: () =>
       import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form')
-        .then(m => m.ManagerArrangementForm),
+        .then((m) => m.ManagerArrangementForm),
   },
   {
     path: 'workflows/:workflowId/edit-arrangement/:arrangementId',
     loadComponent: () =>
       import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form')
-        .then(m => m.ManagerArrangementForm),
+        .then((m) => m.ManagerArrangementForm),
   },
   {
     path: 'my-manager-arrangements',
     loadComponent: () =>
       import('./features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list')
-        .then(m => m.ManagerArrangementsList),
+        .then((m) => m.ManagerArrangementsList),
   },
   {
     path: 'manager-arrangements',
     component: ManagerArrangementsList,
+  },
+  {
+    path: 'additional-activities-manager',
+    component: AdditionalActivitiesManager,
+  },
+  {
+    path: 'create-additional-activity',
+    component: CreateActivities,
+  },
+  {
+    path: 'create-additional-activity/:id',
+    component: CreateActivities,
+  },
+  {
+    path: 'manager-arrangement-terms',
+    component: ManagerArrangementTermsList,
+  },
+  {
+    path: 'manager-arrangements/:id/activities',
+    loadComponent: () =>
+      import('./features/arrangements/manager-arrangements/manager-arrangements-activities/manager-arrangements-activities')
+        .then((m) => m.ManagerArrangementsActivities),
+  },
+  {
+    path: 'additional-activities-customer',
+    component: AdditionalActivitiesCustomer,
   },
 ];

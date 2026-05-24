@@ -1,0 +1,109 @@
+<div class="manager-arrangements-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <main class="content">
+    <section class="page-header">
+      <p>LUXTRAVEL</p>
+      <h1>Termini aranžmana</h1>
+      <span> Pregled aranžmana sa izborom konkretnog termina izvođenja. </span>
+    </section>
+
+    <div class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <p class="empty" *ngIf="arrangements.length === 0">
+      Trenutno nema dostupnih aranžmana sa terminima.
+    </p>
+
+    <section class="arrangement-grid">
+      <article class="arrangement-card" *ngFor="let arrangement of arrangements">
+        <div class="card-top">
+          <div>
+            <p class="workflow-name">
+              {{ arrangement.destinationCountry }} - {{ arrangement.destinationName }}
+            </p>
+
+            <h2>{{ arrangement.arrangementName }}</h2>
+          </div>
+        </div>
+
+        <p class="description">Osnovni podaci o aranžmanu i izbor konkretnog termina izvođenja.</p>
+
+        <div class="details arrangement-info">
+          <span>
+            Destinacija:
+            <b>{{ arrangement.destinationCountry }} - {{ arrangement.destinationName }}</b>
+          </span>
+
+          <span>
+            Cena:
+            <b>{{ arrangement.basePrice }} €</b>
+          </span>
+
+          <span>
+            Noćenja:
+            <b>{{ arrangement.numberOfNights }}</b>
+          </span>
+        </div>
+
+        <div class="term-select-box">
+          <label>Termin</label>
+
+          <select [(ngModel)]="selectedTermIds[arrangement.arrangementId]">
+            <option
+              *ngFor="let term of getTermsForArrangement(arrangement.arrangementId)"
+              [ngValue]="term.arrangementTermId"
+            >
+              {{ term.startDate | date: 'dd.MM.yyyy.' }} -
+              {{ term.endDate | date: 'dd.MM.yyyy.' }}
+            </option>
+          </select>
+        </div>
+
+        <div
+          class="details term-info"
+          *ngIf="getSelectedTerm(arrangement.arrangementId) as selectedTerm"
+        >
+          <span>
+            Polazak:
+            <b>{{ selectedTerm.startDate | date: 'dd.MM.yyyy.' }}</b>
+          </span>
+
+          <span>
+            Povratak:
+            <b>{{ selectedTerm.endDate | date: 'dd.MM.yyyy.' }}</b>
+          </span>
+
+          <span>
+            Kapacitet:
+            <b>{{ selectedTerm.capacity }}</b>
+          </span>
+
+          <span>
+            Rezervisano:
+            <b>{{ selectedTerm.reservedSpots }}</b>
+          </span>
+
+          <span>
+            Slobodna mesta:
+            <b>{{ selectedTerm.availableSpots }}</b>
+          </span>
+        </div>
+
+        <div class="actions" *ngIf="getSelectedTerm(arrangement.arrangementId) as selectedTerm">
+          <button
+            class="view-btn"
+            [routerLink]="['/manager-arrangements', selectedTerm.arrangementTermId, 'activities']"
+            [queryParams]="{
+              startDate: selectedTerm.startDate,
+              endDate: selectedTerm.endDate,
+            }"
+          >
+            Aktivnosti za izabrani termin
+          </button>
+        </div>
+      </article>
+    </section>
+  </main>
+</div>

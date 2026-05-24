@@ -4,10 +4,11 @@ import { Router } from '@angular/router';
 import { Reservation, ReservationService } from '../../../core/services/reservation';
 import { AuthService } from '../../../core/services/auth';
 import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-reservations-overview',
-  imports: [CommonModule, SidebarMenu],
+  imports: [CommonModule, SidebarMenu, RouterLink],
   templateUrl: './reservations-overview.html',
   styleUrl: './reservations-overview.css',
 })

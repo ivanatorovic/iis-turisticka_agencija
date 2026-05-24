@@ -81,10 +81,23 @@
           </div>
         </div>
 
-        <div class="capacity-info">
-          <span>Kapacitet: {{ reservation.arrangementTerm.capacity }}</span>
-          <span>Rezervisano: {{ reservation.arrangementTerm.reservedSpots }}</span>
-          <span>Slobodno: {{ reservation.arrangementTerm.availableSpots }}</span>
+        <div class="capacity-row">
+          <div class="capacity-info">
+            <span>Kapacitet: {{ reservation.arrangementTerm.capacity }}</span>
+            <span>Rezervisano: {{ reservation.arrangementTerm.reservedSpots }}</span>
+            <span>Slobodno: {{ reservation.arrangementTerm.availableSpots }}</span>
+          </div>
+
+          <button
+            class="activities-btn"
+            *ngIf="reservation.status === 'CONFIRMED'"
+            [routerLink]="['/additional-activities-customer']"
+            [queryParams]="{
+              arrangementTermId: reservation.arrangementTerm.id
+            }"
+          >
+            Pogledaj dodatne aktivnosti za ovaj aranžman
+          </button>
         </div>
 
         <div class="reservation-actions">

@@ -8,8 +8,7 @@
   min-height: 100vh;
 
   background:
-    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.78)),
-    url('../../../../assets/plaza.jpg');
+    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.78)), url('../../../../assets/plaza.jpg');
 
   background-size: cover;
   background-position: center;
@@ -430,7 +429,6 @@ h1 {
 /* RESPONSIVE */
 
 @media (max-width: 1100px) {
-
   .hero-card {
     grid-template-columns: 1fr;
   }
@@ -445,7 +443,6 @@ h1 {
 }
 
 @media (max-width: 700px) {
-
   h1 {
     font-size: 44px;
   }
@@ -470,4 +467,52 @@ h1 {
   .image-wrapper {
     height: 240px;
   }
+}
+
+.activities-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+
+  gap: 16px;
+
+  margin-top: 8px;
+}
+
+.activity-card {
+  padding: 18px;
+
+  border-radius: 20px;
+
+  background: #f7f3eb;
+
+  border: 1px solid #eadfce;
+
+  transition: 0.25s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-3px);
+
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.activity-card h4 {
+  margin: 0 0 10px;
+
+  color: #7b5d2f;
+
+  font-size: 18px;
+
+  font-weight: 700;
+}
+
+.activity-card p {
+  margin: 0;
+
+  color: #555;
+
+  line-height: 1.6;
+
+  font-size: 14px;
 }

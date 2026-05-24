@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
   Arrangement,
+  ArrangementActivity,
   ArrangementService,
   ArrangementTerm,
 } from '../../../core/services/arrangement';
@@ -25,11 +26,14 @@ export class ArrangementDetails implements OnInit {
   arrangement: Arrangement | null = null;
 
   selectedArrangementTermId: number | null = null;
-  numberOfPassengers = 1;
+  selectedArrangementActivities: ArrangementActivity[] = [];
 
+  numberOfPassengers = 1;
   availabilityResponse: AvailabilityResponse | null = null;
-paymentType = 'ONE_TIME';
-numberOfInstallments: number | null = null;
+
+  paymentType = 'ONE_TIME';
+  numberOfInstallments: number | null = null;
+
   successMessage = '';
   errorMessage = '';
 
@@ -49,12 +53,39 @@ numberOfInstallments: number | null = null;
 
         if (data.arrangementTerms && data.arrangementTerms.length > 0) {
           this.selectedArrangementTermId = data.arrangementTerms[0].id;
+          this.loadActivitiesForSelectedTerm();
         }
       },
       error: (err) => {
         console.error('Greška pri učitavanju detalja aranžmana', err);
       },
     });
+  }
+
+  loadActivitiesForSelectedTerm(): void {
+    if (!this.selectedArrangementTermId) {
+      this.selectedArrangementActivities = [];
+      return;
+    }
+
+    this.arrangementService
+      .getActivitiesForArrangementTerm(this.selectedArrangementTermId)
+      .subscribe({
+        next: (activities) => {
+          this.selectedArrangementActivities = activities;
+        },
+        error: (err) => {
+          console.error('Greška pri učitavanju dodatnih aktivnosti', err);
+          this.selectedArrangementActivities = [];
+        },
+      });
+  }
+
+  onArrangementTermChange(): void {
+    this.loadActivitiesForSelectedTerm();
+    this.availabilityResponse = null;
+    this.successMessage = '';
+    this.errorMessage = '';
   }
 
   getImageUrl(): string {
@@ -136,15 +167,14 @@ numberOfInstallments: number | null = null;
     }
 
     this.reservationService
-  .createReservation({
-    userId,
-    arrangementId: this.arrangement.id,
-    arrangementTermId: this.selectedArrangementTermId,
-    numberOfPassengers: this.numberOfPassengers,
-    paymentType: this.paymentType,
-    numberOfInstallments:
-      this.paymentType === 'INSTALLMENTS' ? this.numberOfInstallments : 1,
-  })
+      .createReservation({
+        userId,
+        arrangementId: this.arrangement.id,
+        arrangementTermId: this.selectedArrangementTermId,
+        numberOfPassengers: this.numberOfPassengers,
+        paymentType: this.paymentType,
+        numberOfInstallments: this.paymentType === 'INSTALLMENTS' ? this.numberOfInstallments : 1,
+      })
       .subscribe({
         next: () => {
           this.successMessage = 'Rezervacija je uspešno kreirana.';
@@ -153,6 +183,7 @@ numberOfInstallments: number | null = null;
           this.arrangementService.getById(this.arrangement!.id).subscribe({
             next: (updatedArrangement) => {
               this.arrangement = updatedArrangement;
+              this.loadActivitiesForSelectedTerm();
             },
           });
         },
@@ -168,17 +199,18 @@ numberOfInstallments: number | null = null;
     this.availabilityResponse = null;
     this.successMessage = '';
     this.errorMessage = '';
+    this.loadActivitiesForSelectedTerm();
   }
 
   calculateInstallmentAmount(): number {
-  if (this.paymentType !== 'INSTALLMENTS') {
-    return this.calculateTotalPrice();
-  }
+    if (this.paymentType !== 'INSTALLMENTS') {
+      return this.calculateTotalPrice();
+    }
 
-  if (!this.numberOfInstallments || this.numberOfInstallments < 2) {
-    return 0;
-  }
+    if (!this.numberOfInstallments || this.numberOfInstallments < 2) {
+      return 0;
+    }
 
-  return this.calculateTotalPrice() / this.numberOfInstallments;
-}
+    return this.calculateTotalPrice() / this.numberOfInstallments;
+  }
 }

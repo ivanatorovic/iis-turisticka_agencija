@@ -1,0 +1,87 @@
+<section class="activities-page">
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <nav class="navbar">
+    <div class="left-nav">
+      <app-sidebar-menu></app-sidebar-menu>
+      <a class="logo">LUXTRAVEL</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="header-row">
+      <header class="page-header">
+        <p class="subtitle">MENADŽERSKI PANEL</p>
+
+        <h1>Dodatne aktivnosti</h1>
+
+        <p class="description">
+          Pregled aktivnosti koje putnici mogu izabrati kao dodatni sadržaj uz aranžmane.
+        </p>
+      </header>
+
+      <div class="top-actions">
+        <button class="create-btn" routerLink="/create-additional-activity">
+          + Kreiraj aktivnost
+        </button>
+      </div>
+    </div>
+
+    <div *ngIf="loading" class="message-box">Učitavanje dodatnih aktivnosti...</div>
+
+    <div *ngIf="errorMessage && !loading" class="message-box error">
+      {{ errorMessage }}
+    </div>
+
+    <section *ngIf="!loading && !errorMessage" class="activities-grid">
+      <article class="activity-card" *ngFor="let activity of activities">
+        <div class="image-wrapper">
+          <img [src]="getImageUrl(activity.imageUrl)" [alt]="activity.name" />
+        </div>
+
+        <div class="activity-content">
+          <div class="title-row">
+            <h2>{{ activity.name }}</h2>
+          </div>
+          <p class="activity-description">{{ activity.description }}</p>
+
+          <div class="meta-grid">
+            <div>
+              <span>Lokacija</span>
+              <strong>{{ activity.location }}</strong>
+            </div>
+            <div>
+              <span>Kreirao</span>
+              <strong>{{ activity.createdByUsername }}</strong>
+            </div>
+          </div>
+          <div class="card-actions">
+            <button class="edit-btn" [routerLink]="['/create-additional-activity', activity.id]">
+              Izmeni
+            </button>
+            <button class="delete-btn" (click)="openDeleteModal(activity.id)">Obriši</button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div *ngIf="!loading && !errorMessage && activities.length === 0" class="message-box">
+      Trenutno nema dodatnih aktivnosti.
+    </div>
+  </main>
+</section>
+
+<div class="modal-backdrop" *ngIf="showDeleteModal" (click)="closeDeleteModal()"></div>
+
+<div class="delete-modal" *ngIf="showDeleteModal">
+  <h3>Brisanje aktivnosti</h3>
+
+  <p>Da li ste sigurni da želite da obrišete ovu dodatnu aktivnost?</p>
+
+  <div class="modal-actions">
+    <button class="cancel-btn" (click)="closeDeleteModal()">Otkaži</button>
+
+    <button class="confirm-btn" (click)="confirmDelete()">Obriši</button>
+  </div>
+</div>
