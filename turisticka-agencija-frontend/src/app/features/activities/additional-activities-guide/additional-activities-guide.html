@@ -27,7 +27,13 @@
     <section *ngIf="!loading && !errorMessage" class="activities-grid">
       <article class="activity-card" *ngFor="let activity of activities">
         <div class="arrangement-strip">
-          <span>Termin aranžmana</span>
+          <div class="arrangement-top">
+            <span>Termin aranžmana</span>
+
+            <span class="status-badge" [ngClass]="getStatusClass(activity.status)">
+              {{ getStatusLabel(activity.status) }}
+            </span>
+          </div>
 
           <strong>{{ activity.arrangementName }}</strong>
 
@@ -83,6 +89,7 @@
               <strong>{{ activity.reservedSpots }}</strong>
             </div>
           </div>
+
           <div class="card-actions">
             <button
               class="participants-btn"
@@ -90,6 +97,24 @@
               [routerLink]="['/additional-activity-participants', activity.id]"
             >
               Prikaži učesnike
+            </button>
+
+            <button
+              *ngIf="activity.status === 'UPCOMING'"
+              class="status-action-btn start-btn"
+              type="button"
+              (click)="startActivity(activity.id)"
+            >
+              Započni aktivnost
+            </button>
+
+            <button
+              *ngIf="activity.status === 'ACTIVE'"
+              class="status-action-btn finish-btn"
+              type="button"
+              (click)="finishActivity(activity.id)"
+            >
+              Završi aktivnost
             </button>
           </div>
         </div>

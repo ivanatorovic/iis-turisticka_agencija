@@ -31,6 +31,7 @@ public class AdditionalActivityExecutionResponse {
     private String guideFirstName;
     private String guideLastName;
     private String guideUsername;
+    private String status;
 
     public AdditionalActivityExecutionResponse(
             Long id,
@@ -53,7 +54,8 @@ public class AdditionalActivityExecutionResponse {
             int capacity,
             int reservedSpots,
             int availableSpots,
-            double price
+            double price,
+            String status
     ) {
         this.id = id;
         this.arrangementTermId = arrangementTermId;
@@ -76,6 +78,7 @@ public class AdditionalActivityExecutionResponse {
         this.reservedSpots = reservedSpots;
         this.availableSpots = availableSpots;
         this.price = price;
+        this.status = status;
     }
 
     public Long getId() { return id; }
@@ -99,4 +102,7 @@ public class AdditionalActivityExecutionResponse {
     public int getReservedSpots() { return reservedSpots; }
     public int getAvailableSpots() { return availableSpots; }
     public double getPrice() { return price; }
+    public String getStatus() {
+        return status;
+    }
 }

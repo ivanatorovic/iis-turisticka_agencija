@@ -65,6 +65,7 @@ export interface ArrangementActivity {
   guideFirstName: string;
   guideLastName: string;
   guideUsername: string;
+  status: string;
 }
 
 export interface AdditionalActivityExecutionRequest {
@@ -291,6 +292,26 @@ export class ArrangementService {
     return this.http.put<ArrangementActivity>(
       `${this.additionalActivityExecutionsUrl}/${id}`,
       request,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  startAdditionalActivityExecution(id: number) {
+    return this.http.put<ArrangementActivity>(
+      `${this.additionalActivityExecutionsUrl}/${id}/start`,
+      {},
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  finishAdditionalActivityExecution(id: number) {
+    return this.http.put<ArrangementActivity>(
+      `${this.additionalActivityExecutionsUrl}/${id}/finish`,
+      {},
       {
         headers: this.getHeaders(),
       },

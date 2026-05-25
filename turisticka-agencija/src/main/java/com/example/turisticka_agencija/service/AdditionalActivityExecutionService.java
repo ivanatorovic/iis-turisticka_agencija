@@ -92,6 +92,7 @@ public class AdditionalActivityExecutionService {
         execution.setCapacity(request.getCapacity());
         execution.setReservedSpots(0);
         execution.setGuide(guide);
+        execution.setStatus(ExecutionStatus.UPCOMING);
 
         execution = executionRepository.save(execution);
 
@@ -197,7 +198,8 @@ public class AdditionalActivityExecutionService {
                 execution.getReservedSpots(),
                 execution.getCapacity() - execution.getReservedSpots(),
 
-                price
+                price,
+                execution.getStatus().name()
         );
     }
 
@@ -322,5 +324,53 @@ public class AdditionalActivityExecutionService {
         }
 
         return mapToResponse(execution);
+    }
+
+    @Transactional
+    public AdditionalActivityExecutionResponse startExecution(Long id, Principal principal) {
+        User guide = getAuthenticatedUser(principal);
+
+        if (guide.getRole() != Role.GUIDE) {
+            throw new BadRequestException("Only GUIDE can start activity execution");
+        }
+
+        AdditionalActivityExecution execution = executionRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Activity execution not found"));
+
+        if (!execution.getGuide().getId().equals(guide.getId())) {
+            throw new BadRequestException("You can start only your own activity execution");
+        }
+
+        if (execution.getStatus() != ExecutionStatus.UPCOMING) {
+            throw new BadRequestException("Only UPCOMING activity can be started");
+        }
+
+        execution.setStatus(ExecutionStatus.ACTIVE);
+
+        return mapToResponse(executionRepository.save(execution));
+    }
+
+    @Transactional
+    public AdditionalActivityExecutionResponse finishExecution(Long id, Principal principal) {
+        User guide = getAuthenticatedUser(principal);
+
+        if (guide.getRole() != Role.GUIDE) {
+            throw new BadRequestException("Only GUIDE can finish activity execution");
+        }
+
+        AdditionalActivityExecution execution = executionRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Activity execution not found"));
+
+        if (!execution.getGuide().getId().equals(guide.getId())) {
+            throw new BadRequestException("You can finish only your own activity execution");
+        }
+
+        if (execution.getStatus() != ExecutionStatus.ACTIVE) {
+            throw new BadRequestException("Only ACTIVE activity can be finished");
+        }
+
+        execution.setStatus(ExecutionStatus.FINISHED);
+
+        return mapToResponse(executionRepository.save(execution));
     }
 }

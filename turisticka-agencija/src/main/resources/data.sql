@@ -162,20 +162,20 @@ VALUES
 
 INSERT INTO additional_activity_execution
 (id, additional_activity_id, arrangement_term_id, activity_term_id,
- guide_id, duration_minutes, capacity, reserved_spots)
+ guide_id, duration_minutes, capacity, reserved_spots, status)
 VALUES
-    (1, 1, 1, 1, 7, 180, 30, 10),
-    (2, 6, 1, 2, 8, 150, 35, 9),
-    (3, 1, 2, 3, 9, 180, 28, 5),
-    (4, 6, 2, 4, 7, 150, 30, 7),
-    (5, 2, 3, 5, 8, 120, 20, 0),
-    (6, 7, 3, 6, 9, 180, 20, 0),
-    (7, 3, 4, 7, 7, 120, 18, 3),
-    (8, 8, 4, 8, 8, 90, 12, 0),
-    (9, 4, 5, 9, 9, 180, 14, 0),
-    (10, 9, 5, 10, 7, 240, 16, 8),
-    (11, 5, 6, 11, 8, 90, 12, 3),
-    (12, 10, 6, 12, 9, 150, 12, 0);
+    (1, 1, 1, 1, 7, 180, 30, 10, 'UPCOMING'),
+    (2, 6, 1, 2, 8, 150, 35, 9, 'UPCOMING'),
+    (3, 1, 2, 3, 9, 180, 28, 5, 'UPCOMING'),
+    (4, 6, 2, 4, 7, 150, 30, 7, 'UPCOMING'),
+    (5, 2, 3, 5, 8, 120, 20, 0, 'UPCOMING'),
+    (6, 7, 3, 6, 9, 180, 20, 0, 'UPCOMING'),
+    (7, 3, 4, 7, 7, 120, 18, 3, 'UPCOMING'),
+    (8, 8, 4, 8, 8, 90, 12, 0, 'UPCOMING'),
+    (9, 4, 5, 9, 9, 180, 14, 0, 'UPCOMING'),
+    (10, 9, 5, 10, 7, 240, 16, 8, 'UPCOMING'),
+    (11, 5, 6, 11, 8, 90, 12, 3, 'UPCOMING'),
+    (12, 10, 6, 12, 9, 150, 12, 0, 'UPCOMING');
 
 INSERT INTO additional_activity_price_list
 (id, additional_activity_execution_id, price, valid_from, valid_to)

@@ -27,6 +27,9 @@ public class AdditionalActivityExecution {
     @ManyToOne
     private User guide;
 
+    @Enumerated(EnumType.STRING)
+    private ExecutionStatus status = ExecutionStatus.UPCOMING;
+
     public AdditionalActivityExecution() {
     }
 
@@ -92,5 +95,13 @@ public class AdditionalActivityExecution {
 
     public void setGuide(User guide) {
         this.guide = guide;
+    }
+
+    public ExecutionStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(ExecutionStatus status) {
+        this.status = status;
     }
 }

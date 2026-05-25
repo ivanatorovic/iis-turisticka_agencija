@@ -59,4 +59,20 @@ public class AdditionalActivityExecutionController {
     ) {
         return executionService.updateExecution(id, request, principal);
     }
+
+    @PutMapping("/{id}/start")
+    public AdditionalActivityExecutionResponse startExecution(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        return executionService.startExecution(id, principal);
+    }
+
+    @PutMapping("/{id}/finish")
+    public AdditionalActivityExecutionResponse finishExecution(
+            @PathVariable Long id,
+            Principal principal
+    ) {
+        return executionService.finishExecution(id, principal);
+    }
 }

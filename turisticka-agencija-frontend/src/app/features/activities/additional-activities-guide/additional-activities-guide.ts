@@ -36,6 +36,7 @@ export class AdditionalActivitiesGuide implements OnInit {
     this.arrangementService.getGuideActivities().subscribe({
       next: (data: ArrangementActivity[]) => {
         this.activities = data;
+        this.sortActivities();
         this.loading = false;
       },
       error: (error) => {
@@ -43,6 +44,80 @@ export class AdditionalActivitiesGuide implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  startActivity(id: number): void {
+    this.arrangementService.startAdditionalActivityExecution(id).subscribe({
+      next: (updatedActivity) => {
+        const activity = this.activities.find((a) => a.id === id);
+
+        if (activity) {
+          activity.status = updatedActivity.status;
+        }
+
+        this.sortActivities();
+      },
+
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Greška pri započinjanju aktivnosti.';
+      },
+    });
+  }
+
+  finishActivity(id: number): void {
+    this.arrangementService.finishAdditionalActivityExecution(id).subscribe({
+      next: (updatedActivity) => {
+        const activity = this.activities.find((a) => a.id === id);
+
+        if (activity) {
+          activity.status = updatedActivity.status;
+        }
+
+        this.sortActivities();
+      },
+
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Greška pri završavanju aktivnosti.';
+      },
+    });
+  }
+
+  sortActivities(): void {
+    const order: Record<string, number> = {
+      ACTIVE: 1,
+      UPCOMING: 2,
+      FINISHED: 3,
+    };
+
+    this.activities.sort((a, b) => {
+      return order[a.status] - order[b.status];
+    });
+  }
+
+  getStatusLabel(status: string): string {
+    switch (status) {
+      case 'UPCOMING':
+        return 'Predstoji';
+      case 'ACTIVE':
+        return 'U toku';
+      case 'FINISHED':
+        return 'Završena';
+      default:
+        return 'Nepoznat status';
+    }
+  }
+
+  getStatusClass(status: string): string {
+    switch (status) {
+      case 'UPCOMING':
+        return 'status-upcoming';
+      case 'ACTIVE':
+        return 'status-active';
+      case 'FINISHED':
+        return 'status-finished';
+      default:
+        return '';
+    }
   }
 
   getImageUrl(imageUrl: string): string {
