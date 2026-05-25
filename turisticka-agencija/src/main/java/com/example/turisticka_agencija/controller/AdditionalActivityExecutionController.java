@@ -7,6 +7,7 @@ import com.example.turisticka_agencija.service.AdditionalActivityExecutionServic
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -74,5 +75,30 @@ public class AdditionalActivityExecutionController {
             Principal principal
     ) {
         return executionService.finishExecution(id, principal);
+    }
+
+    @GetMapping("/arrangement-term/{arrangementTermId}/filter")
+    public List<AdditionalActivityExecutionResponse> getFilteredByArrangementTerm(
+            @PathVariable Long arrangementTermId,
+            @RequestParam(required = false) LocalDate dateFrom,
+            @RequestParam(required = false) LocalDate dateTo,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(required = false) Integer minDuration,
+            @RequestParam(required = false) Integer maxDuration,
+            @RequestParam(required = false) Integer minAvailableSpots,
+            @RequestParam(required = false) Boolean onlyAvailable
+    ) {
+        return executionService.getFilteredByArrangementTerm(
+                arrangementTermId,
+                dateFrom,
+                dateTo,
+                minPrice,
+                maxPrice,
+                minDuration,
+                maxDuration,
+                minAvailableSpots,
+                onlyAvailable
+        );
     }
 }

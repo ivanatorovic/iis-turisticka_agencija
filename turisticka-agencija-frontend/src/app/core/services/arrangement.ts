@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth';
 
@@ -179,6 +179,17 @@ export interface AdditionalActivityExecutionUpdateRequest {
   price?: number;
 }
 
+export interface AdditionalActivityExecutionFilter {
+  dateFrom?: string;
+  dateTo?: string;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  minDuration?: number | null;
+  maxDuration?: number | null;
+  minAvailableSpots?: number | null;
+  onlyAvailable?: boolean;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -344,6 +355,51 @@ export class ArrangementService {
       `${this.additionalActivityRegistrationsUrl}/execution/${executionId}/participants`,
       {
         headers: this.getHeaders(),
+      },
+    );
+  }
+
+  getFilteredActivitiesForArrangementTerm(
+    arrangementTermId: number,
+    filter: AdditionalActivityExecutionFilter,
+  ): Observable<ArrangementActivity[]> {
+    let params = new HttpParams();
+
+    if (filter.dateFrom) {
+      params = params.set('dateFrom', filter.dateFrom);
+    }
+
+    if (filter.dateTo) {
+      params = params.set('dateTo', filter.dateTo);
+    }
+
+    if (filter.minPrice !== null && filter.minPrice !== undefined) {
+      params = params.set('minPrice', filter.minPrice);
+    }
+
+    if (filter.maxPrice !== null && filter.maxPrice !== undefined) {
+      params = params.set('maxPrice', filter.maxPrice);
+    }
+
+    if (filter.minDuration !== null && filter.minDuration !== undefined) {
+      params = params.set('minDuration', filter.minDuration);
+    }
+
+    if (filter.maxDuration !== null && filter.maxDuration !== undefined) {
+      params = params.set('maxDuration', filter.maxDuration);
+    }
+
+    if (filter.minAvailableSpots !== null && filter.minAvailableSpots !== undefined) {
+      params = params.set('minAvailableSpots', filter.minAvailableSpots);
+    }
+
+    params = params.set('onlyAvailable', filter.onlyAvailable ?? false);
+
+    return this.http.get<ArrangementActivity[]>(
+      `${this.additionalActivityExecutionsUrl}/arrangement-term/${arrangementTermId}/filter`,
+      {
+        headers: this.getHeaders(),
+        params,
       },
     );
   }

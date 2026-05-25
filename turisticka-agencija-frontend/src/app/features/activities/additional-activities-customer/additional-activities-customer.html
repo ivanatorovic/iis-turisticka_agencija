@@ -131,6 +131,9 @@
 
                 <input type="number" min="1" [(ngModel)]="updatedNumberOfParticipants" />
               </label>
+              <div class="inline-error" *ngIf="updateRegistrationErrorMessage">
+                {{ updateRegistrationErrorMessage }}
+              </div>
 
               <div class="update-actions">
                 <button class="confirm-btn" type="button" (click)="confirmUpdateRegistration()">
@@ -152,6 +155,50 @@
         <p class="subtitle small">PONUDA</p>
 
         <h2>Dostupne dodatne aktivnosti</h2>
+      </div>
+
+      <div class="filter-panel">
+        <div class="filter-grid">
+          <label>
+            Datum od
+            <input type="date" [(ngModel)]="filters.dateFrom" />
+          </label>
+
+          <label>
+            Datum do
+            <input type="date" [(ngModel)]="filters.dateTo" />
+          </label>
+
+          <label>
+            Cena od
+            <input type="number" min="0" [(ngModel)]="filters.minPrice" />
+          </label>
+
+          <label>
+            Cena do
+            <input type="number" min="0" [(ngModel)]="filters.maxPrice" />
+          </label>
+
+          <label>
+            Trajanje od (u min)
+            <input type="number" min="1" [(ngModel)]="filters.minDuration" />
+          </label>
+
+          <label>
+            Trajanje do (u min)
+            <input type="number" min="1" [(ngModel)]="filters.maxDuration" />
+          </label>
+
+          <label>
+            Min. slobodnih mesta
+            <input type="number" min="1" [(ngModel)]="filters.minAvailableSpots" />
+          </label>
+        </div>
+
+        <div class="filter-actions">
+          <button type="button" class="filter-btn" (click)="applyFilters()">Primeni filtere</button>
+          <button type="button" class="clear-filter-btn" (click)="resetFilters()">Resetuj</button>
+        </div>
       </div>
 
       <div *ngIf="getAvailableActivities().length === 0" class="message-box">
@@ -237,6 +284,9 @@
                     placeholder="Unesite broj osoba"
                   />
                 </label>
+                <div class="inline-error" *ngIf="registrationErrorMessage">
+                  {{ registrationErrorMessage }}
+                </div>
 
                 <div class="register-actions">
                   <button class="confirm-btn" type="button" (click)="confirmRegistration(activity)">

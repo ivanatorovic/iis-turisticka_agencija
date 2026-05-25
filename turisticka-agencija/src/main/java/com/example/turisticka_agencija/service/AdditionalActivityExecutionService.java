@@ -369,8 +369,59 @@ public class AdditionalActivityExecutionService {
             throw new BadRequestException("Only ACTIVE activity can be finished");
         }
 
+        List<AdditionalActivityRegistration> registrations =
+                registrationRepository.findByAdditionalActivityExecutionId(id);
+
+        for (AdditionalActivityRegistration registration : registrations) {
+
+            if (registration.getStatus() == AdditionalActivityRegistrationStatus.ACTIVE) {
+                registration.setStatus(AdditionalActivityRegistrationStatus.FINISHED);
+            }
+        }
+
+        registrationRepository.saveAll(registrations);
+
         execution.setStatus(ExecutionStatus.FINISHED);
 
         return mapToResponse(executionRepository.save(execution));
+    }
+
+    public List<AdditionalActivityExecutionResponse> getFilteredByArrangementTerm(
+            Long arrangementTermId,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            Double minPrice,
+            Double maxPrice,
+            Integer minDuration,
+            Integer maxDuration,
+            Integer minAvailableSpots,
+            Boolean onlyAvailable
+    ) {
+        if (dateFrom != null && dateTo != null && dateFrom.isAfter(dateTo)) {
+            throw new BadRequestException("Početni datum ne može biti posle krajnjeg datuma");
+        }
+
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new BadRequestException("Minimalna cena ne može biti veća od maksimalne cene");
+        }
+
+        if (minDuration != null && maxDuration != null && minDuration > maxDuration) {
+            throw new BadRequestException("Minimalno trajanje ne može biti veće od maksimalnog trajanja");
+        }
+
+        return executionRepository.findFilteredByArrangementTerm(
+                        arrangementTermId,
+                        dateFrom,
+                        dateTo,
+                        minPrice,
+                        maxPrice,
+                        minDuration,
+                        maxDuration,
+                        minAvailableSpots,
+                        onlyAvailable
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 }

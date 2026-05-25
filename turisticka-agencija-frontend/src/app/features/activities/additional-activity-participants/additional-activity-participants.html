@@ -45,7 +45,6 @@
               <th>Kontakt</th>
               <th>Broj učesnika</th>
               <th>Datum prijave</th>
-              <th>Status prijave</th>
             </tr>
           </thead>
 
@@ -65,12 +64,6 @@
 
               <td>
                 {{ participant.registrationDate | date: 'dd.MM.yyyy. HH:mm' }}
-              </td>
-
-              <td>
-                <span class="status" [class.cancelled]="participant.status === 'CANCELLED'">
-                  {{ getStatusLabel(participant.status) }}
-                </span>
               </td>
             </tr>
           </tbody>
