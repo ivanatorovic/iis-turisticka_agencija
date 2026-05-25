@@ -15,6 +15,7 @@ public class AdditionalActivityExecutionRequest {
     private Integer capacity;
 
     private Double price;
+    private Long guideId;
 
     public Long getArrangementTermId() { return arrangementTermId; }
     public Long getAdditionalActivityId() { return additionalActivityId; }
@@ -31,4 +32,12 @@ public class AdditionalActivityExecutionRequest {
     public void setDurationMinutes(Integer durationMinutes) { this.durationMinutes = durationMinutes; }
     public void setCapacity(Integer capacity) { this.capacity = capacity; }
     public void setPrice(Double price) { this.price = price; }
+
+    public Long getGuideId() {
+        return guideId;
+    }
+
+    public void setGuideId(Long guideId) {
+        this.guideId = guideId;
+    }
 }

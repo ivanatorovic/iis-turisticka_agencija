@@ -108,4 +108,10 @@ public class UserController {
 
         return ResponseEntity.ok("Lozinka je uspešno promenjena");
     }
+
+    @GetMapping("/guides")
+    public ResponseEntity<List<UserResponse>> getGuides() {
+
+        return ResponseEntity.ok(userService.getGuides());
+    }
 }

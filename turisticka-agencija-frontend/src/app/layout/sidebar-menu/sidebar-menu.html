@@ -68,6 +68,10 @@
       Dodatne aktivnosti
     </a>
 
+    <a routerLink="/additional-activities-guide" *ngIf="isGuide()" (click)="closeMenu()">
+      Moje dodatne aktivnosti
+    </a>
+
     <!-- SVI -->
 
     <a routerLink="/my-profile" (click)="closeMenu()"> Moj profil </a>

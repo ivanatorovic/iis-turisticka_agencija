@@ -4,6 +4,7 @@ import com.example.turisticka_agencija.dto.UpdateProfileRequest;
 import com.example.turisticka_agencija.dto.UpdateProfileResponse;
 import com.example.turisticka_agencija.dto.UserResponse;
 import com.example.turisticka_agencija.exception.BadRequestException;
+import com.example.turisticka_agencija.model.Role;
 import com.example.turisticka_agencija.model.User;
 import com.example.turisticka_agencija.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -120,5 +121,26 @@ public class UserService implements UserDetailsService {
         );
 
         return new UpdateProfileResponse(userResponse, newToken);
+    }
+
+    public List<UserResponse> getGuides() {
+
+        List<User> guides = userRepository.findByRole(Role.GUIDE);
+
+        if (guides.isEmpty()) {
+            throw new BadRequestException("Trenutno nema dostupnih vodiča");
+        }
+
+        return guides.stream()
+                .map(user -> new UserResponse(
+                        user.getId(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getUsername(),
+                        user.getEmail(),
+                        user.getContact(),
+                        user.getRole()
+                ))
+                .toList();
     }
 }

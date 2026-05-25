@@ -24,6 +24,9 @@ public class AdditionalActivityExecution {
 
     private int reservedSpots;
 
+    @ManyToOne
+    private User guide;
+
     public AdditionalActivityExecution() {
     }
 
@@ -81,5 +84,13 @@ public class AdditionalActivityExecution {
 
     public int getAvailableSpots() {
         return capacity - reservedSpots;
+    }
+
+    public User getGuide() {
+        return guide;
+    }
+
+    public void setGuide(User guide) {
+        this.guide = guide;
     }
 }

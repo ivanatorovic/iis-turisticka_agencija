@@ -9,4 +9,5 @@ public interface AdditionalActivityExecutionRepository
         extends JpaRepository<AdditionalActivityExecution, Long> {
 
     List<AdditionalActivityExecution> findByArrangementTermId(Long arrangementTermId);
+    List<AdditionalActivityExecution> findByGuideId(Long guideId);
 }

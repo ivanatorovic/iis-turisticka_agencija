@@ -13,9 +13,7 @@
     <div class="header-row">
       <header class="page-header">
         <p class="subtitle">MENADŽERSKI PANEL</p>
-
         <h1>Aktivnosti aranžmana</h1>
-
         <p class="description">
           Pregled dodatnih aktivnosti koje su trenutno povezane sa izabranim aranžmanom.
         </p>
@@ -23,20 +21,13 @@
 
       <div class="top-actions">
         <button class="back-btn" routerLink="/manager-arrangement-terms">Nazad na aranžmane</button>
-
         <button class="add-btn" type="button" (click)="openAddModal()">+ Dodaj aktivnost</button>
       </div>
     </div>
 
     <div *ngIf="loading" class="message-box">Učitavanje dodatnih aktivnosti...</div>
-
-    <div *ngIf="errorMessage && !loading" class="message-box error">
-      {{ errorMessage }}
-    </div>
-
-    <div *ngIf="successMessage" class="message-box success">
-      {{ successMessage }}
-    </div>
+    <div *ngIf="errorMessage && !loading" class="message-box error">{{ errorMessage }}</div>
+    <div *ngIf="successMessage" class="message-box success">{{ successMessage }}</div>
 
     <section *ngIf="!loading && !errorMessage" class="activities-grid">
       <article class="activity-card" *ngFor="let activity of activities">
@@ -49,9 +40,7 @@
             <h2>{{ activity.activityName }}</h2>
           </div>
 
-          <p class="activity-description">
-            {{ activity.activityDescription }}
-          </p>
+          <p class="activity-description">{{ activity.activityDescription }}</p>
 
           <div class="meta-grid">
             <div>
@@ -61,9 +50,7 @@
 
             <div>
               <span>Datum</span>
-              <strong>
-                {{ activity.activityDate | date: 'dd.MM.yyyy.' }}
-              </strong>
+              <strong>{{ activity.activityDate | date: 'dd.MM.yyyy.' }}</strong>
             </div>
 
             <div>
@@ -82,25 +69,26 @@
             </div>
 
             <div>
-              <span>Rezervisano</span>
-              <strong>{{ activity.reservedSpots }}</strong>
+              <span>Slobodna mesta</span>
+              <strong>{{ activity.availableSpots }}</strong>
             </div>
 
             <div>
-              <span>Slobodna mesta</span>
-              <strong>{{ activity.availableSpots }}</strong>
+              <span>Vodič</span>
+              <strong>{{ activity.guideFirstName }} {{ activity.guideLastName }}</strong>
             </div>
 
             <div>
               <span>Cena</span>
               <strong>{{ activity.price }} €</strong>
             </div>
+          </div>
 
-            <div class="card-actions">
-              <button class="remove-btn" type="button" (click)="removeActivity(activity.id)">
-                Ukloni aktivnost
-              </button>
-            </div>
+          <div class="card-actions">
+            <button class="edit-btn" type="button" (click)="openEditModal(activity)">Izmeni</button>
+            <button class="delete-btn" type="button" (click)="removeActivity(activity.id)">
+              Ukloni
+            </button>
           </div>
         </div>
       </article>
@@ -118,21 +106,16 @@
 
     <div class="modal-header">
       <p>Dodavanje aktivnosti</p>
-
       <h2 *ngIf="modalStep === 1">Izaberite aktivnost</h2>
-
       <h2 *ngIf="modalStep === 2">Podaci o izvođenju</h2>
     </div>
 
     <div class="step-indicator">
-      <span [class.active]="modalStep === 1"> 1. Aktivnost </span>
-
-      <span [class.active]="modalStep === 2"> 2. Detalji </span>
+      <span [class.active]="modalStep === 1">1. Aktivnost</span>
+      <span [class.active]="modalStep === 2">2. Detalji</span>
     </div>
 
-    <div *ngIf="modalErrorMessage" class="modal-message error">
-      {{ modalErrorMessage }}
-    </div>
+    <div *ngIf="modalErrorMessage" class="modal-message error">{{ modalErrorMessage }}</div>
 
     <div *ngIf="modalStep === 1">
       <input
@@ -158,9 +141,7 @@
         >
           <div>
             <strong>{{ activity.name }}</strong>
-
             <p>{{ activity.description }}</p>
-
             <span>{{ activity.location }}</span>
           </div>
 
@@ -170,7 +151,6 @@
 
       <div class="modal-actions">
         <button class="cancel-btn" type="button" (click)="closeAddModal()">Odustani</button>
-
         <button class="next-btn" type="button" (click)="goToFormStep()">Dalje →</button>
       </div>
     </div>
@@ -178,16 +158,13 @@
     <div *ngIf="modalStep === 2">
       <div class="selected-activity-preview" *ngIf="selectedActivity">
         <span>Izabrana aktivnost</span>
-
         <strong>{{ selectedActivity.name }}</strong>
-
         <p>{{ selectedActivity.location }}</p>
       </div>
 
       <div class="execution-form">
         <label>
           Datum aktivnosti
-
           <input
             type="date"
             [min]="termStartDate"
@@ -198,34 +175,103 @@
 
         <label>
           Vreme početka
-
           <input type="time" [(ngModel)]="executionForm.startTime" />
         </label>
 
         <label>
           Trajanje u minutima
-
           <input type="number" placeholder="npr. 120" [(ngModel)]="executionForm.durationMinutes" />
         </label>
 
         <label>
           Kapacitet
-
           <input type="number" placeholder="npr. 25" [(ngModel)]="executionForm.capacity" />
         </label>
 
         <label>
-          Cena (u eurima)
+          Vodič
+          <select [(ngModel)]="executionForm.guideId">
+            <option [ngValue]="null">Izaberite vodiča</option>
+            <option *ngFor="let guide of guides" [ngValue]="guide.id">
+              {{ guide.firstName }} {{ guide.lastName }}
+            </option>
+          </select>
+        </label>
 
+        <label>
+          Cena (u eurima)
           <input type="number" placeholder="npr. 35" [(ngModel)]="executionForm.price" />
         </label>
       </div>
 
       <div class="modal-actions">
         <button class="cancel-btn" type="button" (click)="goBackToSelection()">← Nazad</button>
-
         <button class="next-btn" type="button" (click)="addActivityToTerm()">Potvrdi</button>
       </div>
+    </div>
+  </section>
+
+  <div class="modal-backdrop" *ngIf="showEditModal" (click)="closeEditModal()"></div>
+
+  <section class="activity-modal" *ngIf="showEditModal">
+    <button class="close-modal-btn" type="button" (click)="closeEditModal()">×</button>
+
+    <div class="modal-header">
+      <p>Izmena aktivnosti</p>
+      <h2>{{ selectedExecution?.activityName }}</h2>
+    </div>
+
+    <div *ngIf="editErrorMessage" class="modal-message error">
+      {{ editErrorMessage }}
+    </div>
+
+    <div class="execution-form">
+      <label>
+        Datum aktivnosti
+        <input
+          type="date"
+          [min]="termStartDate"
+          [max]="termEndDate"
+          [(ngModel)]="editForm.activityDate"
+        />
+      </label>
+
+      <label>
+        Vreme početka
+        <input type="time" [(ngModel)]="editForm.startTime" />
+      </label>
+
+      <label>
+        Trajanje u minutima
+        <input type="number" [(ngModel)]="editForm.durationMinutes" />
+      </label>
+
+      <label>
+        Kapacitet
+        <input type="number" [(ngModel)]="editForm.capacity" />
+      </label>
+
+      <label>
+        Vodič
+        <select [(ngModel)]="editForm.guideId">
+          <option [ngValue]="null">Bez promene</option>
+          <option *ngFor="let guide of guides" [ngValue]="guide.id">
+            {{ guide.firstName }} {{ guide.lastName }}
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Cena
+        <input type="number" [(ngModel)]="editForm.price" />
+      </label>
+    </div>
+
+    <div class="modal-actions">
+      <button class="cancel-btn" type="button" (click)="closeEditModal()">Otkaži</button>
+      <button class="next-btn" type="button" (click)="saveExecutionChanges()">
+        Sačuvaj izmene
+      </button>
     </div>
   </section>
 </section>

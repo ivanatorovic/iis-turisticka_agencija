@@ -8,6 +8,9 @@ public class AdditionalActivityExecutionResponse {
     private Long id;
 
     private Long arrangementTermId;
+    private String arrangementName;
+    private LocalDate arrangementStartDate;
+    private LocalDate arrangementEndDate;
 
     private Long additionalActivityId;
     private String activityName;
@@ -24,10 +27,21 @@ public class AdditionalActivityExecutionResponse {
     private int availableSpots;
 
     private double price;
+    private Long guideId;
+    private String guideFirstName;
+    private String guideLastName;
+    private String guideUsername;
 
     public AdditionalActivityExecutionResponse(
             Long id,
             Long arrangementTermId,
+            String arrangementName,
+            LocalDate arrangementStartDate,
+            LocalDate arrangementEndDate,
+            Long guideId,
+            String guideFirstName,
+            String guideLastName,
+            String guideUsername,
             Long additionalActivityId,
             String activityName,
             String activityDescription,
@@ -43,6 +57,13 @@ public class AdditionalActivityExecutionResponse {
     ) {
         this.id = id;
         this.arrangementTermId = arrangementTermId;
+        this.arrangementName = arrangementName;
+        this.arrangementStartDate = arrangementStartDate;
+        this.arrangementEndDate = arrangementEndDate;
+        this.guideId = guideId;
+        this.guideFirstName = guideFirstName;
+        this.guideLastName = guideLastName;
+        this.guideUsername = guideUsername;
         this.additionalActivityId = additionalActivityId;
         this.activityName = activityName;
         this.activityDescription = activityDescription;
@@ -59,6 +80,13 @@ public class AdditionalActivityExecutionResponse {
 
     public Long getId() { return id; }
     public Long getArrangementTermId() { return arrangementTermId; }
+    public String getArrangementName() { return arrangementName; }
+    public LocalDate getArrangementStartDate() { return arrangementStartDate; }
+    public LocalDate getArrangementEndDate() { return arrangementEndDate; }
+    public Long getGuideId() { return guideId; }
+    public String getGuideFirstName() { return guideFirstName; }
+    public String getGuideLastName() { return guideLastName; }
+    public String getGuideUsername() { return guideUsername; }
     public Long getAdditionalActivityId() { return additionalActivityId; }
     public String getActivityName() { return activityName; }
     public String getActivityDescription() { return activityDescription; }

@@ -40,6 +40,9 @@ export interface ArrangementActivity {
   id: number;
 
   arrangementTermId: number;
+  arrangementName: string;
+  arrangementStartDate: string;
+  arrangementEndDate: string;
   additionalActivityId: number;
 
   activityName: string;
@@ -58,6 +61,10 @@ export interface ArrangementActivity {
   availableSpots: number;
 
   price: number;
+  guideId: number;
+  guideFirstName: string;
+  guideLastName: string;
+  guideUsername: string;
 }
 
 export interface AdditionalActivityExecutionRequest {
@@ -68,6 +75,7 @@ export interface AdditionalActivityExecutionRequest {
   durationMinutes: number | null;
   capacity: number | null;
   price: number | null;
+  guideId: number | null;
 }
 
 export interface Destination {
@@ -146,6 +154,28 @@ export interface AdditionalActivityRegistrationResponse {
 
 export interface AdditionalActivityRegistrationUpdateRequest {
   numberOfParticipants: number | null;
+}
+
+export interface AdditionalActivityParticipantResponse {
+  registrationId: number;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  contact: string;
+  numberOfParticipants: number;
+  registrationDate: string;
+  status: string;
+}
+
+export interface AdditionalActivityExecutionUpdateRequest {
+  activityDate?: string;
+  startTime?: string;
+  durationMinutes?: number;
+  capacity?: number;
+  guideId?: number;
+  price?: number;
 }
 
 @Injectable({
@@ -254,6 +284,19 @@ export class ArrangementService {
     );
   }
 
+  updateExecution(
+    id: number,
+    request: AdditionalActivityExecutionUpdateRequest,
+  ): Observable<ArrangementActivity> {
+    return this.http.put<ArrangementActivity>(
+      `${this.additionalActivityExecutionsUrl}/${id}`,
+      request,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
   updateActivityRegistration(
     registrationId: number,
     request: AdditionalActivityRegistrationUpdateRequest,
@@ -261,6 +304,23 @@ export class ArrangementService {
     return this.http.put<AdditionalActivityRegistrationResponse>(
       `${this.additionalActivityRegistrationsUrl}/${registrationId}`,
       request,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  getGuideActivities(): Observable<ArrangementActivity[]> {
+    return this.http.get<ArrangementActivity[]>(`${this.additionalActivityExecutionsUrl}/guide`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getParticipantsForExecution(
+    executionId: number,
+  ): Observable<AdditionalActivityParticipantResponse[]> {
+    return this.http.get<AdditionalActivityParticipantResponse[]>(
+      `${this.additionalActivityRegistrationsUrl}/execution/${executionId}/participants`,
       {
         headers: this.getHeaders(),
       },

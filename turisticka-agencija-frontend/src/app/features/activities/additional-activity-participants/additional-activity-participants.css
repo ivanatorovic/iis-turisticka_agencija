@@ -1,0 +1,248 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:wght@500;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
+.participants-page {
+  position: relative;
+  min-height: 100vh;
+  padding: 34px 60px 70px;
+  color: white;
+  font-family: 'Inter', sans-serif;
+  background: #050505;
+}
+
+.background {
+  position: fixed;
+  inset: 0;
+  background: url('../../../../assets/hotel.jpg') center/cover no-repeat;
+  transform: scale(1.04);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.76), rgba(0, 0, 0, 0.92)),
+    linear-gradient(to right, rgba(0, 0, 0, 0.64), rgba(0, 0, 0, 0.32));
+}
+
+.background,
+.overlay {
+  z-index: 0;
+}
+
+.navbar {
+  position: relative;
+  z-index: 10000;
+}
+
+.left-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+
+.logo {
+  color: white;
+  text-decoration: none;
+  font-size: 15px;
+  letter-spacing: 6px;
+  font-weight: 600;
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  max-width: 1320px;
+  margin: 72px auto 0;
+}
+
+.header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 30px;
+  margin-bottom: 38px;
+}
+
+.page-header {
+  max-width: 760px;
+}
+
+.subtitle {
+  margin: 0 0 12px;
+  color: #d8c19b;
+  letter-spacing: 5px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+h1 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(54px, 7vw, 82px);
+  line-height: 0.95;
+  font-weight: 600;
+}
+
+.description {
+  margin: 22px 0 0;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 17px;
+  line-height: 1.8;
+}
+
+.top-actions {
+  padding-top: 42px;
+}
+
+.back-btn {
+  border: 1px solid rgba(216, 193, 155, 0.34);
+  padding: 14px 24px;
+  background: rgba(216, 193, 155, 0.16);
+  color: #f3dfbe;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(216, 193, 155, 0.24);
+}
+
+.message-box,
+.table-card {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(8, 10, 10, 0.72);
+  backdrop-filter: blur(18px);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.3);
+}
+
+.message-box {
+  padding: 24px;
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.message-box.error {
+  color: #ffb3b3;
+  border-color: rgba(255, 120, 120, 0.35);
+  background: rgba(255, 80, 80, 0.12);
+}
+
+.table-card {
+  overflow: hidden;
+}
+
+.table-header {
+  display: flex;
+  justify-content: flex-end;
+  padding: 22px 26px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.09);
+  background: rgba(216, 193, 155, 0.08);
+}
+
+.table-header span {
+  display: block;
+  margin-bottom: 6px;
+  color: rgba(255, 255, 255, 0.52);
+  font-size: 12px;
+}
+
+.table-header strong {
+  color: #f3dfbe;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 940px;
+}
+
+th {
+  padding: 18px 20px;
+  text-align: left;
+  color: #d8c19b;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+td {
+  padding: 18px 20px;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+td strong {
+  color: white;
+  font-weight: 600;
+}
+
+tr {
+  transition: 0.2s ease;
+}
+
+tbody tr:hover {
+  background: rgba(216, 193, 155, 0.07);
+}
+
+.status {
+  display: inline-flex;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(184, 255, 208, 0.14);
+  color: #b8ffd0;
+  border: 1px solid rgba(184, 255, 208, 0.3);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status.cancelled {
+  background: rgba(255, 120, 120, 0.12);
+  color: #ffb3b3;
+  border-color: rgba(255, 120, 120, 0.32);
+}
+
+.empty-box {
+  padding: 28px;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+@media (max-width: 900px) {
+  .header-row {
+    flex-direction: column;
+  }
+
+  .top-actions {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 760px) {
+  .participants-page {
+    padding: 26px 22px 50px;
+  }
+
+  .content {
+    margin-top: 56px;
+  }
+
+  h1 {
+    font-size: 52px;
+  }
+}

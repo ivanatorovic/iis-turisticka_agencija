@@ -2,6 +2,7 @@ package com.example.turisticka_agencija.controller;
 
 import com.example.turisticka_agencija.dto.AdditionalActivityExecutionRequest;
 import com.example.turisticka_agencija.dto.AdditionalActivityExecutionResponse;
+import com.example.turisticka_agencija.dto.AdditionalActivityExecutionUpdateRequest;
 import com.example.turisticka_agencija.service.AdditionalActivityExecutionService;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,5 +42,21 @@ public class AdditionalActivityExecutionController {
             Principal principal
     ) {
         executionService.deleteExecution(id, principal);
+    }
+
+    @GetMapping("/guide")
+    public List<AdditionalActivityExecutionResponse> getGuideActivities(
+            Principal principal
+    ) {
+        return executionService.getGuideActivities(principal);
+    }
+
+    @PutMapping("/{id}")
+    public AdditionalActivityExecutionResponse updateExecution(
+            @PathVariable Long id,
+            @RequestBody AdditionalActivityExecutionUpdateRequest request,
+            Principal principal
+    ) {
+        return executionService.updateExecution(id, request, principal);
     }
 }
