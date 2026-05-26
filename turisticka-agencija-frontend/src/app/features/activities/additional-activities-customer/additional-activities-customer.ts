@@ -4,7 +4,6 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import {
-  AdditionalActivityExecutionFilter,
   AdditionalActivityRegistrationResponse,
   ArrangementActivity,
   ArrangementService,
@@ -22,12 +21,8 @@ import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
 export class AdditionalActivitiesCustomer implements OnInit {
   arrangementTermId!: number;
 
-  activities: ArrangementActivity[] = [];
   allTermActivities: ArrangementActivity[] = [];
   myRegistrations: AdditionalActivityRegistrationResponse[] = [];
-
-  selectedExecutionId: number | null = null;
-  numberOfParticipants: number | null = null;
 
   registrationToCancelId: number | null = null;
 
@@ -38,19 +33,7 @@ export class AdditionalActivitiesCustomer implements OnInit {
 
   errorMessage = '';
   successMessage = '';
-  registrationErrorMessage = '';
   updateRegistrationErrorMessage = '';
-
-  filters: AdditionalActivityExecutionFilter = {
-    dateFrom: '',
-    dateTo: '',
-    minPrice: null,
-    maxPrice: null,
-    minDuration: null,
-    maxDuration: null,
-    minAvailableSpots: null,
-    onlyAvailable: true,
-  };
 
   constructor(
     private route: ActivatedRoute,
@@ -74,64 +57,15 @@ export class AdditionalActivitiesCustomer implements OnInit {
     this.successMessage = '';
 
     this.arrangementService.getActivitiesForArrangementTerm(this.arrangementTermId).subscribe({
-      next: (allActivities) => {
-        this.allTermActivities = allActivities;
-        this.loadFilteredActivities();
+      next: (activities) => {
+        this.allTermActivities = activities;
+        this.loadMyRegistrations();
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Greška pri učitavanju aktivnosti.';
         this.loading = false;
       },
     });
-  }
-
-  loadFilteredActivities(): void {
-    this.arrangementService
-      .getFilteredActivitiesForArrangementTerm(this.arrangementTermId, this.filters)
-      .subscribe({
-        next: (activities) => {
-          this.activities = activities;
-          this.loadMyRegistrations();
-        },
-        error: (error) => {
-          this.errorMessage = error.error?.message || 'Greška pri filtriranju aktivnosti.';
-          this.loading = false;
-        },
-      });
-  }
-
-  applyFilters(): void {
-    const currentScroll = window.scrollY;
-
-    this.loading = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.closeRegisterForm();
-
-    this.loadFilteredActivities();
-
-    setTimeout(() => {
-      window.scrollTo({
-        top: currentScroll,
-        behavior: 'instant' as ScrollBehavior,
-      });
-    });
-  }
-
-  resetFilters(): void {
-    this.filters = {
-      dateFrom: '',
-      dateTo: '',
-      minPrice: null,
-      maxPrice: null,
-      minDuration: null,
-      maxDuration: null,
-      minAvailableSpots: null,
-      onlyAvailable: true,
-    };
-
-    this.applyFilters();
   }
 
   loadMyRegistrations(): void {
@@ -150,64 +84,6 @@ export class AdditionalActivitiesCustomer implements OnInit {
         this.loading = false;
       },
     });
-  }
-
-  getAvailableActivities(): ArrangementActivity[] {
-    return this.activities.filter(
-      (activity) =>
-        !this.myRegistrations.some((registration) => registration.executionId === activity.id),
-    );
-  }
-
-  openRegisterForm(executionId: number): void {
-    this.selectedExecutionId = executionId;
-    this.numberOfParticipants = null;
-
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.registrationErrorMessage = '';
-  }
-
-  closeRegisterForm(): void {
-    this.selectedExecutionId = null;
-    this.numberOfParticipants = null;
-    this.registrationErrorMessage = '';
-  }
-
-  confirmRegistration(activity: ArrangementActivity): void {
-    this.errorMessage = '';
-    this.successMessage = '';
-    this.registrationErrorMessage = '';
-
-    if (!this.numberOfParticipants || this.numberOfParticipants <= 0) {
-      this.registrationErrorMessage = 'Morate uneti broj prijavljenih osoba.';
-      return;
-    }
-
-    if (this.numberOfParticipants > activity.availableSpots) {
-      this.registrationErrorMessage = 'Broj osoba ne može biti veći od broja slobodnih mesta.';
-      return;
-    }
-
-    this.arrangementService
-      .registerForActivity(activity.id, {
-        numberOfParticipants: this.numberOfParticipants,
-      })
-      .subscribe({
-        next: () => {
-          this.successMessage = 'Uspešno ste prijavljeni na dodatnu aktivnost.';
-
-          this.selectedExecutionId = null;
-          this.numberOfParticipants = null;
-          this.registrationErrorMessage = '';
-
-          this.loadPageData();
-        },
-        error: (error) => {
-          this.registrationErrorMessage =
-            error.error?.message || 'Prijava na dodatnu aktivnost nije uspela.';
-        },
-      });
   }
 
   openCancelModal(registrationId: number): void {
@@ -229,9 +105,7 @@ export class AdditionalActivitiesCustomer implements OnInit {
     this.arrangementService.cancelActivityRegistration(this.registrationToCancelId).subscribe({
       next: () => {
         this.successMessage = 'Prijava na dodatnu aktivnost je uspešno otkazana.';
-
         this.registrationToCancelId = null;
-
         this.loadPageData();
       },
       error: (error) => {
@@ -239,18 +113,6 @@ export class AdditionalActivitiesCustomer implements OnInit {
         this.registrationToCancelId = null;
       },
     });
-  }
-
-  getImageUrl(imageUrl: string): string {
-    if (!imageUrl) {
-      return '/assets/plaza.jpg';
-    }
-
-    if (imageUrl.startsWith('http')) {
-      return imageUrl;
-    }
-
-    return `http://localhost:8080${imageUrl}`;
   }
 
   openUpdateForm(registration: AdditionalActivityRegistrationResponse): void {
@@ -301,5 +163,17 @@ export class AdditionalActivitiesCustomer implements OnInit {
             error.error?.message || 'Ažuriranje prijave nije uspelo.';
         },
       });
+  }
+
+  getImageUrl(imageUrl: string): string {
+    if (!imageUrl) {
+      return '/assets/plaza.jpg';
+    }
+
+    if (imageUrl.startsWith('http')) {
+      return imageUrl;
+    }
+
+    return `http://localhost:8080${imageUrl}`;
   }
 }

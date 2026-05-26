@@ -740,3 +740,141 @@ h1 {
   font-size: 12px;
   font-weight: 500;
 }
+
+.recommended-section {
+  margin-top: 42px;
+}
+
+.recommended-card {
+  padding: 34px;
+  border: 1px solid rgba(216, 193, 155, 0.22);
+  background: rgba(8, 10, 10, 0.7);
+  backdrop-filter: blur(18px);
+  text-align: center;
+}
+
+.recommended-card h2 {
+  margin: 0;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 44px;
+  font-weight: 600;
+}
+
+.recommended-card p {
+  max-width: 700px;
+  margin: 18px auto 0;
+  color: rgba(255, 255, 255, 0.72);
+  line-height: 1.8;
+}
+
+.recommended-btn {
+  margin-top: 28px;
+  padding: 15px 28px;
+  border: 1px solid rgba(216, 193, 155, 0.34);
+  background: rgba(216, 193, 155, 0.16);
+  color: #f3dfbe;
+  font-family: 'Inter', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.recommended-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(216, 193, 155, 0.24);
+}
+
+.top-actions {
+  padding-top: 18px;
+  width: 270px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 14px;
+}
+
+.recommended-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(216, 193, 155, 0.24);
+}
+@media (max-width: 900px) {
+  .header-row {
+    flex-direction: column;
+  }
+
+  .top-actions {
+    width: 100%;
+    padding-top: 0;
+  }
+}
+
+.recommended-banner {
+  margin-bottom: 46px;
+}
+
+.recommended-banner-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+
+  padding: 28px 32px;
+
+  border: 1px solid rgba(216, 193, 155, 0.2);
+
+  background: rgba(8, 10, 10, 0.58);
+
+  backdrop-filter: blur(16px);
+}
+
+.recommended-banner-content h2 {
+  margin: 0;
+
+  font-family: 'Cormorant Garamond', serif;
+
+  font-size: 42px;
+
+  font-weight: 600;
+}
+
+.recommended-text {
+  max-width: 720px;
+
+  margin: 12px 0 0;
+
+  color: rgba(255, 255, 255, 0.68);
+
+  line-height: 1.7;
+
+  font-size: 15px;
+}
+
+.recommended-btn {
+  flex-shrink: 0;
+
+  padding: 15px 26px;
+
+  border: 1px solid rgba(216, 193, 155, 0.32);
+
+  background: rgba(216, 193, 155, 0.14);
+
+  color: #f3dfbe;
+
+  font-family: 'Inter', sans-serif;
+
+  font-size: 13px;
+
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition: 0.25s ease;
+}
+
+.recommended-btn:hover {
+  transform: translateY(-2px);
+
+  background: rgba(216, 193, 155, 0.22);
+}

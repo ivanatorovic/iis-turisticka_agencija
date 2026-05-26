@@ -19,6 +19,7 @@ import { CreateActivities } from './features/activities/create-activities/create
 import { ManagerArrangementTermsList } from './features/arrangements/manager-arrangements/manager-arrangement-terms-list/manager-arrangement-terms-list';
 import { AdditionalActivitiesCustomer } from './features/activities/additional-activities-customer/additional-activities-customer';
 import { AdditionalActivitiesGuide } from './features/activities/additional-activities-guide/additional-activities-guide';
+import { RecommendedActivities } from './features/activities/recommended-activities/recommended-activities';
 export const routes: Routes = [
   {
     path: '',
@@ -140,5 +141,9 @@ export const routes: Routes = [
       import('./features/activities/additional-activity-participants/additional-activity-participants').then(
         (m) => m.AdditionalActivityParticipants,
       ),
+  },
+  {
+    path: 'recommended-activities',
+    component: RecommendedActivities,
   },
 ];
