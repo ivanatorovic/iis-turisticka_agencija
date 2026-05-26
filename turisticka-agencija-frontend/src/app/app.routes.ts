@@ -50,8 +50,9 @@ export const routes: Routes = [
   {
     path: 'dokumentacija-zalbe/:zalbaId',
     loadComponent: () =>
-      import('./features/dokumentacija-zalbe/dokumentacija-zalbe')
-        .then((m) => m.DokumentacijaZalbeComponent),
+      import('./features/dokumentacija-zalbe/dokumentacija-zalbe').then(
+        (m) => m.DokumentacijaZalbeComponent,
+      ),
   },
   {
     path: 'reservations',
@@ -92,20 +93,23 @@ export const routes: Routes = [
   {
     path: 'workflows/:workflowId/create-arrangement',
     loadComponent: () =>
-      import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form')
-        .then((m) => m.ManagerArrangementForm),
+      import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form').then(
+        (m) => m.ManagerArrangementForm,
+      ),
   },
   {
     path: 'workflows/:workflowId/edit-arrangement/:arrangementId',
     loadComponent: () =>
-      import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form')
-        .then((m) => m.ManagerArrangementForm),
+      import('./features/arrangements/manager-arrangements/manager-arrangements-form/manager-arrangements-form').then(
+        (m) => m.ManagerArrangementForm,
+      ),
   },
   {
     path: 'my-manager-arrangements',
     loadComponent: () =>
-      import('./features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list')
-        .then((m) => m.ManagerArrangementsList),
+      import('./features/arrangements/manager-arrangements/manager-arrangements-list/manager-arrangements-list').then(
+        (m) => m.ManagerArrangementsList,
+      ),
   },
   {
     path: 'manager-arrangements',
@@ -130,8 +134,9 @@ export const routes: Routes = [
   {
     path: 'manager-arrangements/:id/activities',
     loadComponent: () =>
-      import('./features/arrangements/manager-arrangements/manager-arrangements-activities/manager-arrangements-activities')
-        .then((m) => m.ManagerArrangementsActivities),
+      import('./features/arrangements/manager-arrangements/manager-arrangements-activities/manager-arrangements-activities').then(
+        (m) => m.ManagerArrangementsActivities,
+      ),
   },
   {
     path: 'additional-activities-customer',
@@ -144,13 +149,12 @@ export const routes: Routes = [
   {
     path: 'additional-activity-participants/:executionId',
     loadComponent: () =>
-      import('./features/activities/additional-activity-participants/additional-activity-participants')
-        .then((m) => m.AdditionalActivityParticipants),
+      import('./features/activities/additional-activity-participants/additional-activity-participants').then(
+        (m) => m.AdditionalActivityParticipants,
+      ),
   },
   {
     path: 'recommended-activities',
     component: RecommendedActivities,
   },
 ];
-import { AdditionalActivitiesGuide } from './features/activities/additional-activities-guide/additional-activities-guide';
-import { RecommendedActivities } from './features/activities/recommended-activities/recommended-activities';

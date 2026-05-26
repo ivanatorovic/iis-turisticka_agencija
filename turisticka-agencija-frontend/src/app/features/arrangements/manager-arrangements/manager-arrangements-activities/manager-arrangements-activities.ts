@@ -84,6 +84,7 @@ export class ManagerArrangementsActivities implements OnInit {
     this.termEndDate = this.route.snapshot.queryParamMap.get('endDate') || '';
 
     this.loadActivities();
+    this.loadGuides();
   }
 
   loadActivities(): void {
