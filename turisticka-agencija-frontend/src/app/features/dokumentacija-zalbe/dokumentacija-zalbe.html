@@ -1,0 +1,211 @@
+<div class="documentation-page">
+
+
+  <div class="content">
+    <div class="page-header">
+      <p class="subtitle">LUXTRAVEL</p>
+      <h1>Dokumentacija žalbe</h1>
+      <p class="description">
+        Pregled podataka o žalbi, putniku, aranžmanu, smeštaju, prevozu i operativnim kontaktima.
+      </p>
+    </div>
+
+    <p class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+
+    <p class="loading-message" *ngIf="loading">
+      Učitavanje dokumentacije...
+    </p>
+
+    <div class="top-actions" *ngIf="dokumentacija">
+      <button class="secondary-btn" (click)="nazad()">
+        Nazad na žalbe
+      </button>
+
+      <button class="primary-btn" (click)="sacuvajKaoPdf()">
+        Odštampaj / Sačuvaj kao PDF
+      </button>
+    </div>
+
+    <div class="documentation-grid" *ngIf="dokumentacija">
+      <div class="documentation-card wide">
+        <div class="card-title-row">
+          <div>
+            <p class="small-title">Žalba</p>
+            <h2>{{ dokumentacija.naslovZalbe }}</h2>
+          </div>
+
+          <span class="status-badge">
+            {{ dokumentacija.statusZalbe }}
+          </span>
+        </div>
+
+        <div class="info-grid">
+          <div>
+            <span>Tip žalbe</span>
+            <b>{{ dokumentacija.tipZalbe }}</b>
+          </div>
+
+          <div>
+            <span>Hitna</span>
+            <b>{{ dokumentacija.hitna ? 'Da' : 'Ne' }}</b>
+          </div>
+
+          <div>
+            <span>ID žalbe</span>
+            <b>{{ dokumentacija.zalbaId }}</b>
+          </div>
+        </div>
+
+        <div class="long-text">
+          <span>Opis žalbe</span>
+          <p>{{ dokumentacija.opisZalbe }}</p>
+        </div>
+      </div>
+
+      <div class="documentation-card wide">
+        <p class="small-title">Aranžman / tura</p>
+        <h2>{{ dokumentacija.nazivAranzmana }}</h2>
+
+        <div class="info-grid">
+          <div>
+            <span>Destinacija</span>
+            <b>
+              {{ dokumentacija.destinacijaNaziv || '-' }},
+              {{ dokumentacija.destinacijaDrzava || '-' }}
+            </b>
+          </div>
+
+          <div>
+            <span>Broj noćenja</span>
+            <b>{{ dokumentacija.brojNocenja || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Osnovna cena</span>
+            <b>{{ dokumentacija.osnovnaCena | number: '1.2-2' }} €</b>
+          </div>
+        </div>
+
+        <div class="long-text">
+          <span>Opis aranžmana</span>
+          <p>{{ dokumentacija.opisAranzmana || 'Nema opisa.' }}</p>
+        </div>
+      </div>
+
+      <div class="documentation-card">
+        <h2>Podaci o smeštaju</h2>
+
+        <div class="info-list">
+          <div>
+            <span>Naziv smeštaja</span>
+            <b>{{ dokumentacija.nazivSmestaja || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Kategorija</span>
+            <b>{{ dokumentacija.kategorijaSmestaja || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Kontakt smeštaja</span>
+            <b>{{ dokumentacija.kontaktSmestaja || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Email smeštaja</span>
+            <b>{{ dokumentacija.emailSmestaja || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Odgovorna osoba</span>
+            <b>{{ dokumentacija.odgovornaOsobaSmestaja || '-' }}</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="documentation-card">
+        <h2>Podaci o prevozu</h2>
+
+        <div class="info-list">
+          <div>
+            <span>Tip prevoza</span>
+            <b>{{ dokumentacija.tipPrevoza || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Kompanija</span>
+            <b>{{ dokumentacija.kompanijaPrevoza || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Kontakt prevoznika</span>
+            <b>{{ dokumentacija.kontaktPrevoznika || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Email prevoznika</span>
+            <b>{{ dokumentacija.emailPrevoznika || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Odgovorna osoba</span>
+            <b>{{ dokumentacija.odgovornaOsobaPrevoznika || '-' }}</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="documentation-card wide">
+        <h2>Podaci o putniku</h2>
+
+        <div class="info-grid">
+          <div>
+            <span>Ime i prezime</span>
+            <b>{{ dokumentacija.imePutnika }} {{ dokumentacija.prezimePutnika }}</b>
+          </div>
+
+          <div>
+            <span>Username</span>
+            <b>{{ dokumentacija.usernamePutnika || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Email</span>
+            <b>{{ dokumentacija.emailPutnika || '-' }}</b>
+          </div>
+
+          <div>
+            <span>Kontakt</span>
+            <b>{{ dokumentacija.kontaktPutnika || '-' }}</b>
+          </div>
+
+          <div>
+            <span>ID putnika</span>
+            <b>{{ dokumentacija.putnikId }}</b>
+          </div>
+        </div>
+      </div>
+
+      <div class="documentation-card wide">
+        <h2>Plan puta</h2>
+        <p class="text-block">
+          {{ dokumentacija.planPuta || 'Plan puta nije unet.' }}
+        </p>
+      </div>
+
+      <div class="documentation-card wide">
+        <h2>Napomene za tim</h2>
+
+        <p class="text-block">
+          {{ dokumentacija.napomeneZaTim || 'Nema posebnih napomena.' }}
+        </p>
+
+        <div class="urgent-contact">
+          <span>Hitni kontakt</span>
+          <b>{{ dokumentacija.kontaktHitno || '-' }}</b>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

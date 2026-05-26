@@ -20,6 +20,8 @@ export interface Zalba {
   najduziKorak?: string;
   ocena?: number;
   komentarOcene?: string;
+  reservationId?: number;
+  nazivTure?: string;
 }
 
 @Injectable({

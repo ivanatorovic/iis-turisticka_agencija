@@ -10,6 +10,8 @@ public class Zalba {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long reservationId;
+
     private String naslov;
 
     @Column(length = 1000)
@@ -26,6 +28,8 @@ public class Zalba {
     private Long putnikId;
 
     private boolean hitna;
+
+    private String nazivTure;
 
     @Enumerated(EnumType.STRING)
     private TimZalbe dodeljeniTim;
@@ -271,5 +275,22 @@ public class Zalba {
 
     public void setKomentarOcene(String komentarOcene) {
         this.komentarOcene = komentarOcene;
+    }
+
+    public Long getReservationId() {
+        return reservationId;
+    }
+
+    public void setReservationId(Long reservationId) {
+        this.reservationId = reservationId;
+    }
+
+
+    public String getNazivTure() {
+        return nazivTure;
+    }
+
+    public void setNazivTure(String nazivTure) {
+        this.nazivTure = nazivTure;
     }
 }

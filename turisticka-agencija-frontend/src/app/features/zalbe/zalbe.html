@@ -1,6 +1,6 @@
 <div class="zalbe-page">
-  <app-sidebar-menu></app-sidebar-menu>
 
+  <app-sidebar-menu></app-sidebar-menu>
   <div class="content">
     <div class="page-header">
       <p class="subtitle">LUXTRAVEL</p>
@@ -18,7 +18,6 @@
       {{ successMessage }}
     </p>
 
-    <!-- PUTNIK / CUSTOMER -->
     <div class="analytics-grid" *ngIf="role === 'CUSTOMER'">
       <div class="analytics-card">
         <h2>Podnošenje žalbe</h2>
@@ -62,6 +61,7 @@
           <thead>
           <tr>
             <th>Naslov</th>
+            <th>Tura</th>
             <th>Tip</th>
             <th>Status</th>
             <th>Ocena</th>
@@ -72,13 +72,14 @@
           <tbody>
           <tr *ngFor="let zalba of zalbe">
             <td>{{ zalba.naslov }}</td>
+            <td>{{ getNazivTure(zalba) }}</td>
             <td>{{ zalba.tipZalbe }}</td>
             <td>
               <span class="status-badge">{{ zalba.status }}</span>
             </td>
             <td>{{ zalba.ocena || '-' }}</td>
             <td>
-              <div class="inline-actions" *ngIf="zalba.status === 'ZATVORENO' && !zalba.ocena">
+              <div class="inline-actions" *ngIf="mozeDaOceni(zalba)">
                 <select [(ngModel)]="ocena">
                   <option [ngValue]="1">1</option>
                   <option [ngValue]="2">2</option>
@@ -98,9 +99,9 @@
                 </button>
               </div>
 
-              <span *ngIf="zalba.status !== 'ZATVORENO' || zalba.ocena">
-                  -
-                </span>
+              <span *ngIf="!mozeDaOceni(zalba)">
+                -
+              </span>
             </td>
           </tr>
           </tbody>
@@ -108,7 +109,6 @@
       </div>
     </div>
 
-    <!-- OPERATER ŽALBI -->
     <div class="analytics-grid" *ngIf="role === 'COMPLAINT_OPERATOR'">
       <div class="analytics-card wide">
         <div class="card-header">
@@ -119,9 +119,7 @@
             </p>
           </div>
 
-          <button class="primary-btn" (click)="loadNoveZalbe()">
-            Osveži
-          </button>
+
         </div>
 
         <table>
@@ -158,10 +156,6 @@
                   <input type="checkbox" [(ngModel)]="selectedHitna" />
                   Hitno
                 </label>
-
-                <button class="small-btn" (click)="kategorizuj(zalba)">
-                  Kategorizuj
-                </button>
               </div>
             </td>
 
@@ -185,7 +179,6 @@
       </div>
     </div>
 
-    <!-- TIMOVI ZA ŽALBE -->
     <div class="analytics-grid" *ngIf="isComplaintTeam()">
       <div class="analytics-card wide">
         <div class="card-header">
@@ -196,9 +189,7 @@
             </p>
           </div>
 
-          <button class="primary-btn" (click)="loadZalbeZaTim()">
-            Osveži
-          </button>
+
         </div>
 
         <table>
@@ -222,6 +213,10 @@
             <td>{{ zalba.hitna ? 'Da' : 'Ne' }}</td>
             <td>
               <div class="team-form">
+                <button class="small-btn" (click)="otvoriDokumentacijuZalbe(zalba)">
+                  Vidi dokumentaciju žalbe
+                </button>
+
                 <input
                   type="text"
                   placeholder="Opis rešenja"
@@ -271,7 +266,6 @@
       </div>
     </div>
 
-    <!-- MENADŽER ŽALBI / DIREKTOR -->
     <div class="analytics-grid" *ngIf="role === 'COMPLAINT_MANAGER' || role === 'DIRECTOR'">
       <div class="summary-grid" *ngIf="statistikaStatusi">
         <div class="summary-card">
@@ -291,7 +285,7 @@
 
         <div class="summary-card">
           <span>Rešeno</span>
-          <b>{{ statistikaStatusi.RESENO || 0 }}</b>
+          <b>{{ (statistikaStatusi.RESENO || 0) + (statistikaStatusi.ZATVORENO || 0) }}</b>
         </div>
 
         <div class="summary-card highlight">
@@ -342,6 +336,9 @@
             <th>Tip</th>
             <th>Status</th>
             <th>Tim</th>
+            <th>Opis rešenja</th>
+            <th>Preduzete mere</th>
+            <th>Najduži korak</th>
             <th>Ocena</th>
           </tr>
           </thead>
@@ -352,13 +349,15 @@
             <td>{{ zalba.tipZalbe }}</td>
             <td>{{ zalba.status }}</td>
             <td>{{ zalba.dodeljeniTim || '-' }}</td>
+            <td>{{ zalba.opisResenja || '-' }}</td>
+            <td>{{ zalba.preduzeteMere || '-' }}</td>
+            <td>{{ zalba.najduziKorak || '-' }}</td>
             <td>{{ zalba.ocena || '-' }}</td>
           </tr>
           </tbody>
         </table>
       </div>
     </div>
-
 
     <div class="analytics-grid" *ngIf="role === 'ADMIN'">
       <div class="analytics-card wide">
@@ -391,7 +390,6 @@
         </table>
       </div>
     </div>
-
 
     <div class="analytics-grid" *ngIf="!role">
       <div class="analytics-card wide">

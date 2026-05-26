@@ -19,46 +19,57 @@
   </div>
 
   <div class="menu-links">
-    <!-- POČETNA -->
+    <a class="home-link" routerLink="/" (click)="closeMenu()">
+      Početna stranica
+    </a>
+
+
     <a routerLink="/workflows/create" *ngIf="isAdmin()" (click)="closeMenu()">
       Kreiraj novi radni tok
     </a>
 
-    <a routerLink="/workflows" *ngIf="isAdmin()" (click)="closeMenu()"> Prikaži radne tokove </a>
+    <a routerLink="/workflows" *ngIf="isAdmin()" (click)="closeMenu()">
+      Prikaži radne tokove
+    </a>
 
-    <a class="home-link" routerLink="/" (click)="closeMenu()"> Početna stranica </a>
 
-    <!-- PRETRAGA -->
+    <a routerLink="/zalbe" *ngIf="isAdmin()" (click)="closeMenu()">
+      Administracija žalbi
+    </a>
+
 
     <a routerLink="/arrangements" *ngIf="isCustomer() || isSalesAgent()" (click)="closeMenu()">
       Pretraga aranžmana
     </a>
 
-    <!-- CUSTOMER -->
+    <a routerLink="/reservations" *ngIf="isCustomer()" (click)="closeMenu()">
+      Moje rezervacije
+    </a>
 
-    <a routerLink="/reservations" *ngIf="isCustomer()" (click)="closeMenu()"> Moje rezervacije </a>
+    <a routerLink="/reservations" *ngIf="isSalesAgent()" (click)="closeMenu()">
+      Sve rezervacije
+    </a>
 
-    <!-- SALES AGENT -->
-
-    <a routerLink="/reservations" *ngIf="isSalesAgent()" (click)="closeMenu()"> Sve rezervacije </a>
-
-    <!-- MANAGER -->
 
     <a routerLink="/sales-analytics" *ngIf="isManager()" (click)="closeMenu()">
       Analitika prodaje
     </a>
 
-    <!-- MANAGER -->
-
-    <a routerLink="/received-workflows" *ngIf="isManager()"> Primljeni radni tokovi </a>
+    <a routerLink="/received-workflows" *ngIf="isManager()" (click)="closeMenu()">
+      Primljeni radni tokovi
+    </a>
 
     <a routerLink="/manager-destinations" *ngIf="isManager()" (click)="closeMenu()">
       Destinacije
     </a>
 
-    <a routerLink="/manager-calendars" (click)="closeMenu()"> Kalendari </a>
+    <a routerLink="/manager-calendars" *ngIf="isManager()" (click)="closeMenu()">
+      Kalendari
+    </a>
 
-    <a routerLink="/manager-arrangements"> Kreirani aranžmani </a>
+    <a routerLink="/manager-arrangements" *ngIf="isManager()" (click)="closeMenu()">
+      Kreirani aranžmani
+    </a>
 
     <a routerLink="/manager-arrangement-terms" *ngIf="isManager()" (click)="closeMenu()">
       Termini aranžmana
@@ -68,9 +79,27 @@
       Dodatne aktivnosti
     </a>
 
-    <!-- SVI -->
+    <!-- TVOJE ULOGE ZA ŽALBE -->
+    <a routerLink="/zalbe" *ngIf="isComplaintOperator()" (click)="closeMenu()">
+      Nove žalbe
+    </a>
 
-    <a routerLink="/my-profile" (click)="closeMenu()"> Moj profil </a>
+    <a routerLink="/zalbe" *ngIf="isComplaintTeam()" (click)="closeMenu()">
+      Dodeljene žalbe
+    </a>
+
+    <a routerLink="/zalbe" *ngIf="isComplaintManager()" (click)="closeMenu()">
+      Statistika žalbi
+    </a>
+
+    <a routerLink="/zalbe" *ngIf="isDirector()" (click)="closeMenu()">
+      Pregled žalbi
+    </a>
+
+    <!-- SVI -->
+    <a routerLink="/my-profile" (click)="closeMenu()">
+      Moj profil
+    </a>
   </div>
 
   <button class="menu-logout" (click)="logout()">Odjava</button>

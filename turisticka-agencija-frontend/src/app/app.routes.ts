@@ -46,6 +46,12 @@ export const routes: Routes = [
     component: Zalbe,
   },
   {
+    path: 'dokumentacija-zalbe/:zalbaId',
+    loadComponent: () =>
+      import('./features/dokumentacija-zalbe/dokumentacija-zalbe')
+        .then((m) => m.DokumentacijaZalbeComponent),
+  },
+  {
     path: 'reservations',
     component: ReservationsOverview,
   },

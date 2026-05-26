@@ -6,7 +6,8 @@ import com.example.turisticka_agencija.repository.PraviloKategorizacijeRepositor
 import com.example.turisticka_agencija.repository.ZalbaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.example.turisticka_agencija.repository.ArrangementRepository;
+import com.example.turisticka_agencija.repository.ReservationRepository;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,17 +24,21 @@ public class ZalbaService {
     private final ZalbaRepository zalbaRepository;
     private final ObavestenjeRepository obavestenjeRepository;
     private final PraviloKategorizacijeRepository praviloRepository;
-
+    private final ArrangementRepository arrangementRepository;
+    private final ReservationRepository reservationRepository;
     public ZalbaService(
             ZalbaRepository zalbaRepository,
             ObavestenjeRepository obavestenjeRepository,
-            PraviloKategorizacijeRepository praviloRepository
+            PraviloKategorizacijeRepository praviloRepository,
+            ArrangementRepository arrangementRepository,
+            ReservationRepository reservationRepository
     ) {
         this.zalbaRepository = zalbaRepository;
         this.obavestenjeRepository = obavestenjeRepository;
         this.praviloRepository = praviloRepository;
+        this.arrangementRepository = arrangementRepository;
+        this.reservationRepository = reservationRepository;
     }
-
     public Zalba kreirajZalbu(Zalba zalba) {
         validirajZalbu(zalba);
 
@@ -66,7 +71,16 @@ public class ZalbaService {
     }
 
     public List<Zalba> pronadjiPoPutniku(Long putnikId) {
-        return zalbaRepository.findByPutnikId(putnikId);
+        List<Zalba> zalbe = zalbaRepository.findByPutnikId(putnikId);
+
+        for (Zalba zalba : zalbe) {
+            if (zalba.getIdTure() != null) {
+                arrangementRepository.findById(zalba.getIdTure())
+                        .ifPresent(arrangement -> zalba.setNazivTure(arrangement.getName()));
+            }
+        }
+
+        return zalbe;
     }
 
     public List<Zalba> pronadjiNoveZalbe() {
@@ -104,6 +118,7 @@ public class ZalbaService {
         postojecaZalba.setOpis(izmenjenaZalba.getOpis());
         postojecaZalba.setTipZalbe(izmenjenaZalba.getTipZalbe());
         postojecaZalba.setIdTure(izmenjenaZalba.getIdTure());
+        postojecaZalba.setReservationId(izmenjenaZalba.getReservationId());
         postojecaZalba.setDokumentacijaUrl(izmenjenaZalba.getDokumentacijaUrl());
 
         return zalbaRepository.save(postojecaZalba);

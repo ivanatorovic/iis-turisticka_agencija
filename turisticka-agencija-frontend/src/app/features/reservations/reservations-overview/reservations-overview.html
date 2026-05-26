@@ -100,6 +100,51 @@
           </button>
         </div>
 
+        <div class="complaints-box" *ngIf="getZalbeForReservation(reservation).length > 0">
+          <h3>Moje žalbe za ovu rezervaciju</h3>
+
+          <div
+            class="complaint-item"
+            *ngFor="let zalba of getZalbeForReservation(reservation)"
+          >
+            <div class="complaint-content">
+              <b>{{ zalba.naslov }}</b>
+              <p>{{ zalba.opis }}</p>
+
+              <div class="rating-box" *ngIf="canRateComplaint(zalba)">
+                <label>Ocena rešavanja</label>
+
+                <select [(ngModel)]="ocene[zalba.id!]">
+                  <option [ngValue]="1">1</option>
+                  <option [ngValue]="2">2</option>
+                  <option [ngValue]="3">3</option>
+                  <option [ngValue]="4">4</option>
+                  <option [ngValue]="5">5</option>
+                </select>
+
+                <input
+                  type="text"
+                  placeholder="Komentar ocene"
+                  [(ngModel)]="komentariOcene[zalba.id!]"
+                />
+
+                <button class="complaint-btn" (click)="oceniZalbu(zalba)">
+                  Oceni žalbu
+                </button>
+              </div>
+
+              <p class="rated-message" *ngIf="zalba.ocena">
+                Ocenjeno: {{ zalba.ocena }}/5
+                <span *ngIf="zalba.komentarOcene"> — {{ zalba.komentarOcene }}</span>
+              </p>
+            </div>
+
+            <span class="complaint-status">
+              {{ zalba.status }}
+            </span>
+          </div>
+        </div>
+
         <div class="reservation-actions">
           <button
             class="complaint-btn"

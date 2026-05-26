@@ -1,26 +1,33 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { Reservation, ReservationService } from '../../../core/services/reservation';
 import { AuthService } from '../../../core/services/auth';
 import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
-import { RouterLink } from '@angular/router';
+import { Zalba, ZalbaService } from '../../../core/services/zalba';
 
 @Component({
   selector: 'app-reservations-overview',
-  imports: [CommonModule, SidebarMenu, RouterLink],
+  imports: [CommonModule, SidebarMenu, RouterLink, FormsModule],
   templateUrl: './reservations-overview.html',
   styleUrl: './reservations-overview.css',
 })
 export class ReservationsOverview implements OnInit {
   reservations: Reservation[] = [];
+  mojeZalbe: Zalba[] = [];
+
   errorMessage = '';
   successMessage = '';
+
+  ocene: { [zalbaId: number]: number } = {};
+  komentariOcene: { [zalbaId: number]: string } = {};
 
   constructor(
     private reservationService: ReservationService,
     private authService: AuthService,
     private router: Router,
+    private zalbaService: ZalbaService,
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +70,7 @@ export class ReservationsOverview implements OnInit {
     this.reservationService.getMyReservations(userId).subscribe({
       next: (data) => {
         this.reservations = data;
+        this.loadMojeZalbe(userId);
       },
       error: (err) => {
         console.error(err);
@@ -71,24 +79,101 @@ export class ReservationsOverview implements OnInit {
     });
   }
 
+  loadMojeZalbe(userId: number): void {
+    this.zalbaService.getByPutnik(userId).subscribe({
+      next: (data) => {
+        this.mojeZalbe = data;
+      },
+      error: (err) => {
+        console.error(err);
+        this.mojeZalbe = [];
+      },
+    });
+  }
+
+  getArrangementId(reservation: Reservation): number | null {
+    if (reservation.arrangement && reservation.arrangement.id) {
+      return reservation.arrangement.id;
+    }
+
+    return null;
+  }
+
+  getZalbeForReservation(reservation: Reservation): Zalba[] {
+    if (!reservation.id) {
+      return [];
+    }
+
+    return this.mojeZalbe.filter((zalba) => zalba.reservationId === reservation.id);
+  }
+
+  hasComplaintForReservation(reservation: Reservation): boolean {
+    return this.getZalbeForReservation(reservation).length > 0;
+  }
+
   canSubmitComplaint(reservation: Reservation): boolean {
     if (this.isSalesAgent()) {
       return false;
     }
 
-    return reservation.status === 'CONFIRMED';
+    if (reservation.status !== 'CONFIRMED') {
+      return false;
+    }
+
+    return !this.hasComplaintForReservation(reservation);
+  }
+
+  canRateComplaint(zalba: Zalba): boolean {
+    return zalba.status === 'ZATVORENO' && !zalba.ocena;
   }
 
   submitComplaint(reservation: Reservation): void {
-    const idTure =
-      reservation.arrangement?.id ||
-      reservation.arrangementTerm?.id ||
-      reservation.id;
+    const idTure = this.getArrangementId(reservation);
+
+    if (!idTure) {
+      this.errorMessage = 'Nije pronađen ID aranžmana za ovu rezervaciju.';
+      return;
+    }
 
     this.router.navigate(['/zalbe'], {
       queryParams: {
         idTure: idTure,
         reservationId: reservation.id,
+        nazivTure: reservation.arrangement.name,
+      },
+    });
+  }
+
+  oceniZalbu(zalba: Zalba): void {
+    if (!zalba.id) {
+      this.errorMessage = 'Nije pronađen ID žalbe.';
+      return;
+    }
+
+    const ocena = this.ocene[zalba.id];
+    const komentar = this.komentariOcene[zalba.id] || '';
+
+    if (!ocena || ocena < 1 || ocena > 5) {
+      this.errorMessage = 'Ocena mora biti između 1 i 5.';
+      return;
+    }
+
+    this.zalbaService.oceni(zalba.id, ocena, komentar).subscribe({
+      next: () => {
+        this.successMessage = 'Uspešno ste ocenili rešavanje žalbe.';
+        this.errorMessage = '';
+
+        delete this.ocene[zalba.id!];
+        delete this.komentariOcene[zalba.id!];
+
+        const userId = this.authService.getUserId();
+        if (userId) {
+          this.loadMojeZalbe(userId);
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = 'Greška pri ocenjivanju žalbe.';
       },
     });
   }

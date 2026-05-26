@@ -1,13 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
-import { SidebarMenu } from '../../layout/sidebar-menu/sidebar-menu';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Zalba, ZalbaService } from '../../core/services/zalba';
-
+import { SidebarMenu } from '../../layout/sidebar-menu/sidebar-menu';
 @Component({
   selector: 'app-zalbe',
-  imports: [CommonModule, FormsModule, SidebarMenu],
+  standalone: true,
+  imports: [CommonModule, FormsModule,SidebarMenu],
   templateUrl: './zalbe.html',
   styleUrl: './zalbe.css',
 })
@@ -33,6 +33,7 @@ export class Zalbe implements OnInit {
     tipZalbe: 'SMESTAJ',
     idTure: 1,
     putnikId: 1,
+    nazivTure: '',
   };
 
   selectedTip = 'SMESTAJ';
@@ -51,6 +52,7 @@ export class Zalbe implements OnInit {
   constructor(
     private zalbaService: ZalbaService,
     private route: ActivatedRoute,
+    private router: Router,
   ) {}
 
   ngOnInit(): void {
@@ -78,6 +80,7 @@ export class Zalbe implements OnInit {
     this.route.queryParams.subscribe((params) => {
       const idTure = params['idTure'];
       const reservationId = params['reservationId'];
+      const nazivTure = params['nazivTure'];
 
       if (idTure) {
         this.idTureFromReservation = Number(idTure);
@@ -86,9 +89,15 @@ export class Zalbe implements OnInit {
 
       if (reservationId) {
         this.reservationIdFromUrl = Number(reservationId);
+        this.novaZalba.reservationId = Number(reservationId);
+      }
+
+      if (nazivTure) {
+        this.novaZalba.nazivTure = nazivTure;
       }
     });
   }
+
 
   loadDataByRole(): void {
     this.clearMessages();
@@ -207,7 +216,9 @@ export class Zalbe implements OnInit {
     this.novaZalba.putnikId = this.userId;
 
     this.zalbaService.getByPutnik(this.userId).subscribe({
-      next: (data) => this.zalbe = data,
+      next: (data) => {
+        this.zalbe = data;
+      },
       error: () => this.errorMessage = 'Greška pri učitavanju žalbi putnika.',
     });
   }
@@ -258,9 +269,19 @@ export class Zalbe implements OnInit {
       return;
     }
 
-    this.novaZalba.putnikId = this.userId;
+    const nazivTureFromUrl = this.route.snapshot.queryParamMap.get('nazivTure');
+    const reservationIdFromUrl = this.route.snapshot.queryParamMap.get('reservationId');
 
-    this.zalbaService.create(this.novaZalba).subscribe({
+    const zalbaZaSlanje: Zalba = {
+      ...this.novaZalba,
+      putnikId: this.userId,
+      reservationId: reservationIdFromUrl ? Number(reservationIdFromUrl) : this.reservationIdFromUrl || undefined,
+      nazivTure: nazivTureFromUrl || this.novaZalba.nazivTure || 'Nepoznata tura',
+    };
+
+    console.log('SALJEM ZALBU:', zalbaZaSlanje);
+
+    this.zalbaService.create(zalbaZaSlanje).subscribe({
       next: () => {
         this.successMessage = 'Žalba je uspešno podneta.';
 
@@ -269,12 +290,16 @@ export class Zalbe implements OnInit {
           opis: '',
           tipZalbe: 'SMESTAJ',
           idTure: this.idTureFromReservation || 1,
+          reservationId: reservationIdFromUrl ? Number(reservationIdFromUrl) : this.reservationIdFromUrl || undefined,
           putnikId: this.userId || 1,
+          nazivTure: nazivTureFromUrl || '',
         };
 
         this.loadDataByRole();
       },
-      error: () => this.errorMessage = 'Greška pri podnošenju žalbe.',
+      error: () => {
+        this.errorMessage = 'Greška pri podnošenju žalbe.';
+      },
     });
   }
 
@@ -356,8 +381,36 @@ export class Zalbe implements OnInit {
     });
   }
 
+  mozeDaOceni(zalba: Zalba): boolean {
+    return zalba.status === 'ZATVORENO' && !zalba.ocena;
+  }
+
+  otvoriDokumentacijuZalbe(zalba: Zalba): void {
+    if (!zalba.id) {
+      this.errorMessage = 'Nije pronađen ID žalbe.';
+      return;
+    }
+
+    this.router.navigate(['/dokumentacija-zalbe', zalba.id]);
+  }
+
   clearMessages(): void {
     this.errorMessage = '';
     this.successMessage = '';
+  }
+  getNazivTure(zalba: Zalba): string {
+    if (zalba.nazivTure && zalba.nazivTure !== 'Nepoznata tura') {
+      return zalba.nazivTure;
+    }
+
+    const naziviTura: { [key: number]: string } = {
+      1: 'Rim city break',
+      2: 'Letovanje Hurgada',
+      3: 'Rim city break',
+      4: 'Letovanje Hurgada',
+      5: 'Pariz romantično putovanje',
+    };
+
+    return naziviTura[zalba.idTure] || 'Nepoznata tura';
   }
 }
