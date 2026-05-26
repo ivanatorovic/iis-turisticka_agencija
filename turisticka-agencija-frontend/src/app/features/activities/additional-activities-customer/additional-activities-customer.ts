@@ -21,21 +21,19 @@ import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
 export class AdditionalActivitiesCustomer implements OnInit {
   arrangementTermId!: number;
 
-  activities: ArrangementActivity[] = [];
+  allTermActivities: ArrangementActivity[] = [];
   myRegistrations: AdditionalActivityRegistrationResponse[] = [];
 
-  selectedExecutionId: number | null = null;
-  numberOfParticipants: number | null = null;
-
   registrationToCancelId: number | null = null;
+
+  registrationToUpdateId: number | null = null;
+  updatedNumberOfParticipants: number | null = null;
 
   loading = false;
 
   errorMessage = '';
   successMessage = '';
-
-  registrationToUpdateId: number | null = null;
-  updatedNumberOfParticipants: number | null = null;
+  updateRegistrationErrorMessage = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -55,13 +53,12 @@ export class AdditionalActivitiesCustomer implements OnInit {
 
   loadPageData(): void {
     this.loading = true;
-
     this.errorMessage = '';
     this.successMessage = '';
 
     this.arrangementService.getActivitiesForArrangementTerm(this.arrangementTermId).subscribe({
       next: (activities) => {
-        this.activities = activities;
+        this.allTermActivities = activities;
         this.loadMyRegistrations();
       },
       error: (error) => {
@@ -77,7 +74,7 @@ export class AdditionalActivitiesCustomer implements OnInit {
         this.myRegistrations = registrations.filter(
           (registration) =>
             registration.status === 'ACTIVE' &&
-            this.activities.some((activity) => activity.id === registration.executionId),
+            this.allTermActivities.some((activity) => activity.id === registration.executionId),
         );
 
         this.loading = false;
@@ -87,50 +84,6 @@ export class AdditionalActivitiesCustomer implements OnInit {
         this.loading = false;
       },
     });
-  }
-
-  getAvailableActivities(): ArrangementActivity[] {
-    return this.activities.filter(
-      (activity) =>
-        !this.myRegistrations.some((registration) => registration.executionId === activity.id),
-    );
-  }
-
-  openRegisterForm(executionId: number): void {
-    this.selectedExecutionId = executionId;
-
-    this.numberOfParticipants = null;
-
-    this.errorMessage = '';
-    this.successMessage = '';
-  }
-
-  closeRegisterForm(): void {
-    this.selectedExecutionId = null;
-    this.numberOfParticipants = null;
-  }
-
-  confirmRegistration(activity: ArrangementActivity): void {
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.arrangementService
-      .registerForActivity(activity.id, {
-        numberOfParticipants: this.numberOfParticipants,
-      })
-      .subscribe({
-        next: () => {
-          this.successMessage = 'Uspešno ste prijavljeni na dodatnu aktivnost.';
-
-          this.selectedExecutionId = null;
-          this.numberOfParticipants = null;
-
-          this.loadPageData();
-        },
-        error: (error) => {
-          this.errorMessage = error.error?.message || 'Prijava na dodatnu aktivnost nije uspela.';
-        },
-      });
   }
 
   openCancelModal(registrationId: number): void {
@@ -152,17 +105,64 @@ export class AdditionalActivitiesCustomer implements OnInit {
     this.arrangementService.cancelActivityRegistration(this.registrationToCancelId).subscribe({
       next: () => {
         this.successMessage = 'Prijava na dodatnu aktivnost je uspešno otkazana.';
-
         this.registrationToCancelId = null;
-
         this.loadPageData();
       },
       error: (error) => {
         this.errorMessage = error.error?.message || 'Otkazivanje prijave nije uspelo.';
-
         this.registrationToCancelId = null;
       },
     });
+  }
+
+  openUpdateForm(registration: AdditionalActivityRegistrationResponse): void {
+    this.registrationToUpdateId = registration.id;
+    this.updatedNumberOfParticipants = registration.numberOfParticipants;
+
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.updateRegistrationErrorMessage = '';
+  }
+
+  closeUpdateForm(): void {
+    this.registrationToUpdateId = null;
+    this.updatedNumberOfParticipants = null;
+    this.updateRegistrationErrorMessage = '';
+  }
+
+  confirmUpdateRegistration(): void {
+    if (!this.registrationToUpdateId) {
+      return;
+    }
+
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.updateRegistrationErrorMessage = '';
+
+    if (!this.updatedNumberOfParticipants || this.updatedNumberOfParticipants <= 0) {
+      this.updateRegistrationErrorMessage = 'Broj osoba mora biti veći od 0.';
+      return;
+    }
+
+    this.arrangementService
+      .updateActivityRegistration(this.registrationToUpdateId, {
+        numberOfParticipants: this.updatedNumberOfParticipants,
+      })
+      .subscribe({
+        next: () => {
+          this.successMessage = 'Prijava je uspešno ažurirana.';
+
+          this.registrationToUpdateId = null;
+          this.updatedNumberOfParticipants = null;
+          this.updateRegistrationErrorMessage = '';
+
+          this.loadPageData();
+        },
+        error: (error) => {
+          this.updateRegistrationErrorMessage =
+            error.error?.message || 'Ažuriranje prijave nije uspelo.';
+        },
+      });
   }
 
   getImageUrl(imageUrl: string): string {
@@ -175,45 +175,5 @@ export class AdditionalActivitiesCustomer implements OnInit {
     }
 
     return `http://localhost:8080${imageUrl}`;
-  }
-
-  openUpdateForm(registration: AdditionalActivityRegistrationResponse): void {
-    this.registrationToUpdateId = registration.id;
-    this.updatedNumberOfParticipants = registration.numberOfParticipants;
-
-    this.errorMessage = '';
-    this.successMessage = '';
-  }
-
-  closeUpdateForm(): void {
-    this.registrationToUpdateId = null;
-    this.updatedNumberOfParticipants = null;
-  }
-
-  confirmUpdateRegistration(): void {
-    if (!this.registrationToUpdateId) {
-      return;
-    }
-
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.arrangementService
-      .updateActivityRegistration(this.registrationToUpdateId, {
-        numberOfParticipants: this.updatedNumberOfParticipants,
-      })
-      .subscribe({
-        next: () => {
-          this.successMessage = 'Prijava je uspešno ažurirana.';
-
-          this.registrationToUpdateId = null;
-          this.updatedNumberOfParticipants = null;
-
-          this.loadPageData();
-        },
-        error: (error) => {
-          this.errorMessage = error.error?.message || 'Ažuriranje prijave nije uspelo.';
-        },
-      });
   }
 }

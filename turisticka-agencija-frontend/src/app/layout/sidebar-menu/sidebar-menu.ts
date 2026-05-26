@@ -60,6 +60,10 @@ export class SidebarMenu {
     return this.getRole() === 'ADMIN';
   }
 
+  isGuide(): boolean {
+    return this.getRole() === 'GUIDE';
+  }
+
   isComplaintOperator(): boolean {
     return this.getRole() === 'COMPLAINT_OPERATOR';
   }
@@ -79,3 +83,43 @@ export class SidebarMenu {
     return this.getRole() === 'DIRECTOR';
   }
 }
+    return this.authService.getRole();
+  }
+  isCustomer(): boolean {
+    return this.getRole() === 'CUSTOMER';
+  }
+  isSalesAgent(): boolean {
+    return this.getRole() === 'SALES_AGENT';
+  }
+  isManager(): boolean {
+    return this.getRole() === 'MANAGER';
+  }
+  isAdmin(): boolean {
+    return this.getRole() === 'ADMIN';
+  }
+
+  isComplaintOperator(): boolean {
+    return this.getRole() === 'COMPLAINT_OPERATOR';
+  }
+
+  isComplaintTeam(): boolean {
+    return this.getRole() === 'COMPLAINT_TEAM_ACCOMMODATION'
+      || this.getRole() === 'COMPLAINT_TEAM_TRANSPORT'
+      || this.getRole() === 'COMPLAINT_TEAM_DOCUMENTATION'
+      || this.getRole() === 'COMPLAINT_TEAM_OTHER';
+  }
+
+  isComplaintManager(): boolean {
+    return this.getRole() === 'COMPLAINT_MANAGER';
+  }
+
+  isDirector(): boolean {
+    return this.getRole() === 'DIRECTOR';
+  }
+  isAdmin(): boolean {
+    return this.getRole() === 'ADMIN';
+  }
+
+  isGuide(): boolean {
+    return this.getRole() === 'GUIDE';
+  }

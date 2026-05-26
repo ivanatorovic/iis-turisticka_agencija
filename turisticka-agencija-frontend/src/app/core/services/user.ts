@@ -76,4 +76,16 @@ export class UserService {
       responseType: 'text',
     });
   }
+
+  getGuides(): Observable<UserResponse[]> {
+    const token = this.authService.getToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return this.http.get<UserResponse[]>(`${this.apiUrl}/guides`, {
+      headers,
+    });
+  }
 }

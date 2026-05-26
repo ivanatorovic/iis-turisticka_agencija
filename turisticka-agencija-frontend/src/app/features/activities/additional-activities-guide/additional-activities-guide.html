@@ -1,0 +1,128 @@
+<section class="activities-page">
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <nav class="navbar">
+    <div class="left-nav">
+      <app-sidebar-menu></app-sidebar-menu>
+      <a class="logo">LUXTRAVEL</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <header class="page-header">
+      <p class="subtitle">VODIČKI PANEL</p>
+
+      <h1>Moje aktivnosti</h1>
+
+      <p class="description">Pregled dodatnih aktivnosti za koje ste zaduženi kao vodič.</p>
+    </header>
+
+    <div *ngIf="loading" class="message-box">Učitavanje dodatnih aktivnosti...</div>
+
+    <div *ngIf="errorMessage && !loading" class="message-box error">
+      {{ errorMessage }}
+    </div>
+
+    <section *ngIf="!loading && !errorMessage" class="activities-grid">
+      <article class="activity-card" *ngFor="let activity of activities">
+        <div class="arrangement-strip">
+          <div class="arrangement-top">
+            <span>Termin aranžmana</span>
+
+            <span class="status-badge" [ngClass]="getStatusClass(activity.status)">
+              {{ getStatusLabel(activity.status) }}
+            </span>
+          </div>
+
+          <strong>{{ activity.arrangementName }}</strong>
+
+          <p>
+            {{ activity.arrangementStartDate | date: 'dd.MM.yyyy.' }}
+            -
+            {{ activity.arrangementEndDate | date: 'dd.MM.yyyy.' }}
+          </p>
+        </div>
+        <div class="image-wrapper">
+          <img [src]="getImageUrl(activity.imageUrl)" [alt]="activity.activityName" />
+        </div>
+
+        <div class="activity-content">
+          <div class="title-row">
+            <h2>{{ activity.activityName }}</h2>
+
+            <span class="price"> {{ activity.price }} € </span>
+          </div>
+
+          <p class="activity-description">
+            {{ activity.activityDescription }}
+          </p>
+
+          <div class="meta-grid">
+            <div>
+              <span>Lokacija</span>
+              <strong>{{ activity.activityLocation }}</strong>
+            </div>
+
+            <div>
+              <span>Datum</span>
+              <strong>{{ activity.activityDate | date: 'dd.MM.yyyy.' }}</strong>
+            </div>
+
+            <div>
+              <span>Početak</span>
+              <strong>{{ activity.startTime }}</strong>
+            </div>
+
+            <div>
+              <span>Trajanje</span>
+              <strong>{{ formatDuration(activity.durationMinutes) }}</strong>
+            </div>
+
+            <div>
+              <span>Kapacitet</span>
+              <strong>{{ activity.capacity }}</strong>
+            </div>
+
+            <div>
+              <span>Rezervisano</span>
+              <strong>{{ activity.reservedSpots }}</strong>
+            </div>
+          </div>
+
+          <div class="card-actions">
+            <button
+              class="participants-btn"
+              type="button"
+              [routerLink]="['/additional-activity-participants', activity.id]"
+            >
+              Prikaži učesnike
+            </button>
+
+            <button
+              *ngIf="activity.status === 'UPCOMING'"
+              class="status-action-btn start-btn"
+              type="button"
+              (click)="startActivity(activity.id)"
+            >
+              Započni aktivnost
+            </button>
+
+            <button
+              *ngIf="activity.status === 'ACTIVE'"
+              class="status-action-btn finish-btn"
+              type="button"
+              (click)="finishActivity(activity.id)"
+            >
+              Završi aktivnost
+            </button>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <div *ngIf="!loading && !errorMessage && activities.length === 0" class="message-box">
+      Trenutno nemate dodeljene dodatne aktivnosti.
+    </div>
+  </main>
+</section>

@@ -13,6 +13,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import com.example.turisticka_agencija.model.AdditionalActivityExecution;
+import com.example.turisticka_agencija.repository.AdditionalActivityExecutionRepository;
+import com.example.turisticka_agencija.repository.AdditionalActivityPriceListRepository;
+import com.example.turisticka_agencija.repository.AdditionalActivityRegistrationRepository;
+import com.example.turisticka_agencija.repository.ActivityTermRepository;
+import jakarta.transaction.Transactional;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -26,6 +32,10 @@ public class AdditionalActivityService {
     private final AdditionalActivityRepository additionalActivityRepository;
     private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
+    private final AdditionalActivityExecutionRepository executionRepository;
+    private final AdditionalActivityPriceListRepository priceListRepository;
+    private final AdditionalActivityRegistrationRepository registrationRepository;
+    private final ActivityTermRepository activityTermRepository;
 
     private static final Path UPLOAD_DIR = Paths.get(
             System.getProperty("user.dir"),
@@ -36,11 +46,15 @@ public class AdditionalActivityService {
     public AdditionalActivityService(
             AdditionalActivityRepository additionalActivityRepository,
             UserRepository userRepository,
-            ObjectMapper objectMapper
+            ObjectMapper objectMapper, AdditionalActivityExecutionRepository executionRepository, AdditionalActivityPriceListRepository priceListRepository, AdditionalActivityRegistrationRepository registrationRepository, ActivityTermRepository activityTermRepository
     ) {
         this.additionalActivityRepository = additionalActivityRepository;
         this.userRepository = userRepository;
         this.objectMapper = objectMapper;
+        this.executionRepository = executionRepository;
+        this.priceListRepository = priceListRepository;
+        this.registrationRepository = registrationRepository;
+        this.activityTermRepository = activityTermRepository;
     }
 
     public List<AdditionalActivityResponse> getAllAdditionalActivities() {
@@ -104,7 +118,7 @@ public class AdditionalActivityService {
             }
 
             if (!activity.getCreatedBy().getId().equals(user.getId())) {
-                throw new BadRequestException("You can only update your own activities");
+                throw new BadRequestException("Možete izmeniti samo aktivnosti koje ste vi kreirali");
             }
 
             AdditionalActivityRequest request =
@@ -200,6 +214,7 @@ public class AdditionalActivityService {
         }
     }
 
+    @Transactional
     public void deleteAdditionalActivity(Long id, Principal principal) {
         User user = getAuthenticatedUser(principal);
 
@@ -213,6 +228,22 @@ public class AdditionalActivityService {
 
         if (!activity.getCreatedBy().getId().equals(user.getId())) {
             throw new BadRequestException("You can only delete your own activities");
+        }
+
+        List<AdditionalActivityExecution> executions =
+                executionRepository.findByAdditionalActivityId(id);
+
+        for (AdditionalActivityExecution execution : executions) {
+            Long executionId = execution.getId();
+            Long activityTermId = execution.getActivityTerm().getId();
+
+            registrationRepository.deleteByAdditionalActivityExecutionId(executionId);
+
+            priceListRepository.deleteByAdditionalActivityExecutionId(executionId);
+
+            executionRepository.delete(execution);
+
+            activityTermRepository.deleteById(activityTermId);
         }
 
         additionalActivityRepository.delete(activity);

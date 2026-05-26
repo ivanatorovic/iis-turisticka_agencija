@@ -15,18 +15,37 @@
       <header class="page-header">
         <p class="subtitle">DODATNE AKTIVNOSTI</p>
 
-        <h1>Aktivnosti za vaš aranžman</h1>
+        <h1>Moje aktivnosti</h1>
 
-        <p class="description">
-          Pregled aktivnosti na koje ste prijavljeni i dodatnih aktivnosti dostupnih za izabrani
-          termin.
-        </p>
+        <p class="description">Pregled dodatnih aktivnosti na koje ste trenutno prijavljeni.</p>
       </header>
 
       <div class="top-actions">
         <button class="back-btn" routerLink="/reservations">Nazad na rezervacije</button>
       </div>
     </div>
+
+    <section class="recommended-banner">
+      <div class="recommended-banner-content">
+        <div>
+          <p class="subtitle small">PREPORUKE</p>
+
+          <h2>Pronađite još aktivnosti za vaš aranžman</h2>
+
+          <p class="recommended-text">
+            Pogledajte dodatne aktivnosti dostupne za vaš termin i rezervišite nova iskustva.
+          </p>
+        </div>
+
+        <button
+          class="recommended-btn"
+          [routerLink]="['/recommended-activities']"
+          [queryParams]="{ arrangementTermId: arrangementTermId }"
+        >
+          Pogledaj preporuke
+        </button>
+      </div>
+    </section>
 
     <div *ngIf="loading" class="message-box">Učitavanje dodatnih aktivnosti...</div>
 
@@ -69,13 +88,11 @@
             <div class="meta-grid">
               <div>
                 <span>Lokacija</span>
-
                 <strong>{{ registration.activityLocation }}</strong>
               </div>
 
               <div>
                 <span>Datum</span>
-
                 <strong>
                   {{ registration.activityDate | date: 'dd.MM.yyyy.' }}
                 </strong>
@@ -83,25 +100,21 @@
 
               <div>
                 <span>Početak</span>
-
                 <strong>{{ registration.startTime }}</strong>
               </div>
 
               <div>
                 <span>Trajanje</span>
-
                 <strong>{{ registration.durationMinutes }} min</strong>
               </div>
 
               <div>
                 <span>Broj osoba</span>
-
                 <strong>{{ registration.numberOfParticipants }}</strong>
               </div>
 
               <div>
                 <span>Cena</span>
-
                 <strong>{{ registration.price }} €</strong>
               </div>
             </div>
@@ -132,6 +145,10 @@
                 <input type="number" min="1" [(ngModel)]="updatedNumberOfParticipants" />
               </label>
 
+              <div class="inline-error" *ngIf="updateRegistrationErrorMessage">
+                {{ updateRegistrationErrorMessage }}
+              </div>
+
               <div class="update-actions">
                 <button class="confirm-btn" type="button" (click)="confirmUpdateRegistration()">
                   Potvrdi izmenu
@@ -140,113 +157,6 @@
                 <button class="cancel-btn" type="button" (click)="closeUpdateForm()">
                   Odustani
                 </button>
-              </div>
-            </div>
-          </div>
-        </article>
-      </div>
-    </section>
-
-    <section *ngIf="!loading && !errorMessage" class="section-block">
-      <div class="section-title-row">
-        <p class="subtitle small">PONUDA</p>
-
-        <h2>Dostupne dodatne aktivnosti</h2>
-      </div>
-
-      <div *ngIf="getAvailableActivities().length === 0" class="message-box">
-        Nema dodatnih aktivnosti za prijavu.
-      </div>
-
-      <div *ngIf="getAvailableActivities().length > 0" class="activities-grid">
-        <article class="activity-card" *ngFor="let activity of getAvailableActivities()">
-          <div class="image-wrapper">
-            <img [src]="getImageUrl(activity.imageUrl)" [alt]="activity.activityName" />
-
-            <div class="price-badge">{{ activity.price }} €</div>
-          </div>
-
-          <div class="activity-content">
-            <div class="title-row">
-              <h2>{{ activity.activityName }}</h2>
-            </div>
-
-            <p class="activity-description">
-              {{ activity.activityDescription }}
-            </p>
-
-            <div class="meta-grid">
-              <div>
-                <span>Lokacija</span>
-
-                <strong>{{ activity.activityLocation }}</strong>
-              </div>
-
-              <div>
-                <span>Datum</span>
-
-                <strong>
-                  {{ activity.activityDate | date: 'dd.MM.yyyy.' }}
-                </strong>
-              </div>
-
-              <div>
-                <span>Početak</span>
-
-                <strong>{{ activity.startTime }}</strong>
-              </div>
-
-              <div>
-                <span>Trajanje</span>
-
-                <strong>{{ activity.durationMinutes }} min</strong>
-              </div>
-
-              <div>
-                <span>Kapacitet</span>
-
-                <strong>{{ activity.capacity }}</strong>
-              </div>
-
-              <div>
-                <span>Slobodna mesta</span>
-
-                <strong>{{ activity.availableSpots }}</strong>
-              </div>
-            </div>
-
-            <div class="register-area">
-              <button
-                class="register-btn"
-                type="button"
-                *ngIf="selectedExecutionId !== activity.id"
-                (click)="openRegisterForm(activity.id)"
-              >
-                Prijavi se
-              </button>
-
-              <div class="register-form" *ngIf="selectedExecutionId === activity.id">
-                <label>
-                  Broj osoba
-
-                  <input
-                    type="number"
-                    min="1"
-                    [max]="activity.availableSpots"
-                    [(ngModel)]="numberOfParticipants"
-                    placeholder="Unesite broj osoba"
-                  />
-                </label>
-
-                <div class="register-actions">
-                  <button class="confirm-btn" type="button" (click)="confirmRegistration(activity)">
-                    Potvrdi
-                  </button>
-
-                  <button class="cancel-btn" type="button" (click)="closeRegisterForm()">
-                    Odustani
-                  </button>
-                </div>
               </div>
             </div>
           </div>

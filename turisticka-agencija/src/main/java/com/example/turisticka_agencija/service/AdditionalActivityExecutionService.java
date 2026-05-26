@@ -2,6 +2,7 @@ package com.example.turisticka_agencija.service;
 
 import com.example.turisticka_agencija.dto.AdditionalActivityExecutionRequest;
 import com.example.turisticka_agencija.dto.AdditionalActivityExecutionResponse;
+import com.example.turisticka_agencija.dto.AdditionalActivityExecutionUpdateRequest;
 import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationUpdateRequest;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.*;
@@ -71,6 +72,13 @@ public class AdditionalActivityExecutionService {
         AdditionalActivity additionalActivity = additionalActivityRepository.findById(request.getAdditionalActivityId())
                 .orElseThrow(() -> new BadRequestException("Additional activity not found"));
 
+        User guide = userRepository.findById(request.getGuideId())
+                .orElseThrow(() -> new BadRequestException("Guide not found"));
+
+        if (guide.getRole() != Role.GUIDE) {
+            throw new BadRequestException("Selected user is not a guide");
+        }
+
         ActivityTerm activityTerm = new ActivityTerm();
         activityTerm.setDate(request.getActivityDate());
         activityTerm.setStartTime(request.getStartTime());
@@ -83,6 +91,8 @@ public class AdditionalActivityExecutionService {
         execution.setDurationMinutes(request.getDurationMinutes());
         execution.setCapacity(request.getCapacity());
         execution.setReservedSpots(0);
+        execution.setGuide(guide);
+        execution.setStatus(ExecutionStatus.UPCOMING);
 
         execution = executionRepository.save(execution);
 
@@ -140,10 +150,20 @@ public class AdditionalActivityExecutionService {
         if (request.getPrice() == null || request.getPrice() < 0) {
             throw new BadRequestException("Price cannot be negative");
         }
+
+        if (request.getGuideId() == null) {
+            throw new BadRequestException("Guide is required");
+        }
     }
 
-    private AdditionalActivityExecutionResponse mapToResponse(AdditionalActivityExecution execution) {
+    private AdditionalActivityExecutionResponse mapToResponse(
+            AdditionalActivityExecution execution
+    ) {
         AdditionalActivity activity = execution.getAdditionalActivity();
+
+        User guide = execution.getGuide();
+
+        ArrangementTerm arrangementTerm = execution.getArrangementTerm();
 
         double price = priceListRepository
                 .findFirstByAdditionalActivityExecutionIdOrderByIdDesc(execution.getId())
@@ -151,21 +171,50 @@ public class AdditionalActivityExecutionService {
                 .orElse(0.0);
 
         return new AdditionalActivityExecutionResponse(
+
                 execution.getId(),
-                execution.getArrangementTerm().getId(),
+
+                arrangementTerm.getId(),
+                arrangementTerm.getArrangement().getName(),
+                arrangementTerm.getTerm().getStartDate(),
+                arrangementTerm.getTerm().getEndDate(),
+
+                guide.getId(),
+                guide.getFirstName(),
+                guide.getLastName(),
+                guide.getUsername(),
+
                 activity.getId(),
                 activity.getName(),
                 activity.getDescription(),
                 activity.getLocation(),
                 activity.getImageUrl(),
+
                 execution.getActivityTerm().getDate(),
                 execution.getActivityTerm().getStartTime(),
+
                 execution.getDurationMinutes(),
                 execution.getCapacity(),
                 execution.getReservedSpots(),
-                execution.getAvailableSpots(),
-                price
+                execution.getCapacity() - execution.getReservedSpots(),
+
+                price,
+                execution.getStatus().name()
         );
+    }
+
+    public List<AdditionalActivityExecutionResponse> getGuideActivities(
+            Principal principal
+    ) {
+        User guide = userRepository.findByUsername(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Korisnik nije pronađen."));
+
+        List<AdditionalActivityExecution> executions =
+                executionRepository.findByGuideId(guide.getId());
+
+        return executions.stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 
     private User getAuthenticatedUser(Principal principal) {
@@ -181,5 +230,198 @@ public class AdditionalActivityExecutionService {
         if (user.getRole() != Role.MANAGER) {
             throw new BadRequestException("Only MANAGER can manage activity executions");
         }
+    }
+
+    @Transactional
+    public AdditionalActivityExecutionResponse updateExecution(
+            Long id,
+            AdditionalActivityExecutionUpdateRequest request,
+            Principal principal
+    ) {
+        User user = getAuthenticatedUser(principal);
+        validateManager(user);
+
+        AdditionalActivityExecution execution = executionRepository.findById(id)
+                .orElseThrow(() ->
+                        new BadRequestException("Izvođenje dodatne aktivnosti nije pronađeno"));
+
+        if (request == null) {
+            throw new BadRequestException("Request body je obavezan");
+        }
+
+        ActivityTerm activityTerm = execution.getActivityTerm();
+
+        if (request.getActivityDate() != null) {
+            activityTerm.setDate(request.getActivityDate());
+        }
+
+        if (request.getStartTime() != null) {
+            activityTerm.setStartTime(request.getStartTime());
+        }
+
+        activityTermRepository.save(activityTerm);
+
+        if (request.getDurationMinutes() != null) {
+
+            if (request.getDurationMinutes() <= 0) {
+                throw new BadRequestException("Trajanje mora biti veće od 0");
+            }
+
+            execution.setDurationMinutes(request.getDurationMinutes());
+        }
+
+        if (request.getCapacity() != null) {
+
+            if (request.getCapacity() <= 0) {
+                throw new BadRequestException("Kapacitet mora biti veći od 0");
+            }
+
+            if (request.getCapacity() < execution.getReservedSpots()) {
+                throw new BadRequestException(
+                        "Kapacitet ne može biti manji od rezervisanih mesta"
+                );
+            }
+
+            execution.setCapacity(request.getCapacity());
+        }
+
+        if (request.getGuideId() != null) {
+
+            User guide = userRepository.findById(request.getGuideId())
+                    .orElseThrow(() ->
+                            new BadRequestException("Vodič nije pronađen"));
+
+            if (guide.getRole() != Role.GUIDE) {
+                throw new BadRequestException("Korisnik nije vodič");
+            }
+
+            execution.setGuide(guide);
+        }
+
+        execution = executionRepository.save(execution);
+
+        if (request.getPrice() != null) {
+
+            if (request.getPrice() < 0) {
+                throw new BadRequestException("Cena ne može biti negativna");
+            }
+
+            AdditionalActivityPriceList priceList = priceListRepository
+                    .findFirstByAdditionalActivityExecutionIdOrderByIdDesc(execution.getId())
+                    .orElse(null);
+
+            if (priceList == null) {
+                priceList = new AdditionalActivityPriceList();
+
+                priceList.setAdditionalActivityExecution(execution);
+                priceList.setValidFrom(LocalDate.now());
+                priceList.setValidTo(null);
+            }
+
+            priceList.setPrice(request.getPrice());
+
+            priceListRepository.save(priceList);
+        }
+
+        return mapToResponse(execution);
+    }
+
+    @Transactional
+    public AdditionalActivityExecutionResponse startExecution(Long id, Principal principal) {
+        User guide = getAuthenticatedUser(principal);
+
+        if (guide.getRole() != Role.GUIDE) {
+            throw new BadRequestException("Only GUIDE can start activity execution");
+        }
+
+        AdditionalActivityExecution execution = executionRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Activity execution not found"));
+
+        if (!execution.getGuide().getId().equals(guide.getId())) {
+            throw new BadRequestException("You can start only your own activity execution");
+        }
+
+        if (execution.getStatus() != ExecutionStatus.UPCOMING) {
+            throw new BadRequestException("Only UPCOMING activity can be started");
+        }
+
+        execution.setStatus(ExecutionStatus.ACTIVE);
+
+        return mapToResponse(executionRepository.save(execution));
+    }
+
+    @Transactional
+    public AdditionalActivityExecutionResponse finishExecution(Long id, Principal principal) {
+        User guide = getAuthenticatedUser(principal);
+
+        if (guide.getRole() != Role.GUIDE) {
+            throw new BadRequestException("Only GUIDE can finish activity execution");
+        }
+
+        AdditionalActivityExecution execution = executionRepository.findById(id)
+                .orElseThrow(() -> new BadRequestException("Activity execution not found"));
+
+        if (!execution.getGuide().getId().equals(guide.getId())) {
+            throw new BadRequestException("You can finish only your own activity execution");
+        }
+
+        if (execution.getStatus() != ExecutionStatus.ACTIVE) {
+            throw new BadRequestException("Only ACTIVE activity can be finished");
+        }
+
+        List<AdditionalActivityRegistration> registrations =
+                registrationRepository.findByAdditionalActivityExecutionId(id);
+
+        for (AdditionalActivityRegistration registration : registrations) {
+
+            if (registration.getStatus() == AdditionalActivityRegistrationStatus.ACTIVE) {
+                registration.setStatus(AdditionalActivityRegistrationStatus.FINISHED);
+            }
+        }
+
+        registrationRepository.saveAll(registrations);
+
+        execution.setStatus(ExecutionStatus.FINISHED);
+
+        return mapToResponse(executionRepository.save(execution));
+    }
+
+    public List<AdditionalActivityExecutionResponse> getFilteredByArrangementTerm(
+            Long arrangementTermId,
+            LocalDate dateFrom,
+            LocalDate dateTo,
+            Double minPrice,
+            Double maxPrice,
+            Integer minDuration,
+            Integer maxDuration,
+            Integer minAvailableSpots,
+            Boolean onlyAvailable
+    ) {
+        if (dateFrom != null && dateTo != null && dateFrom.isAfter(dateTo)) {
+            throw new BadRequestException("Početni datum ne može biti posle krajnjeg datuma");
+        }
+
+        if (minPrice != null && maxPrice != null && minPrice > maxPrice) {
+            throw new BadRequestException("Minimalna cena ne može biti veća od maksimalne cene");
+        }
+
+        if (minDuration != null && maxDuration != null && minDuration > maxDuration) {
+            throw new BadRequestException("Minimalno trajanje ne može biti veće od maksimalnog trajanja");
+        }
+
+        return executionRepository.findFilteredByArrangementTerm(
+                        arrangementTermId,
+                        dateFrom,
+                        dateTo,
+                        minPrice,
+                        maxPrice,
+                        minDuration,
+                        maxDuration,
+                        minAvailableSpots,
+                        onlyAvailable
+                )
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
     }
 }

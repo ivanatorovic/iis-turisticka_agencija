@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { ArrangementActivity, ArrangementService } from '../../../../core/services/arrangement';
-
+import { UserResponse, UserService } from '../../../../core/services/user';
 import { SidebarMenu } from '../../../../layout/sidebar-menu/sidebar-menu';
 
 import {
@@ -24,6 +24,7 @@ export class ManagerArrangementsActivities implements OnInit {
 
   activities: ArrangementActivity[] = [];
   allActivities: AdditionalActivityShortResponse[] = [];
+  guides: UserResponse[] = [];
 
   selectedActivity: AdditionalActivityShortResponse | null = null;
 
@@ -31,11 +32,26 @@ export class ManagerArrangementsActivities implements OnInit {
   modalStep: 1 | 2 = 1;
   showAddModal = false;
 
+  showEditModal = false;
+  editErrorMessage = '';
+
+  selectedExecution: ArrangementActivity | null = null;
+
+  editForm = {
+    activityDate: '',
+    startTime: '',
+    durationMinutes: null as number | null,
+    capacity: null as number | null,
+    guideId: null as number | null,
+    price: null as number | null,
+  };
+
   executionForm = {
     activityDate: '',
     startTime: '',
     durationMinutes: null as number | null,
     capacity: null as number | null,
+    guideId: null as number | null,
     price: null as number | null,
   };
 
@@ -53,6 +69,7 @@ export class ManagerArrangementsActivities implements OnInit {
     private route: ActivatedRoute,
     private arrangementService: ArrangementService,
     private additionalActivityService: AdditionalActivityService,
+    private userService: UserService,
   ) {}
 
   ngOnInit(): void {
@@ -60,6 +77,7 @@ export class ManagerArrangementsActivities implements OnInit {
       top: 0,
       behavior: 'instant' as ScrollBehavior,
     });
+
     this.arrangementTermId = Number(this.route.snapshot.paramMap.get('id'));
 
     this.termStartDate = this.route.snapshot.queryParamMap.get('startDate') || '';
@@ -85,6 +103,18 @@ export class ManagerArrangementsActivities implements OnInit {
     });
   }
 
+  loadGuides(): void {
+    this.userService.getGuides().subscribe({
+      next: (data: UserResponse[]) => {
+        this.guides = data;
+      },
+      error: (error) => {
+        this.modalErrorMessage =
+          error.error?.message || error.error || 'Greška pri učitavanju vodiča.';
+      },
+    });
+  }
+
   openAddModal(): void {
     this.showAddModal = true;
     this.modalStep = 1;
@@ -97,6 +127,8 @@ export class ManagerArrangementsActivities implements OnInit {
     if (this.allActivities.length === 0) {
       this.loadShortActivities();
     }
+
+    this.loadGuides();
   }
 
   closeAddModal(): void {
@@ -164,15 +196,10 @@ export class ManagerArrangementsActivities implements OnInit {
       return;
     }
 
-    const request = {
-      arrangementTermId: this.arrangementTermId,
-      additionalActivityId: this.selectedActivity.id,
-      activityDate: this.executionForm.activityDate,
-      startTime: this.executionForm.startTime,
-      durationMinutes: this.executionForm.durationMinutes,
-      capacity: this.executionForm.capacity,
-      price: this.executionForm.price,
-    };
+    if (!this.executionForm.guideId) {
+      this.modalErrorMessage = 'Izaberite vodiča koji vodi aktivnost.';
+      return;
+    }
 
     if (
       this.executionForm.activityDate < this.termStartDate ||
@@ -181,6 +208,17 @@ export class ManagerArrangementsActivities implements OnInit {
       this.modalErrorMessage = 'Datum aktivnosti mora biti u opsegu termina aranžmana.';
       return;
     }
+
+    const request = {
+      arrangementTermId: this.arrangementTermId,
+      additionalActivityId: this.selectedActivity.id,
+      guideId: this.executionForm.guideId,
+      activityDate: this.executionForm.activityDate,
+      startTime: this.executionForm.startTime,
+      durationMinutes: this.executionForm.durationMinutes,
+      capacity: this.executionForm.capacity,
+      price: this.executionForm.price,
+    };
 
     this.arrangementService.createActivityExecution(request).subscribe({
       next: () => {
@@ -205,8 +243,60 @@ export class ManagerArrangementsActivities implements OnInit {
       startTime: '',
       durationMinutes: null,
       capacity: null,
+      guideId: null,
       price: null,
     };
+  }
+
+  openEditModal(activity: ArrangementActivity): void {
+    this.selectedExecution = activity;
+    this.editErrorMessage = '';
+
+    this.editForm = {
+      activityDate: activity.activityDate,
+      startTime: activity.startTime?.slice(0, 5),
+      durationMinutes: activity.durationMinutes,
+      capacity: activity.capacity,
+      guideId: activity.guideId,
+      price: activity.price,
+    };
+
+    this.showEditModal = true;
+  }
+
+  closeEditModal(): void {
+    this.showEditModal = false;
+    this.selectedExecution = null;
+    this.editErrorMessage = '';
+  }
+
+  saveExecutionChanges(): void {
+    if (!this.selectedExecution) {
+      return;
+    }
+
+    const request = {
+      activityDate: this.editForm.activityDate || undefined,
+      startTime: this.editForm.startTime || undefined,
+      durationMinutes: this.editForm.durationMinutes ?? undefined,
+      capacity: this.editForm.capacity ?? undefined,
+      guideId: this.editForm.guideId ?? undefined,
+      price: this.editForm.price ?? undefined,
+    };
+
+    this.arrangementService.updateExecution(this.selectedExecution.id, request).subscribe({
+      next: (updatedActivity) => {
+        this.activities = this.activities.map((activity) =>
+          activity.id === updatedActivity.id ? updatedActivity : activity,
+        );
+
+        this.successMessage = 'Aktivnost je uspešno izmenjena.';
+        this.closeEditModal();
+      },
+      error: (error) => {
+        this.editErrorMessage = error.error?.message || 'Greška pri izmeni aktivnosti.';
+      },
+    });
   }
 
   getImageUrl(imageUrl: string): string {
@@ -225,7 +315,6 @@ export class ManagerArrangementsActivities implements OnInit {
     this.arrangementService.deleteActivityExecution(executionId).subscribe({
       next: () => {
         this.activities = this.activities.filter((activity) => activity.id !== executionId);
-
         this.successMessage = 'Aktivnost je uspešno uklonjena iz termina.';
 
         setTimeout(() => {

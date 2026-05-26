@@ -19,6 +19,8 @@ import { AdditionalActivitiesManager } from './features/activities/additional-ac
 import { CreateActivities } from './features/activities/create-activities/create-activities';
 import { ManagerArrangementTermsList } from './features/arrangements/manager-arrangements/manager-arrangement-terms-list/manager-arrangement-terms-list';
 import { AdditionalActivitiesCustomer } from './features/activities/additional-activities-customer/additional-activities-customer';
+import { AdditionalActivitiesGuide } from './features/activities/additional-activities-guide/additional-activities-guide';
+import { RecommendedActivities } from './features/activities/recommended-activities/recommended-activities';
 
 export const routes: Routes = [
   {
@@ -135,4 +137,20 @@ export const routes: Routes = [
     path: 'additional-activities-customer',
     component: AdditionalActivitiesCustomer,
   },
+  {
+    path: 'additional-activities-guide',
+    component: AdditionalActivitiesGuide,
+  },
+  {
+    path: 'additional-activity-participants/:executionId',
+    loadComponent: () =>
+      import('./features/activities/additional-activity-participants/additional-activity-participants')
+        .then((m) => m.AdditionalActivityParticipants),
+  },
+  {
+    path: 'recommended-activities',
+    component: RecommendedActivities,
+  },
 ];
+import { AdditionalActivitiesGuide } from './features/activities/additional-activities-guide/additional-activities-guide';
+import { RecommendedActivities } from './features/activities/recommended-activities/recommended-activities';

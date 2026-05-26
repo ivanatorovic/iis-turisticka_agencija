@@ -23,7 +23,7 @@
       Početna stranica
     </a>
 
-
+    <!-- ADMIN / WORKFLOW -->
     <a routerLink="/workflows/create" *ngIf="isAdmin()" (click)="closeMenu()">
       Kreiraj novi radni tok
     </a>
@@ -32,12 +32,11 @@
       Prikaži radne tokove
     </a>
 
-
     <a routerLink="/zalbe" *ngIf="isAdmin()" (click)="closeMenu()">
       Administracija žalbi
     </a>
 
-
+    <!-- CUSTOMER / PUTNIK -->
     <a routerLink="/arrangements" *ngIf="isCustomer() || isSalesAgent()" (click)="closeMenu()">
       Pretraga aranžmana
     </a>
@@ -46,11 +45,12 @@
       Moje rezervacije
     </a>
 
+    <!-- SALES AGENT -->
     <a routerLink="/reservations" *ngIf="isSalesAgent()" (click)="closeMenu()">
       Sve rezervacije
     </a>
 
-
+    <!-- MANAGER - DELOVI KOLEGA -->
     <a routerLink="/sales-analytics" *ngIf="isManager()" (click)="closeMenu()">
       Analitika prodaje
     </a>
@@ -77,6 +77,11 @@
 
     <a routerLink="/additional-activities-manager" *ngIf="isManager()" (click)="closeMenu()">
       Dodatne aktivnosti
+    </a>
+
+    <!-- GUIDE - DEO KOLEGA -->
+    <a routerLink="/additional-activities-guide" *ngIf="isGuide()" (click)="closeMenu()">
+      Moje dodatne aktivnosti
     </a>
 
     <!-- TVOJE ULOGE ZA ŽALBE -->

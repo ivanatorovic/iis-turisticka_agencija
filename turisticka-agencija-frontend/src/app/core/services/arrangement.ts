@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth';
 
@@ -40,6 +40,9 @@ export interface ArrangementActivity {
   id: number;
 
   arrangementTermId: number;
+  arrangementName: string;
+  arrangementStartDate: string;
+  arrangementEndDate: string;
   additionalActivityId: number;
 
   activityName: string;
@@ -58,6 +61,11 @@ export interface ArrangementActivity {
   availableSpots: number;
 
   price: number;
+  guideId: number;
+  guideFirstName: string;
+  guideLastName: string;
+  guideUsername: string;
+  status: string;
 }
 
 export interface AdditionalActivityExecutionRequest {
@@ -68,6 +76,7 @@ export interface AdditionalActivityExecutionRequest {
   durationMinutes: number | null;
   capacity: number | null;
   price: number | null;
+  guideId: number | null;
 }
 
 export interface Destination {
@@ -146,6 +155,39 @@ export interface AdditionalActivityRegistrationResponse {
 
 export interface AdditionalActivityRegistrationUpdateRequest {
   numberOfParticipants: number | null;
+}
+
+export interface AdditionalActivityParticipantResponse {
+  registrationId: number;
+  userId: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  email: string;
+  contact: string;
+  numberOfParticipants: number;
+  registrationDate: string;
+  status: string;
+}
+
+export interface AdditionalActivityExecutionUpdateRequest {
+  activityDate?: string;
+  startTime?: string;
+  durationMinutes?: number;
+  capacity?: number;
+  guideId?: number;
+  price?: number;
+}
+
+export interface AdditionalActivityExecutionFilter {
+  dateFrom?: string;
+  dateTo?: string;
+  minPrice?: number | null;
+  maxPrice?: number | null;
+  minDuration?: number | null;
+  maxDuration?: number | null;
+  minAvailableSpots?: number | null;
+  onlyAvailable?: boolean;
 }
 
 @Injectable({
@@ -254,6 +296,39 @@ export class ArrangementService {
     );
   }
 
+  updateExecution(
+    id: number,
+    request: AdditionalActivityExecutionUpdateRequest,
+  ): Observable<ArrangementActivity> {
+    return this.http.put<ArrangementActivity>(
+      `${this.additionalActivityExecutionsUrl}/${id}`,
+      request,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  startAdditionalActivityExecution(id: number) {
+    return this.http.put<ArrangementActivity>(
+      `${this.additionalActivityExecutionsUrl}/${id}/start`,
+      {},
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  finishAdditionalActivityExecution(id: number) {
+    return this.http.put<ArrangementActivity>(
+      `${this.additionalActivityExecutionsUrl}/${id}/finish`,
+      {},
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
   updateActivityRegistration(
     registrationId: number,
     request: AdditionalActivityRegistrationUpdateRequest,
@@ -263,6 +338,68 @@ export class ArrangementService {
       request,
       {
         headers: this.getHeaders(),
+      },
+    );
+  }
+
+  getGuideActivities(): Observable<ArrangementActivity[]> {
+    return this.http.get<ArrangementActivity[]>(`${this.additionalActivityExecutionsUrl}/guide`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getParticipantsForExecution(
+    executionId: number,
+  ): Observable<AdditionalActivityParticipantResponse[]> {
+    return this.http.get<AdditionalActivityParticipantResponse[]>(
+      `${this.additionalActivityRegistrationsUrl}/execution/${executionId}/participants`,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  getFilteredActivitiesForArrangementTerm(
+    arrangementTermId: number,
+    filter: AdditionalActivityExecutionFilter,
+  ): Observable<ArrangementActivity[]> {
+    let params = new HttpParams();
+
+    if (filter.dateFrom) {
+      params = params.set('dateFrom', filter.dateFrom);
+    }
+
+    if (filter.dateTo) {
+      params = params.set('dateTo', filter.dateTo);
+    }
+
+    if (filter.minPrice !== null && filter.minPrice !== undefined) {
+      params = params.set('minPrice', filter.minPrice);
+    }
+
+    if (filter.maxPrice !== null && filter.maxPrice !== undefined) {
+      params = params.set('maxPrice', filter.maxPrice);
+    }
+
+    if (filter.minDuration !== null && filter.minDuration !== undefined) {
+      params = params.set('minDuration', filter.minDuration);
+    }
+
+    if (filter.maxDuration !== null && filter.maxDuration !== undefined) {
+      params = params.set('maxDuration', filter.maxDuration);
+    }
+
+    if (filter.minAvailableSpots !== null && filter.minAvailableSpots !== undefined) {
+      params = params.set('minAvailableSpots', filter.minAvailableSpots);
+    }
+
+    params = params.set('onlyAvailable', filter.onlyAvailable ?? false);
+
+    return this.http.get<ArrangementActivity[]>(
+      `${this.additionalActivityExecutionsUrl}/arrangement-term/${arrangementTermId}/filter`,
+      {
+        headers: this.getHeaders(),
+        params,
       },
     );
   }
