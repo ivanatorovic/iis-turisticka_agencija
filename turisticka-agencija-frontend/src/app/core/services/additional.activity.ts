@@ -3,6 +3,11 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth';
 
+export interface CategoryResponse {
+  id: number;
+  name: string;
+}
+
 export interface AdditionalActivityResponse {
   id: number;
   name: string;
@@ -11,6 +16,7 @@ export interface AdditionalActivityResponse {
   imageUrl: string;
   createdById: number;
   createdByUsername: string;
+  categories: CategoryResponse[];
 }
 
 export interface AdditionalActivityRequest {
@@ -18,6 +24,7 @@ export interface AdditionalActivityRequest {
   description: string;
   location: string;
   imageUrl: string;
+  categoryIds?: number[];
 }
 
 export interface AdditionalActivityShortResponse {
@@ -32,6 +39,7 @@ export interface AdditionalActivityShortResponse {
 })
 export class AdditionalActivityService {
   private readonly apiUrl = 'http://localhost:8080/api/additional-activities';
+  private readonly categoriesUrl = 'http://localhost:8080/api/categories';
 
   constructor(
     private http: HttpClient,
@@ -78,6 +86,12 @@ export class AdditionalActivityService {
 
   getAllShort(): Observable<AdditionalActivityShortResponse[]> {
     return this.http.get<AdditionalActivityShortResponse[]>(`${this.apiUrl}/short`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getAllCategories(): Observable<CategoryResponse[]> {
+    return this.http.get<CategoryResponse[]>(this.categoriesUrl, {
       headers: this.getHeaders(),
     });
   }

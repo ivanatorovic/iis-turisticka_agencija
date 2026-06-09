@@ -2,6 +2,9 @@ package com.example.turisticka_agencija.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 @Table(name = "users")
 public class User {
@@ -24,6 +27,14 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "user_liked_category",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> likedCategories = new HashSet<>();
 
     public User() {
     }
@@ -97,4 +108,12 @@ public class User {
     public void setContact(String contact) {
         this.contact = contact;
     }
+    public Set<Category> getLikedCategories() {
+        return likedCategories;
+    }
+
+    public void setLikedCategories(Set<Category> likedCategories) {
+        this.likedCategories = likedCategories;
+    }
+
 }

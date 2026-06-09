@@ -314,3 +314,33 @@ h1 {
   cursor: pointer;
   filter: invert(1);
 }
+
+.categories-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category-option {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.72);
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.22s ease;
+}
+
+.category-option:hover {
+  border-color: rgba(216, 193, 155, 0.42);
+  background: rgba(216, 193, 155, 0.1);
+  color: #f3dfbe;
+}
+
+.category-option.selected {
+  border-color: rgba(216, 193, 155, 0.55);
+  background: rgba(216, 193, 155, 0.2);
+  color: #f3dfbe;
+}

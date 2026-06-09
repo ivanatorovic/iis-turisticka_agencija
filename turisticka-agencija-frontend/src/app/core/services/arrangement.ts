@@ -66,6 +66,7 @@ export interface ArrangementActivity {
   guideLastName: string;
   guideUsername: string;
   status: string;
+  prior: boolean;
 }
 
 export interface AdditionalActivityExecutionRequest {
@@ -400,6 +401,16 @@ export class ArrangementService {
       {
         headers: this.getHeaders(),
         params,
+      },
+    );
+  }
+
+  setExecutionPrior(executionId: number, prior: boolean): Observable<ArrangementActivity> {
+    return this.http.put<ArrangementActivity>(
+      `${this.additionalActivityExecutionsUrl}/${executionId}/prior?prior=${prior}`,
+      {},
+      {
+        headers: this.getHeaders(),
       },
     );
   }

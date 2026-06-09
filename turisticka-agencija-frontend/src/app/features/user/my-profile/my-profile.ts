@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
-import { UserResponse, UserService } from '../../../core/services/user';
+import { CategoryResponse, UserResponse, UserService } from '../../../core/services/user';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -40,6 +40,10 @@ export class MyProfile implements OnInit {
     confirmNewPassword: '',
   };
 
+  likedCategories: CategoryResponse[] = [];
+  allCategories: CategoryResponse[] = [];
+  editingLikedCategories = false;
+
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
@@ -47,6 +51,11 @@ export class MyProfile implements OnInit {
       next: (user) => {
         this.user = user;
         this.loading = false;
+
+        if (user.role === 'CUSTOMER') {
+          this.loadLikedCategories();
+          this.loadAllCategories();
+        }
       },
       error: (err) => {
         this.loading = false;
@@ -57,6 +66,60 @@ export class MyProfile implements OnInit {
 
   getInitial(): string {
     return this.user?.username?.charAt(0).toUpperCase() || '?';
+  }
+
+  loadLikedCategories(): void {
+    this.userService.getMyLikedCategories().subscribe({
+      next: (categories) => {
+        this.likedCategories = categories;
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Nije moguće učitati omiljene kategorije.';
+      },
+    });
+  }
+
+  loadAllCategories(): void {
+    this.userService.getAllCategories().subscribe({
+      next: (categories) => {
+        this.allCategories = categories;
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Nije moguće učitati kategorije.';
+      },
+    });
+  }
+
+  toggleLikedCategoriesEdit(): void {
+    this.editingLikedCategories = !this.editingLikedCategories;
+  }
+
+  isLikedCategory(categoryId: number): boolean {
+    return this.likedCategories.some((category) => category.id === categoryId);
+  }
+
+  toggleLikedCategory(category: CategoryResponse): void {
+    if (this.isLikedCategory(category.id)) {
+      this.userService.removeLikedCategory(category.id).subscribe({
+        next: (categories) => {
+          this.likedCategories = categories;
+        },
+        error: (err) => {
+          this.errorMessage = err?.error?.message || 'Greška pri uklanjanju kategorije.';
+        },
+      });
+
+      return;
+    }
+
+    this.userService.addLikedCategory(category.id).subscribe({
+      next: (categories) => {
+        this.likedCategories = categories;
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Greška pri dodavanju kategorije.';
+      },
+    });
   }
 
   startEditing(field: string): void {

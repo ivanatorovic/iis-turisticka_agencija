@@ -56,6 +56,25 @@
               <strong>{{ activity.createdByUsername }}</strong>
             </div>
           </div>
+          <div class="categories-box">
+            <span class="categories-label">Kategorije</span>
+
+            <div
+              class="category-list"
+              *ngIf="activity.categories && activity.categories.length > 0"
+            >
+              <span class="category-chip" *ngFor="let category of activity.categories">
+                {{ category.name }}
+              </span>
+            </div>
+
+            <p
+              class="no-categories"
+              *ngIf="!activity.categories || activity.categories.length === 0"
+            >
+              Nema dodeljenih kategorija.
+            </p>
+          </div>
           <div class="card-actions">
             <button class="edit-btn" [routerLink]="['/create-additional-activity', activity.id]">
               Izmeni

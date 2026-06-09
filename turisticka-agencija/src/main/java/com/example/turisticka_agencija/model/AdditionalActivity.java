@@ -2,6 +2,9 @@ package com.example.turisticka_agencija.model;
 
 import jakarta.persistence.*;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Entity
 public class AdditionalActivity {
 
@@ -23,6 +26,14 @@ public class AdditionalActivity {
 
     @ManyToOne
     private User createdBy;
+
+    @ManyToMany
+    @JoinTable(
+            name = "additional_activity_category",
+            joinColumns = @JoinColumn(name = "additional_activity_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private Set<Category> categories = new HashSet<>();
 
     public AdditionalActivity() {
     }
@@ -81,5 +92,13 @@ public class AdditionalActivity {
 
     public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
+    }
+
+    public Set<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(Set<Category> categories) {
+        this.categories = categories;
     }
 }

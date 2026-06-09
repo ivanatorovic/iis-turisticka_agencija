@@ -30,6 +30,8 @@ public class AdditionalActivityExecution {
     @Enumerated(EnumType.STRING)
     private ExecutionStatus status = ExecutionStatus.UPCOMING;
 
+    private boolean prior = false;
+
     public AdditionalActivityExecution() {
     }
 
@@ -103,5 +105,13 @@ public class AdditionalActivityExecution {
 
     public void setStatus(ExecutionStatus status) {
         this.status = status;
+    }
+
+    public boolean isPrior() {
+        return prior;
+    }
+
+    public void setPrior(boolean prior) {
+        this.prior = prior;
     }
 }

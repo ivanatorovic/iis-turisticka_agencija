@@ -3,26 +3,20 @@ package com.example.turisticka_agencija.service;
 import com.example.turisticka_agencija.dto.AdditionalActivityRequest;
 import com.example.turisticka_agencija.dto.AdditionalActivityResponse;
 import com.example.turisticka_agencija.dto.AdditionalActivityShortResponse;
+import com.example.turisticka_agencija.dto.CategoryResponse;
 import com.example.turisticka_agencija.exception.BadRequestException;
-import com.example.turisticka_agencija.model.AdditionalActivity;
-import com.example.turisticka_agencija.model.Role;
-import com.example.turisticka_agencija.model.User;
-import com.example.turisticka_agencija.repository.AdditionalActivityRepository;
-import com.example.turisticka_agencija.repository.UserRepository;
+import com.example.turisticka_agencija.model.*;
+import com.example.turisticka_agencija.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-import com.example.turisticka_agencija.model.AdditionalActivityExecution;
-import com.example.turisticka_agencija.repository.AdditionalActivityExecutionRepository;
-import com.example.turisticka_agencija.repository.AdditionalActivityPriceListRepository;
-import com.example.turisticka_agencija.repository.AdditionalActivityRegistrationRepository;
-import com.example.turisticka_agencija.repository.ActivityTermRepository;
 import jakarta.transaction.Transactional;
 
 import java.io.IOException;
 import java.nio.file.*;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,6 +30,7 @@ public class AdditionalActivityService {
     private final AdditionalActivityPriceListRepository priceListRepository;
     private final AdditionalActivityRegistrationRepository registrationRepository;
     private final ActivityTermRepository activityTermRepository;
+    private final CategoryRepository categoryRepository;
 
     private static final Path UPLOAD_DIR = Paths.get(
             System.getProperty("user.dir"),
@@ -46,7 +41,7 @@ public class AdditionalActivityService {
     public AdditionalActivityService(
             AdditionalActivityRepository additionalActivityRepository,
             UserRepository userRepository,
-            ObjectMapper objectMapper, AdditionalActivityExecutionRepository executionRepository, AdditionalActivityPriceListRepository priceListRepository, AdditionalActivityRegistrationRepository registrationRepository, ActivityTermRepository activityTermRepository
+            ObjectMapper objectMapper, AdditionalActivityExecutionRepository executionRepository, AdditionalActivityPriceListRepository priceListRepository, AdditionalActivityRegistrationRepository registrationRepository, ActivityTermRepository activityTermRepository, CategoryRepository categoryRepository
     ) {
         this.additionalActivityRepository = additionalActivityRepository;
         this.userRepository = userRepository;
@@ -55,6 +50,7 @@ public class AdditionalActivityService {
         this.priceListRepository = priceListRepository;
         this.registrationRepository = registrationRepository;
         this.activityTermRepository = activityTermRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<AdditionalActivityResponse> getAllAdditionalActivities() {
@@ -90,6 +86,11 @@ public class AdditionalActivityService {
             activity.setLocation(request.getLocation().trim());
             activity.setImageUrl(saveImage(image));
             activity.setCreatedBy(user);
+            if (request.getCategoryIds() != null) {
+                activity.setCategories(
+                        new HashSet<>(categoryRepository.findAllById(request.getCategoryIds()))
+                );
+            }
 
             return mapToResponse(additionalActivityRepository.save(activity));
 
@@ -147,6 +148,12 @@ public class AdditionalActivityService {
 
             if (image != null && !image.isEmpty()) {
                 activity.setImageUrl(saveImage(image));
+            }
+
+            if (request.getCategoryIds() != null) {
+                activity.setCategories(
+                        new HashSet<>(categoryRepository.findAllById(request.getCategoryIds()))
+                );
             }
 
             return mapToResponse(additionalActivityRepository.save(activity));
@@ -212,6 +219,42 @@ public class AdditionalActivityService {
         } catch (IOException e) {
             throw new BadRequestException("Image could not be saved");
         }
+    }
+
+    public AdditionalActivityResponse addCategoryToActivity(
+            Long activityId,
+            Long categoryId,
+            Principal principal
+    ) {
+        User user = getAuthenticatedUser(principal);
+        validateManager(user);
+
+        AdditionalActivity activity = findActivityById(activityId);
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BadRequestException("Category not found"));
+
+        activity.getCategories().add(category);
+
+        return mapToResponse(additionalActivityRepository.save(activity));
+    }
+
+    public AdditionalActivityResponse removeCategoryFromActivity(
+            Long activityId,
+            Long categoryId,
+            Principal principal
+    ) {
+        User user = getAuthenticatedUser(principal);
+        validateManager(user);
+
+        AdditionalActivity activity = findActivityById(activityId);
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BadRequestException("Category not found"));
+
+        activity.getCategories().remove(category);
+
+        return mapToResponse(additionalActivityRepository.save(activity));
     }
 
     @Transactional
@@ -305,6 +348,14 @@ public class AdditionalActivityService {
             createdByUsername = activity.getCreatedBy().getUsername();
         }
 
+        List<CategoryResponse> categories = activity.getCategories()
+                .stream()
+                .map(category -> new CategoryResponse(
+                        category.getId(),
+                        category.getName()
+                ))
+                .toList();
+
         return new AdditionalActivityResponse(
                 activity.getId(),
                 activity.getName(),
@@ -312,7 +363,8 @@ public class AdditionalActivityService {
                 activity.getLocation(),
                 activity.getImageUrl(),
                 createdById,
-                createdByUsername
+                createdByUsername,
+                categories
         );
     }
 

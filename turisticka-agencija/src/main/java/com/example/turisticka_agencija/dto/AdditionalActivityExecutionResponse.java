@@ -32,6 +32,7 @@ public class AdditionalActivityExecutionResponse {
     private String guideLastName;
     private String guideUsername;
     private String status;
+    private boolean prior;
 
     public AdditionalActivityExecutionResponse(
             Long id,
@@ -55,7 +56,8 @@ public class AdditionalActivityExecutionResponse {
             int reservedSpots,
             int availableSpots,
             double price,
-            String status
+            String status,
+            boolean prior
     ) {
         this.id = id;
         this.arrangementTermId = arrangementTermId;
@@ -79,6 +81,7 @@ public class AdditionalActivityExecutionResponse {
         this.availableSpots = availableSpots;
         this.price = price;
         this.status = status;
+        this.prior = prior;
     }
 
     public Long getId() { return id; }
@@ -104,5 +107,8 @@ public class AdditionalActivityExecutionResponse {
     public double getPrice() { return price; }
     public String getStatus() {
         return status;
+    }
+    public boolean isPrior() {
+        return prior;
     }
 }

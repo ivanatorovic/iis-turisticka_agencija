@@ -199,7 +199,8 @@ public class AdditionalActivityExecutionService {
                 execution.getCapacity() - execution.getReservedSpots(),
 
                 price,
-                execution.getStatus().name()
+                execution.getStatus().name(),
+                execution.isPrior()
         );
     }
 
@@ -346,6 +347,25 @@ public class AdditionalActivityExecutionService {
         }
 
         execution.setStatus(ExecutionStatus.ACTIVE);
+
+        return mapToResponse(executionRepository.save(execution));
+    }
+
+    @Transactional
+    public AdditionalActivityExecutionResponse setPrior(
+            Long id,
+            boolean prior,
+            Principal principal
+    ) {
+        User user = getAuthenticatedUser(principal);
+        validateManager(user);
+
+        AdditionalActivityExecution execution = executionRepository.findById(id)
+                .orElseThrow(() ->
+                        new BadRequestException("Activity execution not found")
+                );
+
+        execution.setPrior(prior);
 
         return mapToResponse(executionRepository.save(execution));
     }

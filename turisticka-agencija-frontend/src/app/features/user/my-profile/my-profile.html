@@ -137,6 +137,40 @@
           </div>
         </div>
 
+        <div class="liked-categories-box" *ngIf="user?.role === 'CUSTOMER'">
+          <div class="liked-categories-header">
+            <div>
+              <span>Vaše omiljene kategorije</span>
+            </div>
+
+            <button class="edit-btn" type="button" (click)="toggleLikedCategoriesEdit()">
+              {{ editingLikedCategories ? '×' : '✎' }}
+            </button>
+          </div>
+
+          <div class="liked-category-list" *ngIf="likedCategories.length > 0">
+            <span class="liked-category-chip" *ngFor="let category of likedCategories">
+              {{ category.name }}
+            </span>
+          </div>
+
+          <p class="empty-categories" *ngIf="likedCategories.length === 0">
+            Još uvek niste izabrali omiljene kategorije.
+          </p>
+
+          <div class="all-category-picker" *ngIf="editingLikedCategories">
+            <button
+              type="button"
+              class="category-toggle"
+              *ngFor="let category of allCategories"
+              [class.selected]="isLikedCategory(category.id)"
+              (click)="toggleLikedCategory(category)"
+            >
+              {{ category.name }}
+            </button>
+          </div>
+        </div>
+
         <form class="password-form" *ngIf="changingPassword" (ngSubmit)="changePassword()">
           <div class="password-header">
             <div>

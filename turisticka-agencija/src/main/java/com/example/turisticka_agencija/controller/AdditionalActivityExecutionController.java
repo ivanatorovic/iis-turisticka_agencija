@@ -101,4 +101,13 @@ public class AdditionalActivityExecutionController {
                 onlyAvailable
         );
     }
+
+    @PutMapping("/{id}/prior")
+    public AdditionalActivityExecutionResponse setPrior(
+            @PathVariable Long id,
+            @RequestParam boolean prior,
+            Principal principal
+    ) {
+        return executionService.setPrior(id, prior, principal);
+    }
 }

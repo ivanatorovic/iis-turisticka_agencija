@@ -162,20 +162,20 @@ VALUES
 
 INSERT INTO additional_activity_execution
 (id, additional_activity_id, arrangement_term_id, activity_term_id,
- guide_id, duration_minutes, capacity, reserved_spots, status)
+ guide_id, duration_minutes, capacity, reserved_spots, status, prior)
 VALUES
-    (1, 1, 1, 1, 7, 180, 30, 10, 'UPCOMING'),
-    (2, 6, 1, 2, 8, 150, 35, 9, 'UPCOMING'),
-    (3, 1, 2, 3, 9, 180, 28, 5, 'UPCOMING'),
-    (4, 6, 2, 4, 7, 150, 30, 7, 'UPCOMING'),
-    (5, 2, 3, 5, 8, 120, 20, 0, 'UPCOMING'),
-    (6, 7, 3, 6, 9, 180, 20, 0, 'UPCOMING'),
-    (7, 3, 4, 7, 7, 120, 18, 3, 'UPCOMING'),
-    (8, 8, 4, 8, 8, 90, 12, 0, 'UPCOMING'),
-    (9, 4, 5, 9, 9, 180, 14, 0, 'UPCOMING'),
-    (10, 9, 5, 10, 7, 240, 16, 8, 'UPCOMING'),
-    (11, 5, 6, 11, 8, 90, 12, 3, 'UPCOMING'),
-    (12, 10, 6, 12, 9, 150, 12, 0, 'UPCOMING');
+    (1, 1, 1, 1, 7, 180, 30, 10, 'UPCOMING', TRUE),
+    (2, 6, 1, 2, 8, 150, 35, 9, 'UPCOMING', FALSE),
+    (3, 1, 2, 3, 9, 180, 28, 5, 'UPCOMING', FALSE),
+    (4, 6, 2, 4, 7, 150, 30, 7, 'UPCOMING', FALSE),
+    (5, 2, 3, 5, 8, 120, 20, 0, 'UPCOMING', TRUE),
+    (6, 7, 3, 6, 9, 180, 20, 0, 'UPCOMING', FALSE),
+    (7, 3, 4, 7, 7, 120, 18, 3, 'UPCOMING', FALSE),
+    (8, 8, 4, 8, 8, 90, 12, 0, 'UPCOMING', FALSE),
+    (9, 4, 5, 9, 9, 180, 14, 0, 'UPCOMING', TRUE),
+    (10, 9, 5, 10, 7, 240, 16, 8, 'UPCOMING', TRUE),
+    (11, 5, 6, 11, 8, 90, 12, 3, 'UPCOMING', FALSE),
+    (12, 10, 6, 12, 9, 150, 12, 0, 'UPCOMING', FALSE);
 
 INSERT INTO additional_activity_price_list
 (id, additional_activity_execution_id, price, valid_from, valid_to)
@@ -220,6 +220,91 @@ VALUES
 
     (16, 1, 11, 3, '2026-04-21 10:25:00', 'ACTIVE');
 
+INSERT INTO category (id, name)
+VALUES
+    (1, 'Avantura'),
+    (2, 'Kultura'),
+    (3, 'Gastronomija'),
+    (4, 'Priroda'),
+    (5, 'Sport'),
+    (6, 'Istorija'),
+    (7, 'Nocni zivot'),
+    (8, 'Porodicne aktivnosti'),
+    (9, 'Relax'),
+    (10, 'Luksuz');
+
+INSERT INTO additional_activity_category
+(additional_activity_id, category_id)
+VALUES
+
+-- Izlet do ostrva Vido
+(1, 4),
+
+-- Koloseum
+(2, 2),
+(2, 6),
+
+-- Ski skola
+(3, 5),
+(3, 1),
+
+-- Ronjenje
+(4, 1),
+(4, 5),
+
+-- Krstarenje Senom
+(5, 2),
+(5, 9),
+
+-- Grcko vece
+(6, 3),
+(6, 7),
+
+-- Vatikan
+(7, 2),
+(7, 6),
+
+-- Motorne sanke
+(8, 1),
+(8, 5),
+
+-- Safari pustinjom
+(9, 1),
+(9, 4),
+
+-- Luvr
+(10, 2),
+(10, 6);
+
+
+INSERT INTO user_category
+(user_id, category_id)
+VALUES
+
+-- Ivana
+(1, 4),   -- Priroda
+(1, 9),   -- Relax
+(1, 2),   -- Kultura
+
+-- Marko
+(10, 1),  -- Avantura
+(10, 5),  -- Sport
+(10, 4),  -- Priroda
+
+-- Ana
+(11, 2),  -- Kultura
+(11, 6),  -- Istorija
+(11, 3),  -- Gastronomija
+
+-- Luka
+(12, 1),  -- Avantura
+(12, 7),  -- Nocni zivot
+(12, 3),  -- Gastronomija
+
+-- Milica
+(13, 10), -- Luksuz
+(13, 9),  -- Relax
+(13, 8);  -- Porodicne aktivnosti
 SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 SELECT setval('destination_id_seq', (SELECT MAX(id) FROM destination));
 SELECT setval('accommodation_id_seq', (SELECT MAX(id) FROM accommodation));
@@ -237,3 +322,4 @@ SELECT setval('activity_term_id_seq', (SELECT MAX(id) FROM activity_term));
 SELECT setval('additional_activity_execution_id_seq', (SELECT MAX(id) FROM additional_activity_execution));
 SELECT setval('additional_activity_price_list_id_seq', (SELECT MAX(id) FROM additional_activity_price_list));
 SELECT setval('additional_activity_registration_id_seq', (SELECT MAX(id) FROM additional_activity_registration));
+SELECT setval('category_id_seq', (SELECT MAX(id) FROM category));

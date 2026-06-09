@@ -116,6 +116,29 @@ export class ManagerArrangementsActivities implements OnInit {
     });
   }
 
+  togglePrior(activity: ArrangementActivity): void {
+    const newPriorValue = !activity.prior;
+
+    this.arrangementService.setExecutionPrior(activity.id, newPriorValue).subscribe({
+      next: (updatedActivity) => {
+        this.activities = this.activities.map((item) =>
+          item.id === updatedActivity.id ? updatedActivity : item,
+        );
+
+        this.successMessage = newPriorValue
+          ? 'Aktivnost je označena kao prioritetna.'
+          : 'Aktivnosti je uklonjen prioritet.';
+
+        setTimeout(() => {
+          this.successMessage = '';
+        }, 3000);
+      },
+      error: (error) => {
+        this.errorMessage = error.error?.message || 'Greška pri promeni prioriteta aktivnosti.';
+      },
+    });
+  }
+
   openAddModal(): void {
     this.showAddModal = true;
     this.modalStep = 1;

@@ -33,11 +33,17 @@ export interface ChangePasswordRequest {
   confirmNewPassword: string;
 }
 
+export interface CategoryResponse {
+  id: number;
+  name: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   private readonly apiUrl = 'http://localhost:8080/api/users';
+  private readonly categoriesUrl = 'http://localhost:8080/api/categories';
 
   constructor(
     private http: HttpClient,
@@ -52,6 +58,45 @@ export class UserService {
     });
 
     return this.http.get<UserResponse>(`${this.apiUrl}/me`, { headers });
+  }
+
+  private getHeaders(): HttpHeaders {
+    const token = this.authService.getToken();
+
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+  }
+
+  getAllCategories(): Observable<CategoryResponse[]> {
+    return this.http.get<CategoryResponse[]>(this.categoriesUrl, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  getMyLikedCategories(): Observable<CategoryResponse[]> {
+    return this.http.get<CategoryResponse[]>(`${this.apiUrl}/me/liked-categories`, {
+      headers: this.getHeaders(),
+    });
+  }
+
+  addLikedCategory(categoryId: number): Observable<CategoryResponse[]> {
+    return this.http.put<CategoryResponse[]>(
+      `${this.apiUrl}/me/liked-categories/${categoryId}`,
+      {},
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
+  removeLikedCategory(categoryId: number): Observable<CategoryResponse[]> {
+    return this.http.delete<CategoryResponse[]>(
+      `${this.apiUrl}/me/liked-categories/${categoryId}`,
+      {
+        headers: this.getHeaders(),
+      },
+    );
   }
 
   updateMyProfile(request: UpdateProfileRequest): Observable<UpdateProfileResponse> {

@@ -1,5 +1,7 @@
 package com.example.turisticka_agencija.dto;
 
+import java.util.List;
+
 public class AdditionalActivityResponse {
 
     private Long id;
@@ -9,6 +11,7 @@ public class AdditionalActivityResponse {
     private String imageUrl;
     private Long createdById;
     private String createdByUsername;
+    private List<CategoryResponse> categories;
 
     public AdditionalActivityResponse(
             Long id,
@@ -17,7 +20,8 @@ public class AdditionalActivityResponse {
             String location,
             String imageUrl,
             Long createdById,
-            String createdByUsername
+            String createdByUsername,
+            List<CategoryResponse> categories
     ) {
         this.id = id;
         this.name = name;
@@ -26,6 +30,7 @@ public class AdditionalActivityResponse {
         this.imageUrl = imageUrl;
         this.createdById = createdById;
         this.createdByUsername = createdByUsername;
+        this.categories = categories;
     }
 
     public Long getId() {
@@ -54,5 +59,9 @@ public class AdditionalActivityResponse {
 
     public String getCreatedByUsername() {
         return createdByUsername;
+    }
+
+    public List<CategoryResponse> getCategories() {
+        return categories;
     }
 }

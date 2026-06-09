@@ -6,6 +6,7 @@ import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
 import {
   AdditionalActivityRequest,
   AdditionalActivityService,
+  CategoryResponse,
 } from '../../../core/services/additional.activity';
 
 @Component({
@@ -22,6 +23,8 @@ export class CreateActivities implements OnInit {
   saving = false;
   errorMessage = '';
   successMessage = '';
+  categories: CategoryResponse[] = [];
+  selectedCategoryIds: number[] = [];
 
   selectedImage: File | null = null;
 
@@ -40,12 +43,24 @@ export class CreateActivities implements OnInit {
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
+    this.loadCategories();
 
     if (id) {
       this.activityId = Number(id);
       this.isEditMode = true;
       this.loadActivity(this.activityId);
     }
+  }
+
+  loadCategories(): void {
+    this.additionalActivityService.getAllCategories().subscribe({
+      next: (categories) => {
+        this.categories = categories;
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Nije moguće učitati kategorije.';
+      },
+    });
   }
 
   loadActivity(id: number): void {
@@ -58,7 +73,10 @@ export class CreateActivities implements OnInit {
           description: activity.description,
           location: activity.location,
           imageUrl: activity.imageUrl,
+          categoryIds: activity.categories?.map((category) => category.id) || [],
         };
+
+        this.selectedCategoryIds = activity.categories?.map((category) => category.id) || [];
 
         this.loading = false;
       },
@@ -67,6 +85,15 @@ export class CreateActivities implements OnInit {
         this.loading = false;
       },
     });
+  }
+
+  toggleCategory(categoryId: number): void {
+    if (this.selectedCategoryIds.includes(categoryId)) {
+      this.selectedCategoryIds = this.selectedCategoryIds.filter((id) => id !== categoryId);
+      return;
+    }
+
+    this.selectedCategoryIds = [...this.selectedCategoryIds, categoryId];
   }
 
   saveActivity(): void {
@@ -133,6 +160,7 @@ export class CreateActivities implements OnInit {
       name: this.form.name,
       description: this.form.description,
       location: this.form.location,
+      categoryIds: this.selectedCategoryIds,
     };
 
     const formData = new FormData();

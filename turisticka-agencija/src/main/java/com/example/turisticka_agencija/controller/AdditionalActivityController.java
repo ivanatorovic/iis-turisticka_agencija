@@ -61,4 +61,31 @@ public class AdditionalActivityController {
     public List<AdditionalActivityShortResponse> getAllShortActivities() {
         return additionalActivityService.getAllShortActivities();
     }
+
+    @PutMapping("/{activityId}/categories/{categoryId}")
+    public AdditionalActivityResponse addCategoryToActivity(
+            @PathVariable Long activityId,
+            @PathVariable Long categoryId,
+            Principal principal
+    ) {
+        return additionalActivityService.addCategoryToActivity(
+                activityId,
+                categoryId,
+                principal
+        );
+    }
+
+    @DeleteMapping("/{activityId}/categories/{categoryId}")
+    public AdditionalActivityResponse removeCategoryFromActivity(
+            @PathVariable Long activityId,
+            @PathVariable Long categoryId,
+            Principal principal
+    ) {
+        return additionalActivityService.removeCategoryFromActivity(
+                activityId,
+                categoryId,
+                principal
+        );
+    }
+
 }

@@ -1,11 +1,14 @@
 package com.example.turisticka_agencija.service;
 
+import com.example.turisticka_agencija.dto.CategoryResponse;
 import com.example.turisticka_agencija.dto.UpdateProfileRequest;
 import com.example.turisticka_agencija.dto.UpdateProfileResponse;
 import com.example.turisticka_agencija.dto.UserResponse;
 import com.example.turisticka_agencija.exception.BadRequestException;
+import com.example.turisticka_agencija.model.Category;
 import com.example.turisticka_agencija.model.Role;
 import com.example.turisticka_agencija.model.User;
+import com.example.turisticka_agencija.repository.CategoryRepository;
 import com.example.turisticka_agencija.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
@@ -18,10 +21,12 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final JwtService jwtService;
+    private final CategoryRepository categoryRepository;
 
-    public UserService(UserRepository userRepository, JwtService jwtService) {
+    public UserService(UserRepository userRepository, JwtService jwtService, CategoryRepository categoryRepository) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.categoryRepository = categoryRepository;
     }
 
     public List<User> getAllUsers() {
@@ -121,6 +126,66 @@ public class UserService implements UserDetailsService {
         );
 
         return new UpdateProfileResponse(userResponse, newToken);
+    }
+
+    public List<CategoryResponse> getLikedCategories(String username) {
+        User user = findByUsername(username);
+
+        validateCustomer(user);
+
+        return user.getLikedCategories()
+                .stream()
+                .map(category -> new CategoryResponse(
+                        category.getId(),
+                        category.getName()
+                ))
+                .toList();
+    }
+
+    public List<CategoryResponse> addLikedCategory(String username, Long categoryId) {
+        User user = findByUsername(username);
+
+        validateCustomer(user);
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BadRequestException("Kategorija nije pronađena"));
+
+        user.getLikedCategories().add(category);
+
+        return userRepository.save(user)
+                .getLikedCategories()
+                .stream()
+                .map(categoryItem -> new CategoryResponse(
+                        categoryItem.getId(),
+                        categoryItem.getName()
+                ))
+                .toList();
+    }
+
+    public List<CategoryResponse> removeLikedCategory(String username, Long categoryId) {
+        User user = findByUsername(username);
+
+        validateCustomer(user);
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new BadRequestException("Kategorija nije pronađena"));
+
+        user.getLikedCategories().remove(category);
+
+        return userRepository.save(user)
+                .getLikedCategories()
+                .stream()
+                .map(categoryItem -> new CategoryResponse(
+                        categoryItem.getId(),
+                        categoryItem.getName()
+                ))
+                .toList();
+    }
+
+    private void validateCustomer(User user) {
+        if (user.getRole() != Role.CUSTOMER) {
+            throw new BadRequestException("Samo kupac može da bira omiljene kategorije");
+        }
     }
 
     public List<UserResponse> getGuides() {

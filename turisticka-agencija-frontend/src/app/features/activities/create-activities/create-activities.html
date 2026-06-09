@@ -37,6 +37,24 @@
         </div>
 
         <div class="form-field full">
+          <label>Kategorije aktivnosti</label>
+
+          <div class="categories-picker">
+            <button
+              type="button"
+              class="category-option"
+              *ngFor="let category of categories"
+              [class.selected]="selectedCategoryIds.includes(category.id)"
+              (click)="toggleCategory(category.id)"
+            >
+              {{ category.name }}
+            </button>
+          </div>
+
+          <p class="selected-image" *ngIf="categories.length === 0">Nema dostupnih kategorija.</p>
+        </div>
+
+        <div class="form-field full">
           <label>Slika aktivnosti</label>
 
           <label class="file-picker">

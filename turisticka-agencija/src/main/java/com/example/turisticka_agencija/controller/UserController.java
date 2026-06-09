@@ -1,9 +1,6 @@
 package com.example.turisticka_agencija.controller;
 
-import com.example.turisticka_agencija.dto.ChangePasswordRequest;
-import com.example.turisticka_agencija.dto.UpdateProfileRequest;
-import com.example.turisticka_agencija.dto.UpdateProfileResponse;
-import com.example.turisticka_agencija.dto.UserResponse;
+import com.example.turisticka_agencija.dto.*;
 import com.example.turisticka_agencija.model.User;
 import com.example.turisticka_agencija.service.AuthService;
 import com.example.turisticka_agencija.service.UserService;
@@ -113,5 +110,26 @@ public class UserController {
     public ResponseEntity<List<UserResponse>> getGuides() {
 
         return ResponseEntity.ok(userService.getGuides());
+    }
+
+    @GetMapping("/me/liked-categories")
+    public List<CategoryResponse> getMyLikedCategories(Authentication authentication) {
+        return userService.getLikedCategories(authentication.getName());
+    }
+
+    @PutMapping("/me/liked-categories/{categoryId}")
+    public List<CategoryResponse> addLikedCategory(
+            Authentication authentication,
+            @PathVariable Long categoryId
+    ) {
+        return userService.addLikedCategory(authentication.getName(), categoryId);
+    }
+
+    @DeleteMapping("/me/liked-categories/{categoryId}")
+    public List<CategoryResponse> removeLikedCategory(
+            Authentication authentication,
+            @PathVariable Long categoryId
+    ) {
+        return userService.removeLikedCategory(authentication.getName(), categoryId);
     }
 }

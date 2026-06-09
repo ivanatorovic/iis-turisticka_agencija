@@ -33,6 +33,7 @@
       <article class="activity-card" *ngFor="let activity of activities">
         <div class="image-wrapper">
           <img [src]="getImageUrl(activity.imageUrl)" [alt]="activity.activityName" />
+          <div *ngIf="activity.prior" class="priority-label">PRIORITET</div>
         </div>
 
         <div class="activity-content">
@@ -85,7 +86,17 @@
           </div>
 
           <div class="card-actions">
+            <button
+              class="priority-btn"
+              type="button"
+              [class.active]="activity.prior"
+              (click)="togglePrior(activity)"
+            >
+              {{ activity.prior ? 'Skloni prioritet' : 'Označi prioritet' }}
+            </button>
+
             <button class="edit-btn" type="button" (click)="openEditModal(activity)">Izmeni</button>
+
             <button class="delete-btn" type="button" (click)="removeActivity(activity.id)">
               Ukloni
             </button>
