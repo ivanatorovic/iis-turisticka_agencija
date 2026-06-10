@@ -277,7 +277,7 @@ VALUES
 (10, 6);
 
 
-INSERT INTO user_category
+INSERT INTO user_liked_category
 (user_id, category_id)
 VALUES
 

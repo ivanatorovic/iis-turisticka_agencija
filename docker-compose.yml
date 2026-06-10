@@ -1,40 +1,96 @@
 services:
-
   postgres:
     image: postgres:15
     container_name: turisticka-agencija-db
     restart: always
-
     environment:
       POSTGRES_DB: turisticka_agencija
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: lozinka123
-
     ports:
       - "5432:5432"
-
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./docker/init:/docker-entrypoint-initdb.d
+      - ./turisticka-agencija/docker/init:/docker-entrypoint-initdb.d
+    networks:
+      - turisticka-network
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: turisticka-agencija-pgadmin
     restart: always
-
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: admin123
-
     ports:
       - "5050:80"
-
     depends_on:
       - postgres
-
     volumes:
       - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - turisticka-network
+
+  neo4j:
+    image: neo4j:5
+    container_name: dodatne-aktivnosti-neo4j
+    restart: always
+    environment:
+      NEO4J_AUTH: neo4j/password
+    ports:
+      - "7476:7474"
+      - "7689:7687"
+    volumes:
+      - neo4j_data:/data
+    networks:
+      - turisticka-network
+
+  turisticka-agencija:
+    build:
+      context: ./turisticka-agencija
+      dockerfile: Dockerfile
+    container_name: turisticka-agencija-backend
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/turisticka_agencija
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: lozinka123
+      SPRING_JPA_HIBERNATE_DDL_AUTO: create-drop
+      SPRING_SQL_INIT_MODE: always
+    volumes:
+      - ./turisticka-agencija/uploads:/app/uploads
+    networks:
+      - turisticka-network
+
+  dodatne-aktivnosti-service:
+    build:
+      context: ./dodatne-aktivnosti
+      dockerfile: Dockerfile
+    container_name: dodatne-aktivnosti-service
+    restart: always
+    depends_on:
+      - neo4j
+    ports:
+      - "8082:8082"
+    environment:
+      SERVER_PORT: 8082
+      SPRING_NEO4J_URI: bolt://neo4j:7687
+      SPRING_NEO4J_AUTHENTICATION_USERNAME: neo4j
+      SPRING_NEO4J_AUTHENTICATION_PASSWORD: password
+      EUREKA_CLIENT_ENABLED: false
+    networks:
+      - turisticka-network
 
 volumes:
   postgres_data:
   pgadmin_data:
+  uploads_data:
+  neo4j_data:
+
+networks:
+  turisticka-network:
+    driver: bridge

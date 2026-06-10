@@ -1,0 +1,23 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: dodatne-aktivnosti
+
+  neo4j:
+    uri: bolt://localhost:7689
+    authentication:
+      username: neo4j
+      password: password
+
+eureka:
+  client:
+    enabled: ${EUREKA_CLIENT_ENABLED:false}
+    service-url:
+      defaultZone: ${EUREKA_CLIENT_SERVICEURL_DEFAULTZONE:http://localhost:8761/eureka/}
+    healthcheck:
+      enabled: true
+
+  instance:
+    prefer-ip-address: true
