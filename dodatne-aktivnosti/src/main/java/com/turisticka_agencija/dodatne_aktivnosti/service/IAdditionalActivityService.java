@@ -26,4 +26,9 @@ public interface IAdditionalActivityService {
     List<RecommendedActivityDTO> recommendActivitiesByCategory(Long customerId);
     List<RecommendedActivityDTO> findAffordableActivitiesForCustomer(Long customerId);
     List<RecommendedActivityDTO> findPopularActivitiesForCustomer(Long customerId);
+    List<RecommendedActivityDTO> recommendBestActivities(Long customerId);
+    List<RecommendedActivityDTO> recommendBestActivitiesForArrangement(
+            Long customerId,
+            Long arrangementId
+    );
 }

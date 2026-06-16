@@ -1,14 +1,12 @@
 package com.example.turisticka_agencija.service;
 
-import com.example.turisticka_agencija.dto.AdditionalActivityParticipantResponse;
-import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationRequest;
-import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationResponse;
-import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationUpdateRequest;
+import com.example.turisticka_agencija.dto.*;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.*;
 import com.example.turisticka_agencija.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.time.LocalDateTime;
@@ -21,17 +19,19 @@ public class AdditionalActivityRegistrationService {
     private final AdditionalActivityExecutionRepository executionRepository;
     private final AdditionalActivityPriceListRepository priceListRepository;
     private final UserRepository userRepository;
+    private final RestTemplate restTemplate;
 
     public AdditionalActivityRegistrationService(
             AdditionalActivityRegistrationRepository registrationRepository,
             AdditionalActivityExecutionRepository executionRepository,
             AdditionalActivityPriceListRepository priceListRepository,
-            UserRepository userRepository
+            UserRepository userRepository, RestTemplate restTemplate
     ) {
         this.registrationRepository = registrationRepository;
         this.executionRepository = executionRepository;
         this.priceListRepository = priceListRepository;
         this.userRepository = userRepository;
+        this.restTemplate = restTemplate;
     }
 
     @Transactional
@@ -79,6 +79,14 @@ public class AdditionalActivityRegistrationService {
         executionRepository.save(execution);
         registration = registrationRepository.save(registration);
 
+        syncRegistrationToRecommendationService(
+                user.getId(),
+                execution.getId(),
+                registration.getId(),
+                registration.getNumberOfParticipants(),
+                registration.getStatus().name()
+        );
+
         return mapToResponse(registration);
     }
 
@@ -116,6 +124,11 @@ public class AdditionalActivityRegistrationService {
 
         executionRepository.save(execution);
         registrationRepository.save(registration);
+
+        deleteRegistrationFromRecommendationService(
+                user.getId(),
+                execution.getId()
+        );
     }
 
     public List<AdditionalActivityParticipantResponse> getParticipantsForExecution(
@@ -235,5 +248,45 @@ public class AdditionalActivityRegistrationService {
         registration = registrationRepository.save(registration);
 
         return mapToResponse(registration);
+    }
+
+    private void syncRegistrationToRecommendationService(
+            Long customerId,
+            Long executionId,
+            Long registrationId,
+            Integer numberOfPeople,
+            String status
+    ) {
+        String url =
+                "http://dodatne-aktivnosti-service:8082/customers/"
+                        + customerId
+                        + "/registrations";
+
+        RecommendationRegistrationRequest request =
+                new RecommendationRegistrationRequest(
+                        registrationId,
+                        executionId,
+                        numberOfPeople,
+                        status
+                );
+
+        restTemplate.postForEntity(
+                url,
+                request,
+                Void.class
+        );
+    }
+
+    private void deleteRegistrationFromRecommendationService(
+            Long customerId,
+            Long executionId
+    ) {
+        String url =
+                "http://dodatne-aktivnosti-service:8082/customers/"
+                        + customerId
+                        + "/registrations/"
+                        + executionId;
+
+        restTemplate.delete(url);
     }
 }

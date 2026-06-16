@@ -66,21 +66,21 @@ public class CustomerController {
     }
 
     @PostMapping("/{customerId}/favorite-categories/{categoryId}")
-    public ResponseEntity<Customer> addFavoriteCategory(@PathVariable Long customerId,
-                                                        @PathVariable Long categoryId) {
-        return new ResponseEntity<>(
-                customerService.addFavoriteCategory(customerId, categoryId),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Void> addFavoriteCategory(
+            @PathVariable Long customerId,
+            @PathVariable Long categoryId
+    ) {
+        customerService.addFavoriteCategory(customerId, categoryId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{customerId}/favorite-categories/{categoryId}")
-    public ResponseEntity<Customer> removeFavoriteCategory(@PathVariable Long customerId,
-                                                           @PathVariable Long categoryId) {
-        return new ResponseEntity<>(
-                customerService.removeFavoriteCategory(customerId, categoryId),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Void> removeFavoriteCategory(
+            @PathVariable Long customerId,
+            @PathVariable Long categoryId
+    ) {
+        customerService.removeFavoriteCategory(customerId, categoryId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @PostMapping("/{customerId}/booked-arrangements/{arrangementId}")

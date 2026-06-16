@@ -1,18 +1,16 @@
 package com.example.turisticka_agencija.service;
 
-import com.example.turisticka_agencija.dto.AdditionalActivityExecutionRequest;
-import com.example.turisticka_agencija.dto.AdditionalActivityExecutionResponse;
-import com.example.turisticka_agencija.dto.AdditionalActivityExecutionUpdateRequest;
-import com.example.turisticka_agencija.dto.AdditionalActivityRegistrationUpdateRequest;
+import com.example.turisticka_agencija.dto.*;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.*;
 import com.example.turisticka_agencija.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.security.Principal;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AdditionalActivityExecutionService {
@@ -24,6 +22,7 @@ public class AdditionalActivityExecutionService {
     private final AdditionalActivityPriceListRepository priceListRepository;
     private final UserRepository userRepository;
     private final AdditionalActivityRegistrationRepository registrationRepository;
+    private final RestTemplate restTemplate;
 
     public AdditionalActivityExecutionService(
             AdditionalActivityExecutionRepository executionRepository,
@@ -32,7 +31,7 @@ public class AdditionalActivityExecutionService {
             ActivityTermRepository activityTermRepository,
             AdditionalActivityPriceListRepository priceListRepository,
             UserRepository userRepository,
-            AdditionalActivityRegistrationRepository registrationRepository
+            AdditionalActivityRegistrationRepository registrationRepository, RestTemplate restTemplate
     ) {
         this.executionRepository = executionRepository;
         this.additionalActivityRepository = additionalActivityRepository;
@@ -41,6 +40,7 @@ public class AdditionalActivityExecutionService {
         this.priceListRepository = priceListRepository;
         this.userRepository = userRepository;
         this.registrationRepository = registrationRepository;
+        this.restTemplate = restTemplate;
     }
 
     public List<AdditionalActivityExecutionResponse> getByArrangementTerm(Long arrangementTermId) {
@@ -231,6 +231,65 @@ public class AdditionalActivityExecutionService {
         if (user.getRole() != Role.MANAGER) {
             throw new BadRequestException("Only MANAGER can manage activity executions");
         }
+    }
+
+    public List<AdditionalActivityExecutionResponse> getRecommendedSortedByArrangementTerm(
+            Long arrangementTermId,
+            Principal principal
+    ) {
+        User user = getAuthenticatedUser(principal);
+
+        ArrangementTerm arrangementTerm = arrangementTermRepository.findById(arrangementTermId)
+                .orElseThrow(() -> new BadRequestException("Arrangement term not found"));
+
+        Long customerId = user.getId();
+        Long arrangementId = arrangementTerm.getArrangement().getId();
+
+        List<AdditionalActivityExecutionResponse> allActivities =
+                new ArrayList<>(getByArrangementTerm(arrangementTermId));
+
+        String url = "http://dodatne-aktivnosti-service:8082/activities/recommendations/best/"
+                + customerId
+                + "/arrangement/"
+                + arrangementId;
+
+        RecommendedActivityDto[] recommended =
+                restTemplate.getForObject(url, RecommendedActivityDto[].class);
+
+        Map<Long, Integer> recommendationOrder = new HashMap<>();
+
+        if (recommended != null) {
+            for (int i = 0; i < recommended.length; i++) {
+                recommendationOrder.put(recommended[i].executionId(), i);
+            }
+        }
+
+        allActivities.sort((first, second) -> {
+            boolean firstPrior = Boolean.TRUE.equals(first.isPrior());
+            boolean secondPrior = Boolean.TRUE.equals(second.isPrior());
+
+            if (firstPrior && !secondPrior) {
+                return -1;
+            }
+
+            if (!firstPrior && secondPrior) {
+                return 1;
+            }
+
+            int firstOrder = recommendationOrder.getOrDefault(
+                    first.getId(),
+                    Integer.MAX_VALUE
+            );
+
+            int secondOrder = recommendationOrder.getOrDefault(
+                    second.getId(),
+                    Integer.MAX_VALUE
+            );
+
+            return Integer.compare(firstOrder, secondOrder);
+        });
+
+        return allActivities;
     }
 
     @Transactional

@@ -19,6 +19,7 @@ public class RecommendedActivityDTO {
     private Double price;
     private String status;
     private Boolean prior;
+    private Integer score;
 
     private ArrangementDTO arrangement;
 
@@ -27,7 +28,7 @@ public class RecommendedActivityDTO {
                                   LocalDate activityDate, LocalTime startTime,
                                   Integer durationMinutes, Integer capacity, Integer reservedSpots,
                                   Double price, String status, Boolean prior,
-                                  ArrangementDTO arrangement) {
+                                  ArrangementDTO arrangement,Integer score) {
         this.executionId = executionId;
         this.activityId = activityId;
         this.name = name;
@@ -42,6 +43,7 @@ public class RecommendedActivityDTO {
         this.status = status;
         this.prior = prior;
         this.arrangement = arrangement;
+        this.score = score;
     }
 
     public Long getExecutionId() { return executionId; }
@@ -58,4 +60,12 @@ public class RecommendedActivityDTO {
     public String getStatus() { return status; }
     public Boolean getPrior() { return prior; }
     public ArrangementDTO getArrangement() { return arrangement; }
+
+    public Integer getScore() {
+        return score;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
 }

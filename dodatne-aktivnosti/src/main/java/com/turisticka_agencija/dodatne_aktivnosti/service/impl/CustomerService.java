@@ -106,31 +106,35 @@ public class CustomerService implements ICustomerService {
     }
 
     @Override
-    public Customer addFavoriteCategory(Long customerId, Long categoryId) {
-        Customer customer = findById(customerId);
+    public void addFavoriteCategory(Long customerId, Long categoryId) {
+        Long matchedCategories = customerRepository.addFavoriteCategoryRelation(
+                customerId,
+                categoryId
+        );
 
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() -> new RuntimeException("Category not found with id: " + categoryId));
+        if (matchedCategories == null || matchedCategories == 0) {
+            throw new RuntimeException(
+                    "Customer or category not found. customerId: "
+                            + customerId + ", categoryId: " + categoryId
+            );
+        }
 
-        customer.getFavoriteCategories().add(category);
-
-        return customerRepository.save(customer);
     }
 
     @Override
-    public Customer removeFavoriteCategory(Long customerId, Long categoryId) {
-        Customer customer = findById(customerId);
-
-        boolean removed = customer.getFavoriteCategories().removeIf(
-                category -> category.getCategoryId() != null
-                        && category.getCategoryId().equals(categoryId)
+    public void removeFavoriteCategory(Long customerId, Long categoryId) {
+        Long matchedCategories = customerRepository.removeFavoriteCategoryRelation(
+                customerId,
+                categoryId
         );
 
-        if (!removed) {
-            throw new RuntimeException("Favorite category not found for customer. Category id: " + categoryId);
+        if (matchedCategories == null || matchedCategories == 0) {
+            throw new RuntimeException(
+                    "Customer or category not found. customerId: "
+                            + customerId + ", categoryId: " + categoryId
+            );
         }
 
-        return customerRepository.save(customer);
     }
 
     @Override

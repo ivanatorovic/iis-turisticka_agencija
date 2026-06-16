@@ -110,4 +110,12 @@ public class AdditionalActivityExecutionController {
     ) {
         return executionService.setPrior(id, prior, principal);
     }
+
+    @GetMapping("/arrangement-term/{arrangementTermId}/recommended-sorted")
+    public List<AdditionalActivityExecutionResponse> getRecommendedSortedByArrangementTerm(
+            @PathVariable Long arrangementTermId,
+            Principal principal
+    ) {
+        return executionService.getRecommendedSortedByArrangementTerm(arrangementTermId, principal);
+    }
 }

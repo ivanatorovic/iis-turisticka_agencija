@@ -96,4 +96,23 @@ public class AdditionalActivityController {
                 HttpStatus.OK
         );
     }
+
+    @GetMapping("/recommendations/best/{customerId}")
+    public ResponseEntity<List<RecommendedActivityDTO>> recommendBestActivities(@PathVariable Long customerId) {
+        return new ResponseEntity<>(
+                additionalActivityService.recommendBestActivities(customerId),
+                HttpStatus.OK
+        );
+    }
+
+    @GetMapping("/recommendations/best/{customerId}/arrangement/{arrangementId}")
+    public ResponseEntity<List<RecommendedActivityDTO>> recommendBestActivitiesForArrangement(
+            @PathVariable Long customerId,
+            @PathVariable Long arrangementId
+    ) {
+        return new ResponseEntity<>(
+                additionalActivityService.recommendBestActivitiesForArrangement(customerId, arrangementId),
+                HttpStatus.OK
+        );
+    }
 }

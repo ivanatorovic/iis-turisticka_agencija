@@ -72,31 +72,23 @@ export class RecommendedActivities implements OnInit {
     this.errorMessage = '';
     this.successMessage = '';
 
-    this.arrangementService.getActivitiesForArrangementTerm(this.arrangementTermId).subscribe({
-      next: (allActivities) => {
-        this.allTermActivities = allActivities;
-        this.loadFilteredActivities();
-      },
-      error: (error) => {
-        this.errorMessage = error.error?.message || 'Greška pri učitavanju aktivnosti.';
-        this.loading = false;
-      },
-    });
-  }
-
-  loadFilteredActivities(): void {
     this.arrangementService
-      .getFilteredActivitiesForArrangementTerm(this.arrangementTermId, this.filters)
+      .getRecommendedSortedActivitiesForArrangementTerm(this.arrangementTermId)
       .subscribe({
-        next: (activities) => {
-          this.activities = activities;
-          this.loadMyRegistrations();
+        next: (allActivities) => {
+          this.allTermActivities = allActivities;
+          this.loadFilteredActivities();
         },
         error: (error) => {
-          this.errorMessage = error.error?.message || 'Greška pri filtriranju aktivnosti.';
+          this.errorMessage = error.error?.message || 'Greška pri učitavanju aktivnosti.';
           this.loading = false;
         },
       });
+  }
+
+  loadFilteredActivities(): void {
+    this.activities = this.allTermActivities;
+    this.loadMyRegistrations();
   }
 
   loadMyRegistrations(): void {

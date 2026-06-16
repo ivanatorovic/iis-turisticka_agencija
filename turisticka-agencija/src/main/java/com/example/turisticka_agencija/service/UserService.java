@@ -13,6 +13,7 @@ import com.example.turisticka_agencija.repository.UserRepository;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -22,11 +23,13 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final JwtService jwtService;
     private final CategoryRepository categoryRepository;
+    private final RestTemplate restTemplate;
 
-    public UserService(UserRepository userRepository, JwtService jwtService, CategoryRepository categoryRepository) {
+    public UserService(UserRepository userRepository, JwtService jwtService, CategoryRepository categoryRepository, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.jwtService = jwtService;
         this.categoryRepository = categoryRepository;
+        this.restTemplate = restTemplate;
     }
 
     public List<User> getAllUsers() {
@@ -152,8 +155,14 @@ public class UserService implements UserDetailsService {
 
         user.getLikedCategories().add(category);
 
-        return userRepository.save(user)
-                .getLikedCategories()
+        User savedUser = userRepository.save(user);
+
+        syncAddLikedCategoryToRecommendationService(
+                savedUser.getId(),
+                categoryId
+        );
+
+        return savedUser.getLikedCategories()
                 .stream()
                 .map(categoryItem -> new CategoryResponse(
                         categoryItem.getId(),
@@ -172,8 +181,14 @@ public class UserService implements UserDetailsService {
 
         user.getLikedCategories().remove(category);
 
-        return userRepository.save(user)
-                .getLikedCategories()
+        User savedUser = userRepository.save(user);
+
+        syncRemoveLikedCategoryFromRecommendationService(
+                savedUser.getId(),
+                categoryId
+        );
+
+        return savedUser.getLikedCategories()
                 .stream()
                 .map(categoryItem -> new CategoryResponse(
                         categoryItem.getId(),
@@ -207,5 +222,23 @@ public class UserService implements UserDetailsService {
                         user.getRole()
                 ))
                 .toList();
+    }
+
+    private void syncAddLikedCategoryToRecommendationService(Long customerId, Long categoryId) {
+        String url = "http://dodatne-aktivnosti-service:8082/customers/"
+                + customerId
+                + "/favorite-categories/"
+                + categoryId;
+
+        restTemplate.postForEntity(url, null, Void.class);
+    }
+
+    private void syncRemoveLikedCategoryFromRecommendationService(Long customerId, Long categoryId) {
+        String url = "http://dodatne-aktivnosti-service:8082/customers/"
+                + customerId
+                + "/favorite-categories/"
+                + categoryId;
+
+        restTemplate.delete(url);
     }
 }

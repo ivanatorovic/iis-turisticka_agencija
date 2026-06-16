@@ -24,9 +24,9 @@ public interface ICustomerService {
 
     void deleteRegistrationForExecution(Long customerId, Long executionId);
 
-    Customer addFavoriteCategory(Long customerId, Long categoryId);
+    void addFavoriteCategory(Long customerId, Long categoryId);
 
-    Customer removeFavoriteCategory(Long customerId, Long categoryId);
+    void removeFavoriteCategory(Long customerId, Long categoryId);
 
     Customer addBookedArrangement(Long customerId, Long arrangementId);
 

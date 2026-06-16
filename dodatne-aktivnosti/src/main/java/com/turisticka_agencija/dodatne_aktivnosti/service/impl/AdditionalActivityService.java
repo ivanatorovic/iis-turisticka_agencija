@@ -11,7 +11,10 @@ import com.turisticka_agencija.dodatne_aktivnosti.repository.CategoryRepository;
 import com.turisticka_agencija.dodatne_aktivnosti.service.IAdditionalActivityService;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class AdditionalActivityService implements IAdditionalActivityService {
@@ -148,6 +151,77 @@ public class AdditionalActivityService implements IAdditionalActivityService {
                 .toList();
     }
 
+    @Override
+    public List<RecommendedActivityDTO> recommendBestActivities(Long customerId) {
+
+        Map<Long, RecommendedActivityDTO> activities = new HashMap<>();
+        Map<Long, Integer> scores = new HashMap<>();
+
+        List<RecommendedActivityDTO> similar = recommendActivitiesBySimilarCustomers(customerId);
+        List<RecommendedActivityDTO> category = recommendActivitiesByCategory(customerId);
+        List<RecommendedActivityDTO> popular = findPopularActivitiesForCustomer(customerId);
+        List<RecommendedActivityDTO> affordable = findAffordableActivitiesForCustomer(customerId);
+
+        addRecommendationPoints(activities, scores, similar, 55);
+        addRecommendationPoints(activities, scores, category, 33);
+        addRecommendationPoints(activities, scores, popular, 22);
+        addRecommendationPoints(activities, scores, affordable, 11);
+
+        List<RecommendedActivityDTO> result = new ArrayList<>(activities.values());
+
+        result.sort((first, second) -> compareRecommendations(first, second, scores));
+
+        result.forEach(recommendation ->
+                recommendation.setScore(
+                        scores.getOrDefault(
+                                recommendation.getExecutionId(),
+                                0
+                        )
+                )
+        );
+        return result;
+    }
+
+    private void addRecommendationPoints(
+            Map<Long, RecommendedActivityDTO> activities,
+            Map<Long, Integer> scores,
+            List<RecommendedActivityDTO> recommendations,
+            int points
+    ) {
+        for (RecommendedActivityDTO recommendation : recommendations) {
+            Long executionId = recommendation.getExecutionId();
+
+            activities.putIfAbsent(executionId, recommendation);
+
+            int currentScore = scores.getOrDefault(executionId, 0);
+            scores.put(executionId, currentScore + points);
+        }
+    }
+
+    private int compareRecommendations(
+            RecommendedActivityDTO first,
+            RecommendedActivityDTO second,
+            Map<Long, Integer> scores
+    ) {
+        int firstScore = scores.getOrDefault(first.getExecutionId(), 0);
+        int secondScore = scores.getOrDefault(second.getExecutionId(), 0);
+
+        return Integer.compare(secondScore, firstScore);
+    }
+
+    public List<RecommendedActivityDTO> recommendBestActivitiesForArrangement(
+            Long customerId,
+            Long arrangementId
+    ) {
+        return recommendBestActivities(customerId)
+                .stream()
+                .filter(activity ->
+                        activity.getArrangement() != null &&
+                                activity.getArrangement().getId().equals(arrangementId)
+                )
+                .toList();
+    }
+
     private RecommendedActivityDTO mapExecutionToDTO(AdditionalActivityExecution execution) {
         AdditionalActivity activity = execution.getActivity();
 
@@ -176,7 +250,8 @@ public class AdditionalActivityService implements IAdditionalActivityService {
                 execution.getPrice(),
                 execution.getStatus(),
                 execution.getPrior(),
-                arrangementDTO
+                arrangementDTO,
+                0
         );
     }
 }

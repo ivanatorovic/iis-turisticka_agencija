@@ -120,7 +120,16 @@ VALUES
     (11, 10, 1, 1, 2, 900, '2026-03-01 12:15:00', 'CONFIRMED', 'ONE_TIME', 1, 900),
     (12, 11, 1, 1, 3, 1350, '2026-03-03 09:40:00', 'CONFIRMED', 'INSTALLMENTS', 3, 450),
     (13, 12, 1, 2, 2, 900, '2026-03-06 15:25:00', 'CONFIRMED', 'ONE_TIME', 1, 900),
-    (14, 13, 4, 5, 2, 1400, '2026-04-02 10:30:00', 'CONFIRMED', 'INSTALLMENTS', 4, 350);
+    (14, 13, 4, 5, 2, 1400, '2026-04-02 10:30:00', 'CONFIRMED', 'INSTALLMENTS', 4, 350),
+    (15, 12, 1, 1, 2, 900,
+     '2026-03-08 10:00:00',
+     'CONFIRMED',
+     'ONE_TIME',
+     1,
+     900),
+    (16, 13, 1, 1, 2, 900, '2026-03-09 10:00:00',
+    'CONFIRMED', 'ONE_TIME', 1, 900);
+
 INSERT INTO workflow (id, name, created_at, admin_id)
 VALUES
     (1, 'Letovanje Evropa', NOW(), 4);
@@ -143,7 +152,15 @@ VALUES
     (7, 'Obilazak Vatikana', 'Organizovan obilazak Vatikanskih muzeja i Trga Svetog Petra.', 'Rim, Italija', '/uploads/additional-activities/vatikan.jpg', 3),
     (8, 'Motorne sanke', 'Vožnja motornim sankama uz pratnju instruktora na Kopaoniku.', 'Kopaonik, Srbija', '/uploads/additional-activities/motorne-sanke.jpg', 6),
     (9, 'Safari pustinjom', 'Vožnja džipovima kroz pustinju i večera u beduinskom kampu.', 'Hurgada, Egipat', '/uploads/additional-activities/safari.jpg', 6),
-    (10, 'Obilazak Luvra', 'Vođeni obilazak najpoznatijih dela u muzeju Luvr.', 'Pariz, Francuska', '/uploads/additional-activities/luvr.jpg', 3);
+    (10, 'Obilazak Luvra', 'Vođeni obilazak najpoznatijih dela u muzeju Luvr.', 'Pariz, Francuska', '/uploads/additional-activities/luvr.jpg', 3),
+    (13, 'Izlet brodom', 'Poseban izlet brodom oko Krfa.', 'Krf, Grcka', '/uploads/additional-activities/brod.jpg', 3),
+    (14, 'Kajak avantura', 'Vožnja kajakom uz obalu Krfa.', 'Krf, Grcka', '/uploads/additional-activities/kajak.jpg', 3),
+    (15, 'Planinarenje do vidikovca', 'Pešačka tura do vidikovca.', 'Krf, Grcka', '/uploads/additional-activities/planinarenje.jpg', 3),
+    (16, 'Plažni odbojkaški turnir', 'Sportsko takmičenje na plaži.', 'Krf, Grcka', '/uploads/additional-activities/odbojka.jpg', 3),
+    (17, 'Degustacija grčke hrane', 'Degustacija lokalnih specijaliteta.', 'Krf, Grcka', '/uploads/additional-activities/hrana.jpg', 3),
+    (18, 'Foto tura starim gradom', 'Obilazak i fotografisanje starog grada.', 'Krf, Grcka', '/uploads/additional-activities/foto.jpg', 3),
+    (19, 'Porodični kviz', 'Zabavna porodična aktivnost.', 'Krf, Grcka', '/uploads/additional-activities/kviz.jpg', 3),
+    (20, 'Relax masaža', 'Kratka relaks masaža u hotelu.', 'Krf, Grcka', '/uploads/additional-activities/masaza.jpg', 3);
 
 INSERT INTO activity_term (id, date, start_time)
 VALUES
@@ -158,7 +175,15 @@ VALUES
     (9, '2026-08-03', '09:00'),
     (10, '2026-08-05', '15:00'),
     (11, '2026-06-17', '19:30'),
-    (12, '2026-06-18', '10:00');
+    (12, '2026-06-18', '10:00'),
+    (13, '2026-07-13', '09:00'),
+    (14, '2026-07-14', '11:00'),
+    (15, '2026-07-15', '08:30'),
+    (16, '2026-07-16', '17:00'),
+    (17, '2026-07-17', '19:00'),
+    (18, '2026-07-18', '10:00'),
+    (19, '2026-07-18', '16:00'),
+    (20, '2026-07-19', '12:00');
 
 INSERT INTO additional_activity_execution
 (id, additional_activity_id, arrangement_term_id, activity_term_id,
@@ -175,7 +200,15 @@ VALUES
     (9, 4, 5, 9, 9, 180, 14, 0, 'UPCOMING', TRUE),
     (10, 9, 5, 10, 7, 240, 16, 8, 'UPCOMING', TRUE),
     (11, 5, 6, 11, 8, 90, 12, 3, 'UPCOMING', FALSE),
-    (12, 10, 6, 12, 9, 150, 12, 0, 'UPCOMING', FALSE);
+    (12, 10, 6, 12, 9, 150, 12, 0, 'UPCOMING', FALSE),
+    (13, 13, 1, 13, 7, 120, 20, 5, 'UPCOMING', TRUE),
+    (14, 14, 1, 14, 8, 150, 20, 14, 'UPCOMING', FALSE),
+    (15, 15, 1, 15, 9, 180, 25, 18, 'UPCOMING', FALSE),
+    (16, 16, 1, 16, 7, 90, 16, 12, 'UPCOMING', FALSE),
+    (17, 17, 1, 17, 8, 120, 30, 8, 'UPCOMING', FALSE),
+    (18, 18, 1, 18, 9, 100, 25, 4, 'UPCOMING', FALSE),
+    (19, 19, 1, 19, 7, 80, 20, 2, 'UPCOMING', FALSE),
+    (20, 20, 1, 20, 8, 60, 15, 1, 'UPCOMING', FALSE);
 
 INSERT INTO additional_activity_price_list
 (id, additional_activity_execution_id, price, valid_from, valid_to)
@@ -191,7 +224,15 @@ VALUES
     (9, 9, 55, '2026-08-01', '2026-08-10'),
     (10, 10, 70, '2026-08-01', '2026-08-10'),
     (11, 11, 35, '2026-06-15', '2026-06-22'),
-    (12, 12, 45, '2026-06-15', '2026-06-22');
+    (12, 12, 45, '2026-06-15', '2026-06-22'),
+    (13, 13, 50, '2026-07-10', '2026-07-20'),
+    (14, 14, 35, '2026-07-10', '2026-07-20'),
+    (15, 15, 25, '2026-07-10', '2026-07-20'),
+    (16, 16, 20, '2026-07-10', '2026-07-20'),
+    (17, 17, 30, '2026-07-10', '2026-07-20'),
+    (18, 18, 15, '2026-07-10', '2026-07-20'),
+    (19, 19, 10, '2026-07-10', '2026-07-20'),
+    (20, 20, 18, '2026-07-10', '2026-07-20');
 
 INSERT INTO additional_activity_registration
 (id, user_id, additional_activity_execution_id,
@@ -218,7 +259,19 @@ VALUES
     (14, 1, 10, 2, '2026-05-04 12:00:00', 'ACTIVE'),
     (15, 11, 10, 4, '2026-05-05 16:35:00', 'ACTIVE'),
 
-    (16, 1, 11, 3, '2026-04-21 10:25:00', 'ACTIVE');
+    (16, 1, 11, 3, '2026-04-21 10:25:00', 'ACTIVE'),
+    (17, 1, 14, 2, '2026-06-10 10:00:00', 'ACTIVE'),
+    (18, 11, 14, 3, '2026-06-10 11:00:00', 'ACTIVE'),
+    (19, 12, 14, 2, '2026-06-10 12:00:00', 'ACTIVE'),
+
+    (20, 1, 15, 2, '2026-06-11 10:00:00', 'ACTIVE'),
+    (21, 11, 15, 2, '2026-06-11 11:00:00', 'ACTIVE'),
+
+    (22, 1, 16, 2, '2026-06-12 10:00:00', 'ACTIVE'),
+
+    (23, 11, 17, 2, '2026-06-13 10:00:00', 'ACTIVE'),
+
+    (24, 1, 18, 1, '2026-06-14 10:00:00', 'ACTIVE');
 
 INSERT INTO category (id, name)
 VALUES
@@ -237,44 +290,35 @@ INSERT INTO additional_activity_category
 (additional_activity_id, category_id)
 VALUES
 
--- Izlet do ostrva Vido
 (1, 4),
-
--- Koloseum
 (2, 2),
 (2, 6),
-
--- Ski skola
 (3, 5),
 (3, 1),
-
--- Ronjenje
 (4, 1),
 (4, 5),
-
--- Krstarenje Senom
 (5, 2),
 (5, 9),
-
--- Grcko vece
 (6, 3),
 (6, 7),
-
--- Vatikan
 (7, 2),
 (7, 6),
-
--- Motorne sanke
 (8, 1),
 (8, 5),
-
--- Safari pustinjom
 (9, 1),
 (9, 4),
-
--- Luvr
 (10, 2),
-(10, 6);
+(10, 6),
+(13, 4),
+(14, 1),
+(14, 5),
+(15, 4),
+(15, 1),
+(16, 5),
+(17, 3),
+(18, 2),
+(19, 8),
+(20, 9);
 
 
 INSERT INTO user_liked_category

@@ -10,6 +10,7 @@ import com.example.turisticka_agencija.repository.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 import jakarta.transaction.Transactional;
 
@@ -31,6 +32,7 @@ public class AdditionalActivityService {
     private final AdditionalActivityRegistrationRepository registrationRepository;
     private final ActivityTermRepository activityTermRepository;
     private final CategoryRepository categoryRepository;
+    private final RestTemplate restTemplate;
 
     private static final Path UPLOAD_DIR = Paths.get(
             System.getProperty("user.dir"),
@@ -41,7 +43,7 @@ public class AdditionalActivityService {
     public AdditionalActivityService(
             AdditionalActivityRepository additionalActivityRepository,
             UserRepository userRepository,
-            ObjectMapper objectMapper, AdditionalActivityExecutionRepository executionRepository, AdditionalActivityPriceListRepository priceListRepository, AdditionalActivityRegistrationRepository registrationRepository, ActivityTermRepository activityTermRepository, CategoryRepository categoryRepository
+            ObjectMapper objectMapper, AdditionalActivityExecutionRepository executionRepository, AdditionalActivityPriceListRepository priceListRepository, AdditionalActivityRegistrationRepository registrationRepository, ActivityTermRepository activityTermRepository, CategoryRepository categoryRepository, RestTemplate restTemplate
     ) {
         this.additionalActivityRepository = additionalActivityRepository;
         this.userRepository = userRepository;
@@ -51,6 +53,7 @@ public class AdditionalActivityService {
         this.registrationRepository = registrationRepository;
         this.activityTermRepository = activityTermRepository;
         this.categoryRepository = categoryRepository;
+        this.restTemplate = restTemplate;
     }
 
     public List<AdditionalActivityResponse> getAllAdditionalActivities() {
@@ -236,7 +239,11 @@ public class AdditionalActivityService {
 
         activity.getCategories().add(category);
 
-        return mapToResponse(additionalActivityRepository.save(activity));
+        AdditionalActivity savedActivity = additionalActivityRepository.save(activity);
+
+        syncAddCategoryToRecommendationService(activityId, categoryId);
+
+        return mapToResponse(savedActivity);
     }
 
     public AdditionalActivityResponse removeCategoryFromActivity(
@@ -254,7 +261,29 @@ public class AdditionalActivityService {
 
         activity.getCategories().remove(category);
 
-        return mapToResponse(additionalActivityRepository.save(activity));
+        AdditionalActivity savedActivity = additionalActivityRepository.save(activity);
+
+        syncRemoveCategoryFromRecommendationService(activityId, categoryId);
+
+        return mapToResponse(savedActivity);
+    }
+
+    private void syncAddCategoryToRecommendationService(Long activityId, Long categoryId) {
+        String url = "http://dodatne-aktivnosti-service:8082/activities/"
+                + activityId
+                + "/categories/"
+                + categoryId;
+
+        restTemplate.postForEntity(url, null, Void.class);
+    }
+
+    private void syncRemoveCategoryFromRecommendationService(Long activityId, Long categoryId) {
+        String url = "http://dodatne-aktivnosti-service:8082/activities/"
+                + activityId
+                + "/categories/"
+                + categoryId;
+
+        restTemplate.delete(url);
     }
 
     @Transactional

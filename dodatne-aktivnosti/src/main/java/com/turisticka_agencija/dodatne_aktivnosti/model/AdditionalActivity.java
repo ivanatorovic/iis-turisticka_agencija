@@ -12,7 +12,7 @@ import java.util.Set;
 public class AdditionalActivity {
 
     @Id
-    private Long activityId; // id iz monolita
+    private Long activityId;
 
     private String name;
     private String description;

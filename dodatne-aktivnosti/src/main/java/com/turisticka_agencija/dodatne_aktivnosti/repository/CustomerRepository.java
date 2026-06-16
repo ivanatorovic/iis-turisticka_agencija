@@ -55,4 +55,28 @@ public interface CustomerRepository extends Neo4jRepository<Customer, Long> {
     Customer updateRegistrationStatus(@Param("customerId") Long customerId,
                                       @Param("registrationId") Long registrationId,
                                       @Param("status") String status);
+
+    @Query("""
+    MATCH (c:Customer)
+    WHERE c.customerId = $customerId
+    MATCH (cat:Category)
+    WHERE cat.categoryId = $categoryId
+    MERGE (c)-[:LIKES]->(cat)
+    RETURN count(cat)
+""")
+    Long addFavoriteCategoryRelation(@Param("customerId") Long customerId,
+                                     @Param("categoryId") Long categoryId);
+
+
+    @Query("""
+    MATCH (c:Customer)
+    WHERE c.customerId = $customerId
+    MATCH (cat:Category)
+    WHERE cat.categoryId = $categoryId
+    OPTIONAL MATCH (c)-[r:LIKES]->(cat)
+    DELETE r
+    RETURN count(cat)
+""")
+    Long removeFavoriteCategoryRelation(@Param("customerId") Long customerId,
+                                        @Param("categoryId") Long categoryId);
 }

@@ -320,6 +320,17 @@ export class ArrangementService {
     );
   }
 
+  getRecommendedSortedActivitiesForArrangementTerm(
+    arrangementTermId: number,
+  ): Observable<ArrangementActivity[]> {
+    return this.http.get<ArrangementActivity[]>(
+      `${this.additionalActivityExecutionsUrl}/arrangement-term/${arrangementTermId}/recommended-sorted`,
+      {
+        headers: this.getHeaders(),
+      },
+    );
+  }
+
   finishAdditionalActivityExecution(id: number) {
     return this.http.put<ArrangementActivity>(
       `${this.additionalActivityExecutionsUrl}/${id}/finish`,
