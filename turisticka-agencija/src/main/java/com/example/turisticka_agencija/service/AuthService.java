@@ -8,6 +8,7 @@ import org.springframework.security.authentication.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import com.example.turisticka_agencija.dto.ChangePasswordRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class AuthService {
@@ -16,15 +17,17 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RestTemplate restTemplate;
 
     public AuthService(UserRepository userRepository,
                        PasswordEncoder passwordEncoder,
                        JwtService jwtService,
-                       AuthenticationManager authenticationManager) {
+                       AuthenticationManager authenticationManager, RestTemplate restTemplate) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
+        this.restTemplate = restTemplate;
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -58,6 +61,8 @@ public class AuthService {
                 savedUser.getUsername(),
                 savedUser.getRole().name()
         );
+
+        syncCreateCustomerToRecommendationService(savedUser);
 
         return new AuthResponse(
                 token,
@@ -124,5 +129,23 @@ public class AuthService {
         userRepository.save(user);
     }
 
+    private void syncCreateCustomerToRecommendationService(User user) {
+        if (user.getRole() != Role.CUSTOMER) {
+            return;
+        }
+
+        String url = "http://dodatne-aktivnosti-service:8082/customers";
+
+        RecommendationCustomerDto dto = new RecommendationCustomerDto(
+                user.getId(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getContact()
+        );
+
+        restTemplate.postForEntity(url, dto, Void.class);
+    }
 
 }

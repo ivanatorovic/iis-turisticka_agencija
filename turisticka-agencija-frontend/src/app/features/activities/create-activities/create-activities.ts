@@ -88,12 +88,46 @@ export class CreateActivities implements OnInit {
   }
 
   toggleCategory(categoryId: number): void {
-    if (this.selectedCategoryIds.includes(categoryId)) {
-      this.selectedCategoryIds = this.selectedCategoryIds.filter((id) => id !== categoryId);
+    const isSelected = this.selectedCategoryIds.includes(categoryId);
+
+    if (!this.isEditMode || this.activityId === null) {
+      if (isSelected) {
+        this.selectedCategoryIds = this.selectedCategoryIds.filter((id) => id !== categoryId);
+        return;
+      }
+
+      this.selectedCategoryIds = [...this.selectedCategoryIds, categoryId];
       return;
     }
 
-    this.selectedCategoryIds = [...this.selectedCategoryIds, categoryId];
+    this.errorMessage = '';
+    this.successMessage = '';
+
+    if (isSelected) {
+      this.additionalActivityService
+        .removeCategoryFromActivity(this.activityId, categoryId)
+        .subscribe({
+          next: (activity) => {
+            this.selectedCategoryIds = activity.categories?.map((category) => category.id) || [];
+            this.successMessage = 'Kategorija je uklonjena.';
+          },
+          error: (err) => {
+            this.errorMessage = err?.error?.message || 'Greška pri uklanjanju kategorije.';
+          },
+        });
+
+      return;
+    }
+
+    this.additionalActivityService.addCategoryToActivity(this.activityId, categoryId).subscribe({
+      next: (activity) => {
+        this.selectedCategoryIds = activity.categories?.map((category) => category.id) || [];
+        this.successMessage = 'Kategorija je dodata.';
+      },
+      error: (err) => {
+        this.errorMessage = err?.error?.message || 'Greška pri dodavanju kategorije.';
+      },
+    });
   }
 
   saveActivity(): void {
@@ -156,12 +190,16 @@ export class CreateActivities implements OnInit {
   }
 
   buildFormData(): FormData {
-    const info = {
+    const info: AdditionalActivityRequest = {
       name: this.form.name,
       description: this.form.description,
       location: this.form.location,
-      categoryIds: this.selectedCategoryIds,
+      imageUrl: this.form.imageUrl,
     };
+
+    if (!this.isEditMode) {
+      info.categoryIds = this.selectedCategoryIds;
+    }
 
     const formData = new FormData();
 

@@ -95,4 +95,25 @@ export class AdditionalActivityService {
       headers: this.getHeaders(),
     });
   }
+
+  addCategoryToActivity(
+    activityId: number,
+    categoryId: number,
+  ): Observable<AdditionalActivityResponse> {
+    return this.http.put<AdditionalActivityResponse>(
+      `${this.apiUrl}/${activityId}/categories/${categoryId}`,
+      {},
+      { headers: this.getHeaders() },
+    );
+  }
+
+  removeCategoryFromActivity(
+    activityId: number,
+    categoryId: number,
+  ): Observable<AdditionalActivityResponse> {
+    return this.http.delete<AdditionalActivityResponse>(
+      `${this.apiUrl}/${activityId}/categories/${categoryId}`,
+      { headers: this.getHeaders() },
+    );
+  }
 }

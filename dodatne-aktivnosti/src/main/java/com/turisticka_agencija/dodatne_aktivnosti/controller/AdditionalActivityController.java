@@ -48,21 +48,21 @@ public class AdditionalActivityController {
     }
 
     @PostMapping("/{activityId}/categories/{categoryId}")
-    public ResponseEntity<AdditionalActivity> addCategoryToActivity(@PathVariable Long activityId,
-                                                                    @PathVariable Long categoryId) {
-        return new ResponseEntity<>(
-                additionalActivityService.addCategoryToActivity(activityId, categoryId),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Void> addCategoryToActivity(
+            @PathVariable Long activityId,
+            @PathVariable Long categoryId
+    ) {
+        additionalActivityService.addCategoryToActivity(activityId, categoryId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{activityId}/categories/{categoryId}")
-    public ResponseEntity<AdditionalActivity> removeCategoryFromActivity(@PathVariable Long activityId,
-                                                                         @PathVariable Long categoryId) {
-        return new ResponseEntity<>(
-                additionalActivityService.removeCategoryFromActivity(activityId, categoryId),
-                HttpStatus.OK
-        );
+    public ResponseEntity<Void> removeCategoryFromActivity(
+            @PathVariable Long activityId,
+            @PathVariable Long categoryId
+    ) {
+        additionalActivityService.removeCategoryFromActivity(activityId, categoryId);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @GetMapping("/recommendations/similar-customers/{customerId}")
