@@ -104,7 +104,23 @@ public class AdditionalActivityExecutionService {
 
         priceListRepository.save(priceList);
 
+        syncCreateExecutionToRecommendationService(
+                execution,
+                request.getPrice()
+        );
+
         return mapToResponse(execution);
+    }
+
+    private void syncCreateExecutionToRecommendationService(
+            AdditionalActivityExecution execution,
+            Double price
+    ) {
+        String url = "http://dodatne-aktivnosti-service:8082/executions";
+
+        RecommendationExecutionDto dto = buildRecommendationExecutionDto(execution, price);
+
+        restTemplate.postForEntity(url, dto, Void.class);
     }
 
     @Transactional
@@ -120,6 +136,17 @@ public class AdditionalActivityExecutionService {
         priceListRepository.deleteByAdditionalActivityExecutionId(id);
 
         executionRepository.delete(execution);
+        syncDeleteExecutionFromRecommendationService(id);
+    }
+
+    private void syncDeleteExecutionFromRecommendationService(
+            Long executionId
+    ) {
+        String url =
+                "http://dodatne-aktivnosti-service:8082/executions/"
+                        + executionId;
+
+        restTemplate.delete(url);
     }
 
     private void validateRequest(AdditionalActivityExecutionRequest request) {
@@ -383,7 +410,67 @@ public class AdditionalActivityExecutionService {
             priceListRepository.save(priceList);
         }
 
+        double currentPrice = priceListRepository
+                .findFirstByAdditionalActivityExecutionIdOrderByIdDesc(execution.getId())
+                .map(AdditionalActivityPriceList::getPrice)
+                .orElse(0.0);
+
+        syncUpdateExecutionToRecommendationService(
+                execution,
+                currentPrice
+        );
+
         return mapToResponse(execution);
+    }
+
+    private void syncUpdateExecutionToRecommendationService(
+            AdditionalActivityExecution execution,
+            Double price
+    ) {
+        String url = "http://dodatne-aktivnosti-service:8082/executions/"
+                + execution.getId();
+
+        RecommendationExecutionDto dto = buildRecommendationExecutionDto(execution, price);
+
+        restTemplate.put(url, dto);
+    }
+
+    private RecommendationExecutionDto buildRecommendationExecutionDto(
+            AdditionalActivityExecution execution,
+            Double price
+    ) {
+        RecommendationExecutionDto dto = new RecommendationExecutionDto();
+
+        dto.setExecutionId(execution.getId());
+
+        dto.setActivityId(
+                execution.getAdditionalActivity().getId()
+        );
+
+        dto.setArrangementId(
+                execution.getArrangementTerm()
+                        .getArrangement()
+                        .getId()
+        );
+
+        dto.setActivityDate(
+                execution.getActivityTerm().getDate()
+        );
+
+        dto.setStartTime(
+                execution.getActivityTerm().getStartTime()
+        );
+
+        dto.setDurationMinutes(execution.getDurationMinutes());
+        dto.setCapacity(execution.getCapacity());
+        dto.setReservedSpots(execution.getReservedSpots());
+
+        dto.setPrice(price);
+
+        dto.setStatus(execution.getStatus().name());
+        dto.setPrior(execution.isPrior());
+
+        return dto;
     }
 
     @Transactional

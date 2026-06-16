@@ -19,7 +19,6 @@ public interface IAdditionalActivityService {
     void delete(Long id);
 
     AdditionalActivity addCategoryToActivity(Long activityId, Long categoryId);
-
     AdditionalActivity removeCategoryFromActivity(Long activityId, Long categoryId);
 
     List<RecommendedActivityDTO> recommendActivitiesBySimilarCustomers(Long customerId);

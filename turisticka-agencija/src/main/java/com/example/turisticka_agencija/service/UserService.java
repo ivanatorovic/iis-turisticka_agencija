@@ -1,9 +1,6 @@
 package com.example.turisticka_agencija.service;
 
-import com.example.turisticka_agencija.dto.CategoryResponse;
-import com.example.turisticka_agencija.dto.UpdateProfileRequest;
-import com.example.turisticka_agencija.dto.UpdateProfileResponse;
-import com.example.turisticka_agencija.dto.UserResponse;
+import com.example.turisticka_agencija.dto.*;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.Category;
 import com.example.turisticka_agencija.model.Role;

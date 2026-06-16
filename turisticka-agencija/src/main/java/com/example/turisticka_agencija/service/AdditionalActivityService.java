@@ -1,9 +1,6 @@
 package com.example.turisticka_agencija.service;
 
-import com.example.turisticka_agencija.dto.AdditionalActivityRequest;
-import com.example.turisticka_agencija.dto.AdditionalActivityResponse;
-import com.example.turisticka_agencija.dto.AdditionalActivityShortResponse;
-import com.example.turisticka_agencija.dto.CategoryResponse;
+import com.example.turisticka_agencija.dto.*;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.*;
 import com.example.turisticka_agencija.repository.*;
@@ -95,7 +92,20 @@ public class AdditionalActivityService {
                 );
             }
 
-            return mapToResponse(additionalActivityRepository.save(activity));
+            AdditionalActivity savedActivity = additionalActivityRepository.save(activity);
+
+            syncCreateActivityToRecommendationService(savedActivity);
+
+            if (request.getCategoryIds() != null) {
+                for (Long categoryId : request.getCategoryIds()) {
+                    syncAddCategoryToRecommendationService(
+                            savedActivity.getId(),
+                            categoryId
+                    );
+                }
+            }
+
+            return mapToResponse(savedActivity);
 
         } catch (BadRequestException e) {
             throw e;
@@ -151,12 +161,6 @@ public class AdditionalActivityService {
 
             if (image != null && !image.isEmpty()) {
                 activity.setImageUrl(saveImage(image));
-            }
-
-            if (request.getCategoryIds() != null) {
-                activity.setCategories(
-                        new HashSet<>(categoryRepository.findAllById(request.getCategoryIds()))
-                );
             }
 
             return mapToResponse(additionalActivityRepository.save(activity));
@@ -319,6 +323,29 @@ public class AdditionalActivityService {
         }
 
         additionalActivityRepository.delete(activity);
+
+        syncDeleteActivityFromRecommendationService(id);
+    }
+
+    private void syncCreateActivityToRecommendationService(AdditionalActivity activity) {
+        String url = "http://dodatne-aktivnosti-service:8082/activities";
+
+        RecommendationActivityDto dto = new RecommendationActivityDto(
+                activity.getId(),
+                activity.getName(),
+                activity.getDescription(),
+                null,
+                activity.getLocation(),
+                activity.getImageUrl()
+        );
+
+        restTemplate.postForEntity(url, dto, Void.class);
+    }
+
+    private void syncDeleteActivityFromRecommendationService(Long activityId) {
+        String url = "http://dodatne-aktivnosti-service:8082/activities/" + activityId;
+
+        restTemplate.delete(url);
     }
 
     private AdditionalActivity findActivityById(Long id) {

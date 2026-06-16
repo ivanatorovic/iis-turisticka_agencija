@@ -89,34 +89,30 @@ public class AdditionalActivityService implements IAdditionalActivityService {
 
     @Override
     public AdditionalActivity addCategoryToActivity(Long activityId, Long categoryId) {
-        AdditionalActivity activity = findById(activityId);
+        Long matched = additionalActivityRepository.addCategoryRelation(activityId, categoryId);
 
-        Category category = categoryRepository.findById(categoryId)
-                .orElseThrow(() ->
-                        new RuntimeException("Category not found with id: " + categoryId)
-                );
+        if (matched == null || matched == 0) {
+            throw new RuntimeException(
+                    "Activity or category not found. activityId: "
+                            + activityId + ", categoryId: " + categoryId
+            );
+        }
 
-        activity.getCategories().add(category);
-
-        return additionalActivityRepository.save(activity);
+        return null;
     }
 
     @Override
     public AdditionalActivity removeCategoryFromActivity(Long activityId, Long categoryId) {
-        AdditionalActivity activity = findById(activityId);
+        Long matched = additionalActivityRepository.removeCategoryRelation(activityId, categoryId);
 
-        boolean removed = activity.getCategories().removeIf(
-                category -> category.getCategoryId() != null
-                        && category.getCategoryId().equals(categoryId)
-        );
-
-        if (!removed) {
+        if (matched == null || matched == 0) {
             throw new RuntimeException(
-                    "Category not found on activity. Category id: " + categoryId
+                    "Activity or category not found. activityId: "
+                            + activityId + ", categoryId: " + categoryId
             );
         }
 
-        return additionalActivityRepository.save(activity);
+        return null;
     }
 
     @Override
