@@ -6,13 +6,11 @@
 
 .details-page {
   min-height: 100vh;
-
   background:
-    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.78)), url('../../../../assets/plaza.jpg');
-
+    linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.78)),
+    url('../../../../assets/plaza.jpg');
   background-size: cover;
   background-position: center;
-
   color: white;
   font-family: 'Inter', sans-serif;
 }
@@ -23,26 +21,16 @@
   padding: 32px 24px 70px;
 }
 
-/* BACK */
-
 .back-btn {
   height: 42px;
   padding: 0 18px;
-
   margin-bottom: 24px;
-
   border-radius: 999px;
-
   border: 1px solid rgba(216, 193, 155, 0.5);
-
   background: rgba(0, 0, 0, 0.35);
-
   color: #d8c19b;
-
   cursor: pointer;
-
   font-weight: 600;
-
   transition: 0.25s ease;
 }
 
@@ -50,41 +38,28 @@
   background: rgba(216, 193, 155, 0.14);
 }
 
-/* HERO */
-
 .hero-card {
   display: grid;
   grid-template-columns: 1fr 0.9fr;
-
   gap: 24px;
-
   padding: 22px;
-
   border-radius: 28px;
-
   background: rgba(0, 0, 0, 0.42);
-
   border: 1px solid rgba(255, 255, 255, 0.1);
-
   backdrop-filter: blur(18px);
-
   margin-bottom: 28px;
 }
 
 .image-wrapper {
   height: 300px;
-
   overflow: hidden;
-
   border-radius: 22px;
 }
 
 .image-wrapper img {
   width: 100%;
   height: 100%;
-
   object-fit: cover;
-
   display: block;
 }
 
@@ -96,116 +71,77 @@
 
 .subtitle {
   color: #d8c19b;
-
   letter-spacing: 3px;
-
   text-transform: uppercase;
-
   font-size: 12px;
-
   margin-bottom: 12px;
 }
 
 h1 {
   font-family: 'Cormorant Garamond', serif;
-
   font-size: 56px;
-
   line-height: 0.95;
-
   margin: 0 0 18px;
 }
 
 .description {
   color: rgba(255, 255, 255, 0.8);
-
   line-height: 1.7;
-
   font-size: 15px;
 }
 
 .price-box {
   margin-top: 24px;
-
   padding: 18px 20px;
-
   border-radius: 22px;
-
   background: rgba(255, 255, 255, 0.96);
-
   color: #111;
-
   width: fit-content;
-
-  min-width: 210px;
+  min-width: 230px;
 }
 
 .price-box span,
 .price-box small {
+  display: block;
   color: #666;
 }
 
 .price-box b {
   display: block;
-
-  font-size: 42px;
-
-  margin: 6px 0;
+  font-size: 34px;
+  margin: 6px 0 12px;
 }
-
-/* RESERVATION */
 
 .reservation-card {
   margin-top: 30px;
-
   padding: 28px;
-
   border-radius: 28px;
-
   background: rgba(0, 0, 0, 0.42);
-
   border: 1px solid rgba(255, 255, 255, 0.12);
-
   backdrop-filter: blur(18px);
-
   margin-bottom: 30px;
 }
 
+.section-label,
 .reservation-subtitle {
   color: #d8c19b;
-
   letter-spacing: 4px;
-
   text-transform: uppercase;
-
   font-size: 12px;
-
   margin-bottom: 10px;
 }
 
 .reservation-card h2 {
   font-family: 'Cormorant Garamond', serif;
-
   font-size: 48px;
-
   margin-bottom: 24px;
-
   line-height: 1;
 }
 
-/* FORM */
-
 .reservation-form {
   display: grid;
-
-  grid-template-columns:
-    2fr
-    1fr
-    1fr
-    auto;
-
+  grid-template-columns: 2fr 1fr 1fr auto;
   gap: 16px;
-
   align-items: end;
 }
 
@@ -216,47 +152,33 @@ h1 {
 
 .form-group label {
   margin-bottom: 8px;
-
   color: #d8c19b;
-
   font-weight: 600;
-
   font-size: 14px;
 }
 
 .form-group select,
 .form-group input {
   height: 52px;
-
   border-radius: 16px;
-
   border: none;
-
   padding: 0 16px;
-
   background: rgba(255, 255, 255, 0.96);
-
   font-size: 15px;
-
   outline: none;
 }
 
 .reservation-price {
-  height: 52px;
-
+  min-height: 52px;
   min-width: 240px;
-
-  padding: 0 18px;
-
+  padding: 8px 18px;
   border-radius: 16px;
-
   background: rgba(255, 255, 255, 0.96);
-
   color: #111;
-
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
 }
 
 .reservation-price span {
@@ -271,38 +193,26 @@ h1 {
   color: #555;
 }
 
-/* BUTTONS */
-
 .reservation-actions {
   display: flex;
-
   gap: 14px;
-
   margin-top: 22px;
 }
 
 .check-btn,
 .reserve-btn {
   height: 50px;
-
   padding: 0 24px;
-
   border-radius: 999px;
-
   border: none;
-
   cursor: pointer;
-
   font-weight: 600;
-
   transition: 0.25s ease;
 }
 
 .check-btn {
   background: transparent;
-
   border: 1px solid rgba(216, 193, 155, 0.5);
-
   color: #d8c19b;
 }
 
@@ -312,7 +222,6 @@ h1 {
 
 .reserve-btn {
   background: #d8c19b;
-
   color: #111;
 }
 
@@ -320,36 +229,27 @@ h1 {
   transform: translateY(-2px);
 }
 
-/* DETAILS */
-
 .details-section {
   padding: 28px;
-
   border-radius: 28px;
-
   background: rgba(255, 255, 255, 0.96);
-
   color: #111;
 }
 
 .details-section h2 {
   font-family: 'Cormorant Garamond', serif;
-
   font-size: 52px;
-
   margin-bottom: 24px;
 }
 
 .details-list {
   display: flex;
   flex-direction: column;
-
   gap: 22px;
 }
 
 .detail-row {
   border-bottom: 1px solid #ececec;
-
   padding-bottom: 18px;
 }
 
@@ -360,20 +260,15 @@ h1 {
 
 .detail-row span {
   display: block;
-
   font-weight: 700;
-
   font-size: 18px;
-
   margin-bottom: 10px;
 }
 
 .detail-row p,
 .detail-row li {
   color: #444;
-
   line-height: 1.7;
-
   font-size: 15px;
 }
 
@@ -384,46 +279,246 @@ h1 {
 .service-tags {
   display: flex;
   flex-wrap: wrap;
-
   gap: 10px;
 }
 
 .service-tags span {
   padding: 8px 14px;
-
   border-radius: 999px;
-
   background: #f4efe6;
-
   color: #7b5d2f;
-
   font-size: 13px;
-
   font-weight: 600;
 }
 
-/* MESSAGES */
-
 .success-message {
   margin-top: 16px;
-
   color: #7dffaf;
-
   font-weight: 600;
 }
 
 .error-message {
   margin-top: 16px;
-
   color: #ff9a9a;
-
   font-weight: 600;
 }
 
-/* LOADING */
-
 .loading {
   padding: 50px;
+}
+
+.activities-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.activity-card {
+  padding: 18px;
+  border-radius: 20px;
+  background: #f7f3eb;
+  border: 1px solid #eadfce;
+  transition: 0.25s ease;
+}
+
+.activity-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+}
+
+.activity-card h4 {
+  margin: 0 0 10px;
+  color: #7b5d2f;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.activity-card p {
+  margin: 0;
+  color: #555;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.price-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.price-labels span {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #f4efe6;
+  color: #9b7a45;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.small-labels {
+  margin-top: 6px;
+}
+
+.small-labels span {
+  font-size: 12px;
+  padding: 5px 10px;
+}
+
+/* MODAL */
+
+.reservation-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(0, 0, 0, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.reservation-modal-card {
+  width: 100%;
+  max-width: 850px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: white;
+  color: #111;
+  border-radius: 24px;
+  padding: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.reservation-modal-card h2 {
+  margin: 0 0 20px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px;
+}
+
+.reservation-modal-card .form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.reservation-modal-card .form-group label {
+  color: #9b7a45;
+}
+
+.reservation-modal-card .form-group input,
+.reservation-modal-card .form-group select {
+  background: #f8f8f8;
+  border: 1px solid #e5e5e5;
+}
+
+.checkbox-group {
+  grid-column: span 2;
+}
+
+.checkbox-group label {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  color: #111 !important;
+}
+
+.checkbox-group input {
+  height: auto;
+}
+
+.passengers-section {
+  margin-top: 24px;
+}
+
+.passengers-section h3 {
+  margin: 0 0 14px;
+}
+
+.passenger-card {
+  padding: 16px;
+  border-radius: 18px;
+  background: #f8f8f8;
+  margin-bottom: 14px;
+}
+
+.passenger-card h4 {
+  margin: 0 0 14px;
+  color: #9b7a45;
+}
+
+.passenger-price {
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+}
+
+.passenger-price span {
+  color: #777;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.passenger-price b {
+  color: #111;
+  font-size: 18px;
+}
+
+.price-breakdown {
+  margin-top: 24px;
+  padding: 18px;
+  border-radius: 18px;
+  background: #f8f8f8;
+}
+
+.price-breakdown h3 {
+  margin: 0 0 12px;
+}
+
+.price-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.price-row:last-child {
+  border-bottom: none;
+}
+
+.price-row.total {
+  font-size: 20px;
+  color: #9b7a45;
+  font-weight: 700;
+}
+
+.modal-actions {
+  position: sticky;
+  bottom: 0;
+  background: white;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 18px;
+}
+
+.secondary-btn {
+  height: 50px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 999px;
+  background: #111;
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.secondary-btn:hover {
+  opacity: 0.9;
 }
 
 /* RESPONSIVE */
@@ -467,52 +562,31 @@ h1 {
   .image-wrapper {
     height: 240px;
   }
-}
 
-.activities-grid {
-  display: grid;
+  .reservation-modal {
+    padding: 12px;
+    align-items: flex-start;
+  }
 
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  .reservation-modal-card {
+    max-height: calc(100vh - 24px);
+    padding: 20px;
+  }
 
-  gap: 16px;
+  .reservation-modal-card .form-grid {
+    grid-template-columns: 1fr;
+  }
 
-  margin-top: 8px;
-}
+  .checkbox-group {
+    grid-column: span 1;
+  }
 
-.activity-card {
-  padding: 18px;
+  .modal-actions {
+    flex-direction: column;
+  }
 
-  border-radius: 20px;
-
-  background: #f7f3eb;
-
-  border: 1px solid #eadfce;
-
-  transition: 0.25s ease;
-}
-
-.activity-card:hover {
-  transform: translateY(-3px);
-
-  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
-}
-
-.activity-card h4 {
-  margin: 0 0 10px;
-
-  color: #7b5d2f;
-
-  font-size: 18px;
-
-  font-weight: 700;
-}
-
-.activity-card p {
-  margin: 0;
-
-  color: #555;
-
-  line-height: 1.6;
-
-  font-size: 14px;
+  .secondary-btn,
+  .modal-actions .reserve-btn {
+    width: 100%;
+  }
 }

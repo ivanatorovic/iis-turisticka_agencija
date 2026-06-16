@@ -22,8 +22,20 @@
 
         <div class="price-box">
           <span>Početna cena</span>
-          <b>{{ arrangement.basePrice }} €</b>
+          <b>{{ arrangement.basePrice | number: '1.2-2' }} €</b>
           <small>po osobi</small>
+
+          <ng-container *ngIf="getSelectedArrangementTerm() as selectedTerm">
+            <span>Trenutna cena za izabrani termin</span>
+            <b>{{ selectedTerm.dynamicPrice | number: '1.2-2' }} €</b>
+            <small>po osobi</small>
+
+            <div class="price-labels" *ngIf="selectedTerm.priceLabels?.length">
+              <span *ngFor="let label of selectedTerm.priceLabels">
+                {{ label }}
+              </span>
+            </div>
+          </ng-container>
         </div>
       </div>
     </div>
@@ -37,6 +49,7 @@
       <div class="reservation-form">
         <div class="form-group">
           <label>Termin putovanja</label>
+
           <select
             [(ngModel)]="selectedArrangementTermId"
             (ngModelChange)="onArrangementTermChange()"
@@ -45,10 +58,17 @@
               *ngFor="let arrangementTerm of arrangement.arrangementTerms"
               [ngValue]="arrangementTerm.id"
             >
-              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }} | slobodno:
-              {{ arrangementTerm.availableSpots }}
+              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
+              | slobodno: {{ arrangementTerm.availableSpots }}
+              | cena: {{ arrangementTerm.dynamicPrice | number: '1.2-2' }} €
             </option>
           </select>
+
+          <div class="price-labels" *ngIf="getSelectedArrangementTerm() as selectedTerm">
+            <span *ngFor="let label of selectedTerm.priceLabels">
+              {{ label }}
+            </span>
+          </div>
         </div>
 
         <div class="form-group">
@@ -70,8 +90,8 @@
         </div>
 
         <div class="reservation-price">
-          <span>Ukupna cena</span>
-          <b>{{ calculateTotalPrice() }} €</b>
+          <span>Okvirna cena</span>
+          <b>{{ calculateFinalPrice() | number: '1.2-2' }} €</b>
 
           <small *ngIf="paymentType === 'ONE_TIME'">Jednokratno plaćanje</small>
 
@@ -87,10 +107,10 @@
 
         <button
           class="reserve-btn"
-          (click)="reserve()"
+          (click)="openReservationForm()"
           [disabled]="availabilityResponse && !availabilityResponse.available"
         >
-          Rezerviši aranžman
+          Nastavi na rezervaciju
         </button>
       </div>
 
@@ -127,6 +147,113 @@
       </div>
     </div>
 
+    <div class="reservation-modal" *ngIf="reservationFormOpen">
+      <div class="reservation-modal-card">
+        <h2>Podaci za rezervaciju</h2>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Ime nosioca rezervacije</label>
+            <input type="text" [(ngModel)]="passengerFirstName" />
+          </div>
+
+          <div class="form-group">
+            <label>Prezime nosioca rezervacije</label>
+            <input type="text" [(ngModel)]="passengerLastName" />
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="passengerEmail" />
+          </div>
+
+          <div class="form-group checkbox-group">
+            <label>
+              <input type="checkbox" [(ngModel)]="insuranceSelected" />
+              Želim putno osiguranje (+30 € po osobi)
+            </label>
+          </div>
+        </div>
+
+        <div class="passengers-section">
+          <h3>Putnici</h3>
+
+          <div class="passenger-card" *ngFor="let passenger of passengers; let i = index">
+            <h4>Putnik {{ i + 1 }}</h4>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Ime</label>
+                <input type="text" [(ngModel)]="passenger.firstName" />
+              </div>
+
+              <div class="form-group">
+                <label>Prezime</label>
+                <input type="text" [(ngModel)]="passenger.lastName" />
+              </div>
+
+              <div class="form-group">
+                <label>Godine</label>
+                <input type="number" min="0" [(ngModel)]="passenger.age" />
+              </div>
+
+              <div class="passenger-price">
+                <span>{{ getPassengerDiscountDescription(passenger) }}</span>
+                <b>{{ calculatePassengerPrice(passenger) | number: '1.2-2' }} €</b>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="price-breakdown">
+          <h3>Pregled cene</h3>
+
+          <div class="price-row">
+            <span>Osnovna cena po osobi</span>
+            <b>{{ arrangement.basePrice | number: '1.2-2' }} €</b>
+          </div>
+
+          <div class="price-row" *ngIf="getSelectedArrangementTerm() as selectedTerm">
+            <span>Dinamička cena po osobi</span>
+            <b>{{ selectedTerm.dynamicPrice | number: '1.2-2' }} €</b>
+          </div>
+
+          <div class="price-row">
+            <span>Broj osoba</span>
+            <b>{{ numberOfPassengers }}</b>
+          </div>
+
+          <div class="price-row">
+            <span>Cena aranžmana sa popustima</span>
+            <b>{{ calculateTotalPrice() | number: '1.2-2' }} €</b>
+          </div>
+
+          <div class="price-row">
+            <span>Osiguranje</span>
+            <b>{{ calculateInsurancePrice() | number: '1.2-2' }} €</b>
+          </div>
+
+          <div class="price-row total">
+            <span>Ukupno za plaćanje</span>
+            <b>{{ calculateFinalPrice() | number: '1.2-2' }} €</b>
+          </div>
+
+          <div class="price-row" *ngIf="paymentType === 'INSTALLMENTS' && numberOfInstallments">
+            <span>Plaćanje na rate</span>
+            <b>
+              {{ numberOfInstallments }} rata po
+              {{ calculateInstallmentAmount() | number: '1.2-2' }} €
+            </b>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button class="secondary-btn" (click)="closeReservationForm()">Otkaži</button>
+          <button class="reserve-btn" (click)="reserve()">Potvrdi rezervaciju</button>
+        </div>
+      </div>
+    </div>
+
     <div class="details-section">
       <h2>Detalji aranžmana</h2>
 
@@ -138,10 +265,18 @@
 
         <div class="detail-row">
           <span>Termini putovanja</span>
+
           <ul>
             <li *ngFor="let arrangementTerm of arrangement.arrangementTerms">
-              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }} — slobodno:
-              {{ arrangementTerm.availableSpots }}
+              {{ arrangementTerm.term.startDate }} - {{ arrangementTerm.term.endDate }}
+              — slobodno: {{ arrangementTerm.availableSpots }}
+              — cena: {{ arrangementTerm.dynamicPrice | number: '1.2-2' }} €
+
+              <div class="price-labels small-labels" *ngIf="arrangementTerm.priceLabels?.length">
+                <span *ngFor="let label of arrangementTerm.priceLabels">
+                  {{ label }}
+                </span>
+              </div>
             </li>
           </ul>
         </div>

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import {
   Arrangement,
@@ -11,6 +11,7 @@ import {
 import {
   AlternativeTerm,
   AvailabilityResponse,
+  ReservationPassengerRequest,
   ReservationService,
 } from '../../../core/services/reservation';
 import { SidebarMenu } from '../../../layout/sidebar-menu/sidebar-menu';
@@ -37,8 +38,20 @@ export class ArrangementDetails implements OnInit {
   successMessage = '';
   errorMessage = '';
 
+  reservationFormOpen = false;
+
+  passengerFirstName = '';
+  passengerLastName = '';
+  passengerEmail = '';
+
+  insuranceSelected = false;
+  insurancePricePerPerson = 30;
+
+  passengers: ReservationPassengerRequest[] = [];
+
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private arrangementService: ArrangementService,
     private reservationService: ReservationService,
     private authService: AuthService,
@@ -86,6 +99,8 @@ export class ArrangementDetails implements OnInit {
     this.availabilityResponse = null;
     this.successMessage = '';
     this.errorMessage = '';
+    this.reservationFormOpen = false;
+    this.passengers = [];
   }
 
   getImageUrl(): string {
@@ -102,14 +117,115 @@ export class ArrangementDetails implements OnInit {
     );
   }
 
+  openReservationForm(): void {
+    this.successMessage = '';
+    this.errorMessage = '';
+
+    if (!this.arrangement || !this.selectedArrangementTermId) {
+      this.errorMessage = 'Morate izabrati termin.';
+      return;
+    }
+
+    if (this.numberOfPassengers <= 0) {
+      this.errorMessage = 'Broj osoba mora biti veći od 0.';
+      return;
+    }
+
+    this.passengers = [];
+
+    for (let i = 0; i < this.numberOfPassengers; i++) {
+      this.passengers.push({
+        firstName: '',
+        lastName: '',
+        age: null,
+      });
+    }
+
+    this.reservationFormOpen = true;
+  }
+
+  closeReservationForm(): void {
+    this.reservationFormOpen = false;
+  }
+
+  calculatePassengerPrice(passenger: ReservationPassengerRequest): number {
+    const selectedTerm = this.getSelectedArrangementTerm();
+
+    if (!selectedTerm || passenger.age === null || passenger.age === undefined) {
+      return 0;
+    }
+
+    if (passenger.age < 5) {
+      return 0;
+    }
+
+    if (passenger.age <= 12) {
+      return selectedTerm.dynamicPrice * 0.5;
+    }
+
+    return selectedTerm.dynamicPrice;
+  }
+
+  getPassengerDiscountDescription(passenger: ReservationPassengerRequest): string {
+    if (passenger.age === null || passenger.age === undefined) {
+      return '';
+    }
+
+    if (passenger.age < 5) {
+      return 'Dete do 5 godina - gratis';
+    }
+
+    if (passenger.age <= 12) {
+      return 'Dečiji popust 50%';
+    }
+
+    return 'Puna cena';
+  }
+
   calculateTotalPrice(): number {
     if (!this.arrangement) {
       return 0;
     }
 
-    const passengers = this.numberOfPassengers > 0 ? this.numberOfPassengers : 1;
+    if (this.passengers.length > 0) {
+      return this.passengers
+        .map((passenger) => this.calculatePassengerPrice(passenger))
+        .reduce((sum, price) => sum + price, 0);
+    }
 
-    return this.arrangement.basePrice * passengers;
+    const passengersCount = this.numberOfPassengers > 0 ? this.numberOfPassengers : 1;
+
+    const selectedTerm = this.getSelectedArrangementTerm();
+
+    const pricePerPerson = selectedTerm?.dynamicPrice ?? this.arrangement.basePrice;
+
+    return pricePerPerson * passengersCount;
+  }
+
+  calculateInsurancePrice(): number {
+    if (!this.insuranceSelected) {
+      return 0;
+    }
+
+    const passengersCount = this.numberOfPassengers > 0 ? this.numberOfPassengers : 1;
+
+    return this.insurancePricePerPerson * passengersCount;
+  }
+
+  calculateFinalPrice(): number {
+    return this.calculateTotalPrice() + this.calculateInsurancePrice();
+  }
+
+  calculateInstallmentAmount(): number {
+    if (this.paymentType !== 'INSTALLMENTS') {
+      return this.calculateFinalPrice();
+    }
+
+    if (!this.numberOfInstallments || this.numberOfInstallments < 2) {
+      return 0;
+    }
+
+    return this.calculateFinalPrice() / this.numberOfInstallments;
   }
 
   checkAvailability(): void {
@@ -159,6 +275,33 @@ export class ArrangementDetails implements OnInit {
       return;
     }
 
+    if (!this.passengerFirstName || !this.passengerLastName || !this.passengerEmail) {
+      this.errorMessage = 'Morate popuniti ime, prezime i email nosioca rezervacije.';
+      return;
+    }
+
+    if (this.passengers.length !== this.numberOfPassengers) {
+      this.errorMessage = 'Broj putnika nije ispravan.';
+      return;
+    }
+
+    for (const passenger of this.passengers) {
+      if (
+        !passenger.firstName ||
+        !passenger.lastName ||
+        passenger.age === null ||
+        passenger.age === undefined
+      ) {
+        this.errorMessage = 'Morate popuniti ime, prezime i godine za svakog putnika.';
+        return;
+      }
+
+      if (passenger.age < 0) {
+        this.errorMessage = 'Godine putnika ne mogu biti negativne.';
+        return;
+      }
+    }
+
     const userId = this.authService.getUserId();
 
     if (!userId) {
@@ -173,23 +316,30 @@ export class ArrangementDetails implements OnInit {
         arrangementTermId: this.selectedArrangementTermId,
         numberOfPassengers: this.numberOfPassengers,
         paymentType: this.paymentType,
-        numberOfInstallments: this.paymentType === 'INSTALLMENTS' ? this.numberOfInstallments : 1,
+        numberOfInstallments:
+          this.paymentType === 'INSTALLMENTS' ? this.numberOfInstallments : 1,
+
+        passengerFirstName: this.passengerFirstName,
+        passengerLastName: this.passengerLastName,
+        passengerEmail: this.passengerEmail,
+
+        insuranceSelected: this.insuranceSelected,
+
+        passengers: this.passengers,
       })
       .subscribe({
         next: () => {
-          this.successMessage = 'Rezervacija je uspešno kreirana.';
-          this.availabilityResponse = null;
+          this.successMessage = 'Rezervacija je uspešno kreirana. Preusmeravanje na moje rezervacije...';
+          this.errorMessage = '';
+          this.reservationFormOpen = false;
 
-          this.arrangementService.getById(this.arrangement!.id).subscribe({
-            next: (updatedArrangement) => {
-              this.arrangement = updatedArrangement;
-              this.loadActivitiesForSelectedTerm();
-            },
-          });
+          setTimeout(() => {
+            this.router.navigate(['/reservations']);
+          }, 1200);
         },
         error: (err) => {
           console.error(err);
-          this.errorMessage = 'Rezervacija nije moguća. Proverite dostupnost termina.';
+          this.errorMessage = 'Rezervacija nije moguća. Proverite podatke i dostupnost termina.';
         },
       });
   }
@@ -199,18 +349,8 @@ export class ArrangementDetails implements OnInit {
     this.availabilityResponse = null;
     this.successMessage = '';
     this.errorMessage = '';
+    this.reservationFormOpen = false;
+    this.passengers = [];
     this.loadActivitiesForSelectedTerm();
-  }
-
-  calculateInstallmentAmount(): number {
-    if (this.paymentType !== 'INSTALLMENTS') {
-      return this.calculateTotalPrice();
-    }
-
-    if (!this.numberOfInstallments || this.numberOfInstallments < 2) {
-      return 0;
-    }
-
-    return this.calculateTotalPrice() / this.numberOfInstallments;
   }
 }

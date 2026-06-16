@@ -1,7 +1,40 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from './auth';
+import { Arrangement, ArrangementTerm } from './arrangement';
+
+export interface ReservationPassengerRequest {
+  firstName: string;
+  lastName: string;
+  age: number | null;
+}
+
+export interface ReservationPassenger {
+  id: number;
+  firstName: string;
+  lastName: string;
+  age: number;
+  price: number;
+  discountDescription: string;
+}
+
+export interface CreateReservationRequest {
+  userId: number;
+  arrangementId: number;
+  arrangementTermId: number;
+  numberOfPassengers: number;
+  paymentType: string;
+  numberOfInstallments: number | null;
+
+  passengerFirstName: string;
+  passengerLastName: string;
+  passengerEmail: string;
+
+  insuranceSelected: boolean;
+
+  passengers: ReservationPassengerRequest[];
+}
 
 export interface AlternativeTerm {
   arrangementTermId: number;
@@ -16,52 +49,34 @@ export interface AvailabilityResponse {
   alternativeTerms: AlternativeTerm[];
 }
 
-export interface CreateReservationRequest {
-  userId: number;
-  arrangementId: number;
-  arrangementTermId: number;
-  numberOfPassengers: number;
-  paymentType: string;
-  numberOfInstallments: number | null;
-}
-
 export interface Reservation {
   id: number;
   numberOfPassengers: number;
   totalPrice: number;
   reservationDate: string;
   status: string;
+
+  user: any;
+  arrangement: Arrangement;
+  arrangementTerm: ArrangementTerm;
+
   paymentType: string;
   numberOfInstallments: number;
   installmentAmount: number;
 
-  user: {
-    id: number;
-    firstName: string;
-    lastName: string;
-    username: string;
-    email: string;
-  };
+  passengerFirstName: string;
+  passengerLastName: string;
+  passengerEmail: string;
 
-  arrangement: {
-    id: number;
-    name: string;
-    destination: {
-      name: string;
-      country: string;
-    };
-  };
+  basePricePerPerson: number;
+  dynamicPricePerPerson: number;
 
-  arrangementTerm: {
-    id: number;
-    capacity: number;
-    reservedSpots: number;
-    availableSpots: number;
-    term: {
-      startDate: string;
-      endDate: string;
-    };
-  };
+  insuranceSelected: boolean;
+  insurancePrice: number;
+
+  arrangementTotalPrice: number;
+
+  passengers: ReservationPassenger[];
 }
 
 @Injectable({
@@ -90,11 +105,8 @@ export class ReservationService {
   }
 
   getMyReservations(userId: number): Observable<Reservation[]> {
-    const params = new HttpParams().set('userId', userId);
-
-    return this.http.get<Reservation[]>(`${this.apiUrl}/my`, {
+    return this.http.get<Reservation[]>(`${this.apiUrl}/my?userId=${userId}`, {
       headers: this.getHeaders(),
-      params,
     });
   }
 
@@ -103,15 +115,12 @@ export class ReservationService {
     arrangementTermId: number,
     passengers: number,
   ): Observable<AvailabilityResponse> {
-    const params = new HttpParams()
-      .set('arrangementId', arrangementId)
-      .set('arrangementTermId', arrangementTermId)
-      .set('passengers', passengers);
-
-    return this.http.get<AvailabilityResponse>(`${this.apiUrl}/check-availability`, {
-      headers: this.getHeaders(),
-      params,
-    });
+    return this.http.get<AvailabilityResponse>(
+      `${this.apiUrl}/check-availability?arrangementId=${arrangementId}&arrangementTermId=${arrangementTermId}&passengers=${passengers}`,
+      {
+        headers: this.getHeaders(),
+      },
+    );
   }
 
   createReservation(request: CreateReservationRequest): Observable<Reservation> {
@@ -120,9 +129,13 @@ export class ReservationService {
     });
   }
 
-  cancelReservation(id: number): Observable<Reservation> {
-    return this.http.put<Reservation>(`${this.apiUrl}/${id}/cancel`, {}, {
-      headers: this.getHeaders(),
-    });
+  cancelReservation(reservationId: number): Observable<Reservation> {
+    return this.http.put<Reservation>(
+      `${this.apiUrl}/${reservationId}/cancel`,
+      {},
+      {
+        headers: this.getHeaders(),
+      },
+    );
   }
 }

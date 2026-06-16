@@ -21,7 +21,7 @@ import { ManagerArrangementTermsList } from './features/arrangements/manager-arr
 import { AdditionalActivitiesCustomer } from './features/activities/additional-activities-customer/additional-activities-customer';
 import { AdditionalActivitiesGuide } from './features/activities/additional-activities-guide/additional-activities-guide';
 import { RecommendedActivities } from './features/activities/recommended-activities/recommended-activities';
-
+import { PricingRules } from './features/pricing-rules/pricing-rules';
 export const routes: Routes = [
   {
     path: '',
@@ -157,4 +157,8 @@ export const routes: Routes = [
     path: 'recommended-activities',
     component: RecommendedActivities,
   },
+  {
+  path: 'pricing-rules',
+  component: PricingRules,
+},
 ];

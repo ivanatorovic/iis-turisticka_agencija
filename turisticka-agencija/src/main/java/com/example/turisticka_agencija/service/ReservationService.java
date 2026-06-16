@@ -3,10 +3,12 @@ package com.example.turisticka_agencija.service;
 import com.example.turisticka_agencija.dto.AlternativeTermDto;
 import com.example.turisticka_agencija.dto.AvailabilityResponse;
 import com.example.turisticka_agencija.dto.CreateReservationRequest;
+import com.example.turisticka_agencija.dto.ReservationPassengerRequest;
 import com.example.turisticka_agencija.model.*;
 import com.example.turisticka_agencija.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,15 +18,18 @@ public class ReservationService {
     private final UserRepository userRepository;
     private final ArrangementRepository arrangementRepository;
     private final ArrangementTermRepository arrangementTermRepository;
+    private final DynamicPricingService dynamicPricingService;
 
     public ReservationService(ReservationRepository reservationRepository,
                               UserRepository userRepository,
                               ArrangementRepository arrangementRepository,
-                              ArrangementTermRepository arrangementTermRepository) {
+                              ArrangementTermRepository arrangementTermRepository,
+                              DynamicPricingService dynamicPricingService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.arrangementRepository = arrangementRepository;
         this.arrangementTermRepository = arrangementTermRepository;
+        this.dynamicPricingService = dynamicPricingService;
     }
 
     public List<Reservation> getAllReservations() {
@@ -86,37 +91,122 @@ public class ReservationService {
             throw new RuntimeException("Not enough available spots");
         }
 
-        double totalPrice = arrangement.getBasePrice() * request.getNumberOfPassengers();
+        double basePricePerPerson = arrangement.getBasePrice();
+
+        double dynamicPricePerPerson =
+                dynamicPricingService.calculatePrice(arrangement, arrangementTerm);
 
         Reservation reservation = new Reservation();
+
+        double arrangementTotalPrice = 0;
+
+        List<ReservationPassenger> reservationPassengers = new ArrayList<>();
+
+        if (request.getPassengers() != null) {
+
+            for (ReservationPassengerRequest passengerRequest : request.getPassengers()) {
+
+                ReservationPassenger passenger = new ReservationPassenger();
+
+                passenger.setFirstName(passengerRequest.getFirstName());
+                passenger.setLastName(passengerRequest.getLastName());
+                passenger.setAge(passengerRequest.getAge());
+
+                double passengerPrice;
+                String discountDescription;
+
+                if (passengerRequest.getAge() < 5) {
+
+                    passengerPrice = 0;
+                    discountDescription = "Dete do 5 godina - gratis";
+
+                } else if (passengerRequest.getAge() <= 12) {
+
+                    passengerPrice = dynamicPricePerPerson * 0.5;
+                    discountDescription = "Dečiji popust 50%";
+
+                } else {
+
+                    passengerPrice = dynamicPricePerPerson;
+                    discountDescription = "Puna cena";
+                }
+
+                passenger.setPrice(passengerPrice);
+                passenger.setDiscountDescription(discountDescription);
+
+                passenger.setReservation(reservation);
+
+                arrangementTotalPrice += passengerPrice;
+
+                reservationPassengers.add(passenger);
+            }
+        }
+
+        double insurancePrice = 0;
+
+        if (request.isInsuranceSelected()) {
+            insurancePrice = 30 * request.getNumberOfPassengers();
+        }
+
+        double totalPrice = arrangementTotalPrice + insurancePrice;
 
         reservation.setUser(user);
         reservation.setArrangement(arrangement);
         reservation.setArrangementTerm(arrangementTerm);
+
+        reservation.setPassengers(reservationPassengers);
+
         reservation.setNumberOfPassengers(request.getNumberOfPassengers());
+
+        reservation.setPassengerFirstName(request.getPassengerFirstName());
+        reservation.setPassengerLastName(request.getPassengerLastName());
+        reservation.setPassengerEmail(request.getPassengerEmail());
+
+        reservation.setBasePricePerPerson(basePricePerPerson);
+        reservation.setDynamicPricePerPerson(dynamicPricePerPerson);
+
+        reservation.setInsuranceSelected(request.isInsuranceSelected());
+        reservation.setInsurancePrice(insurancePrice);
+
+        reservation.setArrangementTotalPrice(arrangementTotalPrice);
         reservation.setTotalPrice(totalPrice);
+
         reservation.setStatus(ReservationStatus.CONFIRMED);
 
-        PaymentType paymentType = request.getPaymentType() != null
-                ? request.getPaymentType()
-                : PaymentType.ONE_TIME;
+        PaymentType paymentType =
+                request.getPaymentType() != null
+                        ? request.getPaymentType()
+                        : PaymentType.ONE_TIME;
 
         reservation.setPaymentType(paymentType);
 
         if (paymentType == PaymentType.INSTALLMENTS) {
-            if (request.getNumberOfInstallments() == null || request.getNumberOfInstallments() < 2) {
-                throw new RuntimeException("Number of installments must be at least 2");
+
+            if (request.getNumberOfInstallments() == null
+                    || request.getNumberOfInstallments() < 2) {
+
+                throw new RuntimeException(
+                        "Number of installments must be at least 2"
+                );
             }
 
-            reservation.setNumberOfInstallments(request.getNumberOfInstallments());
-            reservation.setInstallmentAmount(totalPrice / request.getNumberOfInstallments());
+            reservation.setNumberOfInstallments(
+                    request.getNumberOfInstallments()
+            );
+
+            reservation.setInstallmentAmount(
+                    totalPrice / request.getNumberOfInstallments()
+            );
+
         } else {
+
             reservation.setNumberOfInstallments(1);
             reservation.setInstallmentAmount(totalPrice);
         }
 
         arrangementTerm.setReservedSpots(
-                arrangementTerm.getReservedSpots() + request.getNumberOfPassengers()
+                arrangementTerm.getReservedSpots()
+                        + request.getNumberOfPassengers()
         );
 
         arrangementTermRepository.save(arrangementTerm);

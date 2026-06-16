@@ -102,33 +102,44 @@ VALUES
     (12, 'Luka', 'Pavlovic', 'luka', 'luka@gmail.com', '$2a$12$raKxWepdCv2r/C/48Yp9d.X7ccyX96IdOEjdKmQPSD3bj66diCV7u', '0647777777', 'CUSTOMER'),
     (13, 'Milica', 'Ilic', 'milica', 'milica@gmail.com', '$2a$12$c9e0LO16Tk94VRQ23Y4RsuAHPCcuhXSbZsIcYZkdKRyGRey5edpFu', '0648888888', 'CUSTOMER');
 
-INSERT INTO reservation
-(id, user_id, arrangement_id, arrangement_term_id, number_of_passengers,
- total_price, reservation_date, status, payment_type,
- number_of_installments, installment_amount)
+INSERT INTO reservation (
+    id,
+    user_id,
+    arrangement_id,
+    arrangement_term_id,
+    number_of_passengers,
+    total_price,
+    reservation_date,
+    status,
+    payment_type,
+    number_of_installments,
+    installment_amount,
+    passenger_first_name,
+    passenger_last_name,
+    passenger_email,
+    base_price_per_person,
+    dynamic_price_per_person,
+    insurance_selected,
+    insurance_price,
+    arrangement_total_price
+)
 VALUES
-    (1, 1, 1, 1, 2, 900, '2026-02-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 900),
-    (2, 1, 1, 2, 3, 1350, '2026-03-15 11:30:00', 'CONFIRMED', 'INSTALLMENTS', 3, 450),
-    (3, 1, 4, 5, 2, 1400, '2026-04-01 09:15:00', 'CONFIRMED', 'INSTALLMENTS', 4, 350),
-    (4, 1, 2, 3, 1, 380, '2026-05-12 14:20:00', 'CANCELLED', 'ONE_TIME', 1, 380),
-    (5, 1, 3, 4, 2, 600, '2026-10-05 16:45:00', 'CONFIRMED', 'ONE_TIME', 1, 600),
-    (6, 1, 1, 7, 2, 900, '2025-02-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 900),
-    (7, 1, 1, 8, 3, 1350, '2025-03-10 10:00:00', 'CONFIRMED', 'INSTALLMENTS', 3, 450),
-    (8, 1, 3, 9, 1, 300, '2025-10-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 300),
-    (9, 1, 4, 10, 3, 2100, '2024-04-10 10:00:00', 'CONFIRMED', 'INSTALLMENTS', 6, 350),
-    (10, 1, 3, 11, 1, 300, '2024-11-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 300),
-    (11, 10, 1, 1, 2, 900, '2026-03-01 12:15:00', 'CONFIRMED', 'ONE_TIME', 1, 900),
-    (12, 11, 1, 1, 3, 1350, '2026-03-03 09:40:00', 'CONFIRMED', 'INSTALLMENTS', 3, 450),
-    (13, 12, 1, 2, 2, 900, '2026-03-06 15:25:00', 'CONFIRMED', 'ONE_TIME', 1, 900),
-    (14, 13, 4, 5, 2, 1400, '2026-04-02 10:30:00', 'CONFIRMED', 'INSTALLMENTS', 4, 350),
-    (15, 12, 1, 1, 2, 900,
-     '2026-03-08 10:00:00',
-     'CONFIRMED',
-     'ONE_TIME',
-     1,
-     900),
-    (16, 13, 1, 1, 2, 900, '2026-03-09 10:00:00',
-    'CONFIRMED', 'ONE_TIME', 1, 900);
+    (1, 1, 1, 1, 2, 900, '2026-02-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 900, 'Petar', 'Petrović', 'petar@gmail.com', 450, 450, false, 0, 900),
+    (2, 1, 1, 2, 3, 1350, '2026-03-15 11:30:00', 'CONFIRMED', 'INSTALLMENTS', 3, 450, 'Ana', 'Anić', 'ana@gmail.com', 450, 450, false, 0, 1350),
+    (3, 1, 4, 5, 2, 1400, '2026-04-01 09:15:00', 'CONFIRMED', 'INSTALLMENTS', 4, 350, 'Marko', 'Marković', 'marko@gmail.com', 700, 700, false, 0, 1400),
+    (4, 1, 2, 3, 1, 380, '2026-05-12 14:20:00', 'CANCELLED', 'ONE_TIME', 1, 380, 'Jovana', 'Jovanović', 'jovana@gmail.com', 380, 380, false, 0, 380),
+    (5, 1, 3, 4, 2, 600, '2026-10-05 16:45:00', 'CONFIRMED', 'ONE_TIME', 1, 600, 'Nikola', 'Nikolić', 'nikola@gmail.com', 300, 300, false, 0, 600),
+    (6, 1, 1, 7, 2, 900, '2025-02-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 900, 'Milica', 'Milić', 'milica@gmail.com', 450, 450, false, 0, 900),
+    (7, 1, 1, 8, 3, 1350, '2025-03-10 10:00:00', 'CONFIRMED', 'INSTALLMENTS', 3, 450, 'Stefan', 'Stefanović', 'stefan@gmail.com', 450, 450, false, 0, 1350),
+    (8, 1, 3, 9, 1, 300, '2025-10-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 300, 'Mina', 'Mitić', 'mina@gmail.com', 300, 300, false, 0, 300),
+    (9, 1, 4, 10, 3, 2100, '2024-04-10 10:00:00', 'CONFIRMED', 'INSTALLMENTS', 6, 350, 'Luka', 'Lukić', 'luka@gmail.com', 700, 700, false, 0, 2100),
+    (10, 1, 3, 11, 1, 300, '2024-11-10 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 300, 'Sara', 'Sarić', 'sara@gmail.com', 300, 300, false, 0, 300),
+    (11, 10, 1, 1, 2, 900, '2026-03-01 12:15:00', 'CONFIRMED', 'ONE_TIME', 1, 900, 'Milan', 'Milanović', 'milan@gmail.com', 450, 450, false, 0, 900),
+    (12, 11, 1, 1, 3, 1350, '2026-03-03 09:40:00', 'CONFIRMED', 'INSTALLMENTS', 3, 450, 'Ivana', 'Ivić', 'ivana@gmail.com', 450, 450, false, 0, 1350),
+    (13, 12, 1, 2, 2, 900, '2026-03-06 15:25:00', 'CONFIRMED', 'ONE_TIME', 1, 900, 'Tamara', 'Tomić', 'tamara@gmail.com', 450, 450, false, 0, 900),
+    (14, 13, 4, 5, 2, 1400, '2026-04-02 10:30:00', 'CONFIRMED', 'INSTALLMENTS', 4, 350, 'Bojan', 'Bojić', 'bojan@gmail.com', 700, 700, false, 0, 1400),
+    (15, 12, 1, 1, 2, 900, '2026-03-08 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 900, 'Nina', 'Ninić', 'nina@gmail.com', 450, 450, false, 0, 900),
+    (16, 13, 1, 1, 2, 900, '2026-03-09 10:00:00', 'CONFIRMED', 'ONE_TIME', 1, 900, 'Vuk', 'Vukić', 'vuk@gmail.com', 450, 450, false, 0, 900);
 
 INSERT INTO workflow (id, name, created_at, admin_id)
 VALUES
@@ -349,6 +360,40 @@ VALUES
 (13, 10), -- Luksuz
 (13, 9),  -- Relax
 (13, 8);  -- Porodicne aktivnosti
+
+
+INSERT INTO pricing_rule
+(id, name, type, percentage, arrangement_id, season_start, season_end,
+ min_occupancy_percent, max_days_before_start, min_days_before_start, active)
+VALUES
+    (1, 'Letnja sezona za Krf', 'SEASON', 25, 1, '2026-07-01', '2026-08-31',
+     null, null, null, true),
+
+    (2, 'Zimska sezona za Kopaonik', 'SEASON', 30, 3, '2026-12-01', '2027-03-15',
+     null, null, null, true),
+
+    (3, 'Letnja sezona za Hurgadu', 'SEASON', 20, 4, '2026-06-01', '2026-09-30',
+     null, null, null, true),
+
+    (4, 'Popust za early booking', 'EARLY_BOOKING', -10, null, null, null,
+     null, null, 60, true),
+
+    (5, 'Last minute popust', 'LAST_MINUTE', -20, null, null, null,
+     null, 7, null, true),
+
+    (6, 'Doplata za veliku popunjenost', 'OCCUPANCY', 15, null, null, null,
+     80, null, null, true);
+
+INSERT INTO reservation_passenger
+(id, reservation_id, first_name, last_name, age, price, discount_description)
+VALUES
+    (1, 1, 'Petar', 'Petrović', 34, 450, 'Puna cena'),
+    (2, 1, 'Mila', 'Petrović', 8, 225, 'Dečiji popust 50%'),
+
+    (3, 2, 'Ana', 'Anić', 30, 450, 'Puna cena'),
+    (4, 2, 'Lena', 'Anić', 4, 0, 'Dete do 5 godina - gratis'),
+    (5, 2, 'Marko', 'Anić', 10, 225, 'Dečiji popust 50%');
+
 SELECT setval('users_id_seq', (SELECT MAX(id) FROM users));
 SELECT setval('destination_id_seq', (SELECT MAX(id) FROM destination));
 SELECT setval('accommodation_id_seq', (SELECT MAX(id) FROM accommodation));
@@ -367,3 +412,5 @@ SELECT setval('additional_activity_execution_id_seq', (SELECT MAX(id) FROM addit
 SELECT setval('additional_activity_price_list_id_seq', (SELECT MAX(id) FROM additional_activity_price_list));
 SELECT setval('additional_activity_registration_id_seq', (SELECT MAX(id) FROM additional_activity_registration));
 SELECT setval('category_id_seq', (SELECT MAX(id) FROM category));
+SELECT setval('pricing_rule_id_seq', (SELECT MAX(id) FROM pricing_rule));
+SELECT setval('reservation_passenger_id_seq', (SELECT MAX(id) FROM reservation_passenger));
