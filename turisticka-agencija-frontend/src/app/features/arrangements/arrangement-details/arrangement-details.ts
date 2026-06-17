@@ -324,6 +324,7 @@ export class ArrangementDetails implements OnInit {
         passengerEmail: this.passengerEmail,
 
         insuranceSelected: this.insuranceSelected,
+        expectedTotalPrice: this.calculateFinalPrice(),
 
         passengers: this.passengers,
       })
@@ -338,9 +339,14 @@ export class ArrangementDetails implements OnInit {
           }, 1200);
         },
         error: (err) => {
-          console.error(err);
-          this.errorMessage = 'Rezervacija nije moguća. Proverite podatke i dostupnost termina.';
-        },
+  console.error(err);
+
+  if (err.error?.message) {
+    this.errorMessage = err.error.message;
+  } else {
+    this.errorMessage = 'Rezervacija nije moguća. Proverite podatke i dostupnost termina.';
+  }
+},
       });
   }
 

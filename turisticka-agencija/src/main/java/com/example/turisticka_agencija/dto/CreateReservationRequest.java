@@ -18,7 +18,7 @@ public class CreateReservationRequest {
     private String passengerEmail;
 
     private boolean insuranceSelected;
-
+    private Double expectedTotalPrice;
     private List<ReservationPassengerRequest> passengers;
 
     public CreateReservationRequest() {
@@ -104,5 +104,13 @@ public class CreateReservationRequest {
 
     public void setNumberOfInstallments(Integer numberOfInstallments) {
         this.numberOfInstallments = numberOfInstallments;
+    }
+
+    public Double getExpectedTotalPrice() {
+        return expectedTotalPrice;
+    }
+
+    public void setExpectedTotalPrice(Double expectedTotalPrice) {
+        this.expectedTotalPrice = expectedTotalPrice;
     }
 }

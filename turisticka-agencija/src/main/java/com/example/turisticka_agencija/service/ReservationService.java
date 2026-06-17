@@ -91,6 +91,11 @@ public class ReservationService {
             throw new RuntimeException("Not enough available spots");
         }
 
+        if (request.getPassengers() == null
+                || request.getPassengers().size() != request.getNumberOfPassengers()) {
+            throw new RuntimeException("Broj putnika nije ispravan");
+        }
+
         double basePricePerPerson = arrangement.getBasePrice();
 
         double dynamicPricePerPerson =
@@ -102,44 +107,33 @@ public class ReservationService {
 
         List<ReservationPassenger> reservationPassengers = new ArrayList<>();
 
-        if (request.getPassengers() != null) {
+        for (ReservationPassengerRequest passengerRequest : request.getPassengers()) {
+            ReservationPassenger passenger = new ReservationPassenger();
 
-            for (ReservationPassengerRequest passengerRequest : request.getPassengers()) {
+            passenger.setFirstName(passengerRequest.getFirstName());
+            passenger.setLastName(passengerRequest.getLastName());
+            passenger.setAge(passengerRequest.getAge());
 
-                ReservationPassenger passenger = new ReservationPassenger();
+            double passengerPrice;
+            String discountDescription;
 
-                passenger.setFirstName(passengerRequest.getFirstName());
-                passenger.setLastName(passengerRequest.getLastName());
-                passenger.setAge(passengerRequest.getAge());
-
-                double passengerPrice;
-                String discountDescription;
-
-                if (passengerRequest.getAge() < 5) {
-
-                    passengerPrice = 0;
-                    discountDescription = "Dete do 5 godina - gratis";
-
-                } else if (passengerRequest.getAge() <= 12) {
-
-                    passengerPrice = dynamicPricePerPerson * 0.5;
-                    discountDescription = "Dečiji popust 50%";
-
-                } else {
-
-                    passengerPrice = dynamicPricePerPerson;
-                    discountDescription = "Puna cena";
-                }
-
-                passenger.setPrice(passengerPrice);
-                passenger.setDiscountDescription(discountDescription);
-
-                passenger.setReservation(reservation);
-
-                arrangementTotalPrice += passengerPrice;
-
-                reservationPassengers.add(passenger);
+            if (passengerRequest.getAge() < 5) {
+                passengerPrice = 0;
+                discountDescription = "Dete do 5 godina - gratis";
+            } else if (passengerRequest.getAge() <= 12) {
+                passengerPrice = dynamicPricePerPerson * 0.5;
+                discountDescription = "Dečiji popust 50%";
+            } else {
+                passengerPrice = dynamicPricePerPerson;
+                discountDescription = "Puna cena";
             }
+
+            passenger.setPrice(passengerPrice);
+            passenger.setDiscountDescription(discountDescription);
+            passenger.setReservation(reservation);
+
+            arrangementTotalPrice += passengerPrice;
+            reservationPassengers.add(passenger);
         }
 
         double insurancePrice = 0;
@@ -150,10 +144,18 @@ public class ReservationService {
 
         double totalPrice = arrangementTotalPrice + insurancePrice;
 
+        if (request.getExpectedTotalPrice() != null
+                && Math.abs(totalPrice - request.getExpectedTotalPrice()) > 0.01) {
+            throw new RuntimeException(
+                    "Cena se promenila. Nova cena je "
+                            + totalPrice
+                            + " €. Molimo proverite obračun i pokušajte ponovo."
+            );
+        }
+
         reservation.setUser(user);
         reservation.setArrangement(arrangement);
         reservation.setArrangementTerm(arrangementTerm);
-
         reservation.setPassengers(reservationPassengers);
 
         reservation.setNumberOfPassengers(request.getNumberOfPassengers());
@@ -173,40 +175,26 @@ public class ReservationService {
 
         reservation.setStatus(ReservationStatus.CONFIRMED);
 
-        PaymentType paymentType =
-                request.getPaymentType() != null
-                        ? request.getPaymentType()
-                        : PaymentType.ONE_TIME;
+        PaymentType paymentType = request.getPaymentType() != null
+                ? request.getPaymentType()
+                : PaymentType.ONE_TIME;
 
         reservation.setPaymentType(paymentType);
 
         if (paymentType == PaymentType.INSTALLMENTS) {
-
-            if (request.getNumberOfInstallments() == null
-                    || request.getNumberOfInstallments() < 2) {
-
-                throw new RuntimeException(
-                        "Number of installments must be at least 2"
-                );
+            if (request.getNumberOfInstallments() == null || request.getNumberOfInstallments() < 2) {
+                throw new RuntimeException("Number of installments must be at least 2");
             }
 
-            reservation.setNumberOfInstallments(
-                    request.getNumberOfInstallments()
-            );
-
-            reservation.setInstallmentAmount(
-                    totalPrice / request.getNumberOfInstallments()
-            );
-
+            reservation.setNumberOfInstallments(request.getNumberOfInstallments());
+            reservation.setInstallmentAmount(totalPrice / request.getNumberOfInstallments());
         } else {
-
             reservation.setNumberOfInstallments(1);
             reservation.setInstallmentAmount(totalPrice);
         }
 
         arrangementTerm.setReservedSpots(
-                arrangementTerm.getReservedSpots()
-                        + request.getNumberOfPassengers()
+                arrangementTerm.getReservedSpots() + request.getNumberOfPassengers()
         );
 
         arrangementTermRepository.save(arrangementTerm);

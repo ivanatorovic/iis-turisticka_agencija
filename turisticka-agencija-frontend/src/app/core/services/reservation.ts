@@ -32,6 +32,7 @@ export interface CreateReservationRequest {
   passengerEmail: string;
 
   insuranceSelected: boolean;
+  expectedTotalPrice: number;
 
   passengers: ReservationPassengerRequest[];
 }
