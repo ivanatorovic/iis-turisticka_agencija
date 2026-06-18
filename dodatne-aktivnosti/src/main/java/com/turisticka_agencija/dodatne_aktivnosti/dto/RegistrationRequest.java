@@ -6,6 +6,24 @@ public class RegistrationRequest {
     private Long executionId;
     private Integer numberOfPeople;
     private String status;
+    private Integer reservedSpots;
+    private Integer capacity;
+
+    public Integer getReservedSpots() {
+        return reservedSpots;
+    }
+
+    public void setReservedSpots(Integer reservedSpots) {
+        this.reservedSpots = reservedSpots;
+    }
+
+    public Integer getCapacity() {
+        return capacity;
+    }
+
+    public void setCapacity(Integer capacity) {
+        this.capacity = capacity;
+    }
 
     public RegistrationRequest() {
     }

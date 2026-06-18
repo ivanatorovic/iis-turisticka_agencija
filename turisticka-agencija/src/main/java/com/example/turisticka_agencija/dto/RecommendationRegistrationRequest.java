@@ -4,6 +4,8 @@ public record RecommendationRegistrationRequest(
         Long registrationId,
         Long executionId,
         Integer numberOfPeople,
-        String status
+        String status,
+        Integer reservedSpots,
+        Integer capacity
 ) {
 }

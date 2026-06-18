@@ -96,7 +96,9 @@ public class CustomerService implements ICustomerService {
                 request.getRegistrationId(),
                 LocalDateTime.now(),
                 request.getNumberOfPeople(),
-                request.getStatus()
+                request.getStatus(),
+                request.getReservedSpots(),
+                request.getCapacity()
         );
     }
 

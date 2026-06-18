@@ -84,7 +84,9 @@ public class AdditionalActivityRegistrationService {
                 execution.getId(),
                 registration.getId(),
                 registration.getNumberOfParticipants(),
-                registration.getStatus().name()
+                registration.getStatus().name(),
+                execution.getReservedSpots(),
+                execution.getCapacity()
         );
 
         return mapToResponse(registration);
@@ -255,7 +257,9 @@ public class AdditionalActivityRegistrationService {
             Long executionId,
             Long registrationId,
             Integer numberOfPeople,
-            String status
+            String status,
+            Integer reservedSpots,
+            Integer capacity
     ) {
         String url =
                 "http://dodatne-aktivnosti-service:8082/customers/"
@@ -267,7 +271,9 @@ public class AdditionalActivityRegistrationService {
                         registrationId,
                         executionId,
                         numberOfPeople,
-                        status
+                        status,
+                        reservedSpots,
+                        capacity
                 );
 
         restTemplate.postForEntity(

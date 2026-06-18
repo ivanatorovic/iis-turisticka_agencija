@@ -21,7 +21,6 @@ public interface ICustomerService {
     void delete(Long id);
 
     Customer registerOrUpdateActivity(Long customerId, RegistrationRequest request);
-
     void deleteRegistrationForExecution(Long customerId, Long executionId);
 
     void addFavoriteCategory(Long customerId, Long categoryId);

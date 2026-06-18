@@ -12,27 +12,37 @@ import java.time.LocalDateTime;
 public interface CustomerRepository extends Neo4jRepository<Customer, Long> {
 
     @Query("""
-        MATCH (c:Customer)
-        WHERE c.customerId = $customerId
-        MATCH (e:AdditionalActivityExecution)
-        WHERE e.executionId = $executionId
-        MERGE (c)-[r:REGISTERED_FOR]->(e)
-        ON CREATE SET r.registrationId = $registrationId,
-                      r.registrationDate = $registrationDate,
-                      r.numberOfPeople = $numberOfPeople,
-                      r.status = $status
-        ON MATCH SET r.registrationId = $registrationId,
-                     r.registrationDate = $registrationDate,
-                     r.numberOfPeople = $numberOfPeople,
-                     r.status = $status
-        RETURN c
-    """)
+    MATCH (c:Customer)
+    WHERE c.customerId = $customerId
+
+    MATCH (e:AdditionalActivityExecution)
+    WHERE e.executionId = $executionId
+
+    SET e.reservedSpots = $reservedSpots,
+        e.capacity = $capacity
+
+    MERGE (c)-[r:REGISTERED_FOR]->(e)
+
+    ON CREATE SET r.registrationId = $registrationId,
+                  r.registrationDate = $registrationDate,
+                  r.numberOfPeople = $numberOfPeople,
+                  r.status = $status
+
+    ON MATCH SET r.registrationId = $registrationId,
+                 r.registrationDate = $registrationDate,
+                 r.numberOfPeople = $numberOfPeople,
+                 r.status = $status
+
+    RETURN c
+""")
     Customer registerOrUpdateActivity(@Param("customerId") Long customerId,
                                       @Param("executionId") Long executionId,
                                       @Param("registrationId") Long registrationId,
                                       @Param("registrationDate") LocalDateTime registrationDate,
                                       @Param("numberOfPeople") Integer numberOfPeople,
-                                      @Param("status") String status);
+                                      @Param("status") String status,
+                                      @Param("reservedSpots") Integer reservedSpots,
+                                      @Param("capacity") Integer capacity);
 
 
     @Query("""
