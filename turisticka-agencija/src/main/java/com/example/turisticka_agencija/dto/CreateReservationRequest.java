@@ -2,6 +2,8 @@ package com.example.turisticka_agencija.dto;
 
 import com.example.turisticka_agencija.model.PaymentType;
 
+import java.util.List;
+
 public class CreateReservationRequest {
 
     private Long userId;
@@ -11,8 +13,49 @@ public class CreateReservationRequest {
 
     private PaymentType paymentType;
     private Integer numberOfInstallments;
+    private String passengerFirstName;
+    private String passengerLastName;
+    private String passengerEmail;
+
+    private boolean insuranceSelected;
+    private Double expectedTotalPrice;
+    private List<ReservationPassengerRequest> passengers;
 
     public CreateReservationRequest() {
+    }
+
+    public String getPassengerFirstName() {
+        return passengerFirstName;
+    }
+
+    public void setPassengerFirstName(String passengerFirstName) {
+        this.passengerFirstName = passengerFirstName;
+    }
+
+    public String getPassengerLastName() {
+        return passengerLastName;
+    }
+
+    public void setPassengerLastName(String passengerLastName) {
+        this.passengerLastName = passengerLastName;
+    }
+
+    public String getPassengerEmail() {
+        return passengerEmail;
+    }
+    public List<ReservationPassengerRequest> getPassengers() {
+        return passengers;
+    }
+    public void setPassengerEmail(String passengerEmail) {
+        this.passengerEmail = passengerEmail;
+    }
+
+    public boolean isInsuranceSelected() {
+        return insuranceSelected;
+    }
+
+    public void setInsuranceSelected(boolean insuranceSelected) {
+        this.insuranceSelected = insuranceSelected;
     }
 
     public Long getUserId() {
@@ -61,5 +104,13 @@ public class CreateReservationRequest {
 
     public void setNumberOfInstallments(Integer numberOfInstallments) {
         this.numberOfInstallments = numberOfInstallments;
+    }
+
+    public Double getExpectedTotalPrice() {
+        return expectedTotalPrice;
+    }
+
+    public void setExpectedTotalPrice(Double expectedTotalPrice) {
+        this.expectedTotalPrice = expectedTotalPrice;
     }
 }

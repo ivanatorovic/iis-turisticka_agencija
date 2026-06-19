@@ -6,17 +6,12 @@
       <p class="subtitle">LUXTRAVEL</p>
       <h1>{{ getPageTitle() }}</h1>
       <p class="description">
-        Pregled rezervacija, statusa i osnovnih podataka o aranžmanima.
+        Pregled rezervacija, statusa i detaljne strukture cene aranžmana.
       </p>
     </div>
 
-    <p class="success-message" *ngIf="successMessage">
-      {{ successMessage }}
-    </p>
-
-    <p class="error-message" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </p>
+    <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
+    <p class="error-message" *ngIf="errorMessage">{{ errorMessage }}</p>
 
     <p class="empty-message" *ngIf="reservations.length === 0 && !errorMessage">
       Nema rezervacija za prikaz.
@@ -38,6 +33,14 @@
               -
               {{ reservation.arrangementTerm.term.endDate }}
             </p>
+
+            <p class="passenger-info">
+              Nosilac rezervacije:
+              {{ reservation.passengerFirstName }}
+              {{ reservation.passengerLastName }}
+              —
+              {{ reservation.passengerEmail }}
+            </p>
           </div>
 
           <div class="status" [ngClass]="reservation.status.toLowerCase()">
@@ -45,7 +48,7 @@
           </div>
         </div>
 
-        <div class="reservation-details">
+        <div class="reservation-summary">
           <div>
             <span>Broj osoba</span>
             <b>{{ reservation.numberOfPassengers }}</b>
@@ -53,7 +56,7 @@
 
           <div>
             <span>Ukupna cena</span>
-            <b>{{ reservation.totalPrice }} €</b>
+            <b>{{ reservation.totalPrice | number: '1.2-2' }} €</b>
           </div>
 
           <div>
@@ -61,7 +64,10 @@
             <b>
               {{
                 reservation.paymentType === 'INSTALLMENTS'
-                  ? reservation.numberOfInstallments + ' rata po ' + (reservation.installmentAmount | number: '1.2-2') + ' €'
+                  ? reservation.numberOfInstallments +
+                    ' rata po ' +
+                    (reservation.installmentAmount | number: '1.2-2') +
+                    ' €'
                   : 'Jednokratno'
               }}
             </b>
@@ -78,6 +84,54 @@
               {{ reservation.user.firstName }} {{ reservation.user.lastName }}
               ({{ reservation.user.username }})
             </b>
+          </div>
+        </div>
+
+        <div class="price-explanation">
+          <h3>Obračun cene</h3>
+
+          <div class="price-line">
+            <span>Osnovna cena po osobi</span>
+            <b>{{ reservation.basePricePerPerson | number: '1.2-2' }} €</b>
+          </div>
+
+          <div class="price-line">
+            <span>Dinamička cena po osobi</span>
+            <b>{{ reservation.dynamicPricePerPerson | number: '1.2-2' }} €</b>
+          </div>
+
+          <div class="passenger-price-list" *ngIf="reservation.passengers?.length">
+            <h4>Putnici</h4>
+
+            <div class="passenger-price-row" *ngFor="let passenger of reservation.passengers">
+              <div>
+                <b>{{ passenger.firstName }} {{ passenger.lastName }}</b>
+                <span>{{ passenger.age }} god. — {{ passenger.discountDescription }}</span>
+              </div>
+
+              <strong>{{ passenger.price | number: '1.2-2' }} €</strong>
+            </div>
+          </div>
+
+          <div class="price-line">
+            <span>Cena aranžmana nakon popusta</span>
+            <b>{{ reservation.arrangementTotalPrice | number: '1.2-2' }} €</b>
+          </div>
+
+          <div class="price-line">
+            <span>Putno osiguranje</span>
+            <b>
+              {{
+                reservation.insuranceSelected
+                  ? (reservation.insurancePrice | number: '1.2-2') + ' €'
+                  : 'Nije izabrano'
+              }}
+            </b>
+          </div>
+
+          <div class="price-line final">
+            <span>Ukupno za plaćanje</span>
+            <b>{{ reservation.totalPrice | number: '1.2-2' }} €</b>
           </div>
         </div>
 

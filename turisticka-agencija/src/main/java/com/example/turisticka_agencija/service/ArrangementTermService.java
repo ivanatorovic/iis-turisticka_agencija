@@ -11,9 +11,12 @@ import java.util.List;
 public class ArrangementTermService {
 
     private final ArrangementTermRepository arrangementTermRepository;
+    private final DynamicPricingService dynamicPricingService;
 
-    public ArrangementTermService(ArrangementTermRepository arrangementTermRepository) {
+    public ArrangementTermService(ArrangementTermRepository arrangementTermRepository,
+                                  DynamicPricingService dynamicPricingService) {
         this.arrangementTermRepository = arrangementTermRepository;
+        this.dynamicPricingService = dynamicPricingService;
     }
 
     public List<ArrangementTermResponseDto> getAllArrangementTerms() {
@@ -25,6 +28,10 @@ public class ArrangementTermService {
 
     private ArrangementTermResponseDto mapToResponseDto(ArrangementTerm arrangementTerm) {
         int availableSpots = arrangementTerm.getCapacity() - arrangementTerm.getReservedSpots();
+        double dynamicPrice = dynamicPricingService.calculatePrice(
+                arrangementTerm.getArrangement(),
+                arrangementTerm
+        );
 
         return new ArrangementTermResponseDto(
                 arrangementTerm.getId(),
@@ -34,6 +41,7 @@ public class ArrangementTermService {
                 arrangementTerm.getArrangement().getDestination().getName(),
                 arrangementTerm.getArrangement().getDestination().getCountry(),
                 arrangementTerm.getArrangement().getBasePrice(),
+
                 arrangementTerm.getArrangement().getNumberOfNights(),
 
                 arrangementTerm.getTerm().getId(),
@@ -42,7 +50,9 @@ public class ArrangementTermService {
 
                 arrangementTerm.getCapacity(),
                 arrangementTerm.getReservedSpots(),
-                availableSpots
+                availableSpots,
+                dynamicPrice
+
         );
     }
 }

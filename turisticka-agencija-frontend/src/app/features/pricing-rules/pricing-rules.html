@@ -1,0 +1,189 @@
+<div class="pricing-page">
+  <app-sidebar-menu></app-sidebar-menu>
+
+  <div class="content">
+    <div class="page-header">
+      <p class="subtitle">LUXTRAVEL</p>
+      <h1>Pravila cena</h1>
+      <p class="description">
+        Definišite pravila za dinamičko određivanje cena aranžmana.
+      </p>
+    </div>
+
+    <p class="error-message" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </p>
+
+    <p class="success-message" *ngIf="successMessage">
+      {{ successMessage }}
+    </p>
+
+    <div class="form-card">
+      <h2>{{ editingRuleId ? 'Izmena pravila' : 'Novo pravilo' }}</h2>
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Naziv pravila</label>
+          <input
+            type="text"
+            [(ngModel)]="form.name"
+            placeholder="npr. Letnja sezona za Krf"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>Tip pravila</label>
+          <select [(ngModel)]="form.type" (change)="onTypeChange()">
+            <option value="SEASON">Sezona</option>
+            <option value="OCCUPANCY">Popunjenost</option>
+            <option value="LAST_MINUTE">Last minute</option>
+            <option value="EARLY_BOOKING">Early booking</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Procenat promene</label>
+          <input
+            type="number"
+            [(ngModel)]="form.percentage"
+            placeholder="npr. 20 ili -10"
+          />
+        </div>
+
+        <div class="form-group checkbox-group">
+          <label>
+            <input type="checkbox" [(ngModel)]="form.active" />
+            Aktivno pravilo
+          </label>
+        </div>
+
+        <div class="form-group" *ngIf="form.type === 'SEASON'">
+          <label>Aranžman</label>
+          <select [(ngModel)]="form.arrangementId">
+            <option [ngValue]="null">Izaberite aranžman</option>
+            <option
+              *ngFor="let arrangement of arrangements"
+              [ngValue]="arrangement.id"
+            >
+              {{ arrangement.name }} - {{ arrangement.destination.name }}
+            </option>
+          </select>
+        </div>
+
+        <div class="form-group" *ngIf="form.type === 'SEASON'">
+          <label>Početak sezone</label>
+          <input type="date" [(ngModel)]="form.seasonStart" />
+        </div>
+
+        <div class="form-group" *ngIf="form.type === 'SEASON'">
+          <label>Kraj sezone</label>
+          <input type="date" [(ngModel)]="form.seasonEnd" />
+        </div>
+
+        <div class="form-group" *ngIf="form.type === 'OCCUPANCY'">
+          <label>Minimalna popunjenost (%)</label>
+          <input
+            type="number"
+            [(ngModel)]="form.minOccupancyPercent"
+            placeholder="npr. 80"
+          />
+        </div>
+
+        <div class="form-group" *ngIf="form.type === 'LAST_MINUTE'">
+          <label>Najviše dana do polaska</label>
+          <input
+            type="number"
+            [(ngModel)]="form.maxDaysBeforeStart"
+            placeholder="npr. 7"
+          />
+        </div>
+
+        <div class="form-group" *ngIf="form.type === 'EARLY_BOOKING'">
+          <label>Najmanje dana do polaska</label>
+          <input
+            type="number"
+            [(ngModel)]="form.minDaysBeforeStart"
+            placeholder="npr. 60"
+          />
+        </div>
+      </div>
+
+      <div class="actions">
+        <button class="primary-btn" (click)="saveRule()">
+          {{ editingRuleId ? 'Sačuvaj izmene' : 'Dodaj pravilo' }}
+        </button>
+
+        <button class="secondary-btn" (click)="resetForm()" *ngIf="editingRuleId">
+          Otkaži izmenu
+        </button>
+      </div>
+    </div>
+
+    <div class="rules-card">
+      <h2>Postojeća pravila</h2>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Naziv</th>
+            <th>Tip</th>
+            <th>Promena</th>
+            <th>Aranžman</th>
+            <th>Uslov</th>
+            <th>Status</th>
+            <th>Akcije</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let rule of rules">
+            <td>{{ rule.name }}</td>
+
+            <td>{{ getRuleTypeLabel(rule.type) }}</td>
+
+            <td>
+              {{ rule.percentage > 0 ? '+' : '' }}{{ rule.percentage }}%
+            </td>
+
+            <td>
+              {{ rule.arrangement ? rule.arrangement.name : 'Svi aranžmani' }}
+            </td>
+
+            <td>
+              <span *ngIf="rule.type === 'SEASON'">
+                {{ rule.seasonStart }} - {{ rule.seasonEnd }}
+              </span>
+
+              <span *ngIf="rule.type === 'OCCUPANCY'">
+                Popunjenost preko {{ rule.minOccupancyPercent }}%
+              </span>
+
+              <span *ngIf="rule.type === 'LAST_MINUTE'">
+                Do {{ rule.maxDaysBeforeStart }} dana pre polaska
+              </span>
+
+              <span *ngIf="rule.type === 'EARLY_BOOKING'">
+                Najmanje {{ rule.minDaysBeforeStart }} dana ranije
+              </span>
+            </td>
+
+            <td>
+              <span [class.active]="rule.active" [class.inactive]="!rule.active">
+                {{ rule.active ? 'Aktivno' : 'Neaktivno' }}
+              </span>
+            </td>
+
+            <td class="table-actions">
+              <button class="edit-btn" (click)="editRule(rule)">Izmeni</button>
+              <button class="delete-btn" (click)="deleteRule(rule.id)">Obriši</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p class="empty-message" *ngIf="rules.length === 0">
+        Trenutno nema definisanih pravila.
+      </p>
+    </div>
+  </div>
+</div>

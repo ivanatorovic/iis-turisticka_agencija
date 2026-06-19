@@ -15,8 +15,12 @@ public class ArrangementService {
 
     private final ArrangementRepository arrangementRepository;
 
-    public ArrangementService(ArrangementRepository arrangementRepository) {
+    private final DynamicPricingService dynamicPricingService;
+
+    public ArrangementService(ArrangementRepository arrangementRepository,
+                              DynamicPricingService dynamicPricingService) {
         this.arrangementRepository = arrangementRepository;
+        this.dynamicPricingService = dynamicPricingService;
     }
 
     public List<Arrangement> getAllArrangements() {
@@ -28,8 +32,19 @@ public class ArrangementService {
     }
 
     public Arrangement getArrangementById(Long id) {
-        return arrangementRepository.findById(id)
+        Arrangement arrangement = arrangementRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Arrangement not found"));
+
+        arrangement.getArrangementTerms().forEach(arrangementTerm -> {
+            double dynamicPrice = dynamicPricingService.calculatePrice(arrangement, arrangementTerm);
+            arrangementTerm.setDynamicPrice(dynamicPrice);
+
+            arrangementTerm.setPriceLabels(
+                    dynamicPricingService.getPriceLabels(arrangement, arrangementTerm)
+            );
+        });
+
+        return arrangement;
     }
 
     public List<Arrangement> searchArrangements(ArrangementSearchRequest request) {

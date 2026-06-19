@@ -19,7 +19,7 @@ public class ArrangementTermResponseDto {
     private Integer capacity;
     private Integer reservedSpots;
     private Integer availableSpots;
-
+    private double dynamicPrice;
     public ArrangementTermResponseDto() {
     }
 
@@ -36,7 +36,8 @@ public class ArrangementTermResponseDto {
             LocalDate endDate,
             Integer capacity,
             Integer reservedSpots,
-            Integer availableSpots
+            Integer availableSpots,
+            double dynamicPrice
     ) {
         this.arrangementTermId = arrangementTermId;
         this.arrangementId = arrangementId;
@@ -51,6 +52,7 @@ public class ArrangementTermResponseDto {
         this.capacity = capacity;
         this.reservedSpots = reservedSpots;
         this.availableSpots = availableSpots;
+        this.dynamicPrice = dynamicPrice;
     }
 
     public Long getArrangementTermId() {
@@ -123,6 +125,14 @@ public class ArrangementTermResponseDto {
 
     public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
+    }
+
+    public double getDynamicPrice() {
+        return dynamicPrice;
+    }
+
+    public void setDynamicPrice(double dynamicPrice) {
+        this.dynamicPrice = dynamicPrice;
     }
 
     public LocalDate getEndDate() {

@@ -3,6 +3,9 @@ package com.example.turisticka_agencija.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 public class ArrangementTerm {
 
@@ -20,6 +23,28 @@ public class ArrangementTerm {
     private int capacity;
 
     private int reservedSpots;
+
+    @Transient
+    private double dynamicPrice;
+
+    @Transient
+    private List<String> priceLabels = new ArrayList<>();
+
+    public List<String> getPriceLabels() {
+        return priceLabels;
+    }
+
+    public void setPriceLabels(List<String> priceLabels) {
+        this.priceLabels = priceLabels;
+    }
+
+    public double getDynamicPrice() {
+        return dynamicPrice;
+    }
+
+    public void setDynamicPrice(double dynamicPrice) {
+        this.dynamicPrice = dynamicPrice;
+    }
 
     public ArrangementTerm() {
     }

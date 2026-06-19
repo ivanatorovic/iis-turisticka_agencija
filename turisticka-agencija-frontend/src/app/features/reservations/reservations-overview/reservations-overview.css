@@ -279,8 +279,8 @@ h1 {
 
 @media (max-width: 900px) {
   .reservation-details {
-    grid-template-columns: repeat(2, 1fr);
-  }
+  grid-template-columns: repeat(5, 1fr);
+}
 
   h1 {
     font-size: 48px;
@@ -382,4 +382,109 @@ h1 {
 
 .complaint-content {
   flex: 1;
+}
+.passenger-info {
+  color: #555;
+  margin-top: 6px;
+  font-size: 14px;
+}.reservation-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  padding: 16px;
+  border-radius: 18px;
+  background: #f8f8f8;
+  margin-bottom: 14px;
+}
+
+.reservation-summary span {
+  display: block;
+  font-size: 12px;
+  color: #777;
+  margin-bottom: 4px;
+}
+
+.reservation-summary b {
+  font-size: 14px;
+}
+
+.price-explanation {
+  margin-top: 16px;
+  padding: 18px;
+  border-radius: 18px;
+  background: #f8f8f8;
+}
+
+.price-explanation h3 {
+  margin: 0 0 14px;
+  font-size: 20px;
+  color: #111;
+}
+
+.price-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 0;
+  border-bottom: 1px solid #e5e5e5;
+}
+
+.price-line span {
+  color: #666;
+}
+
+.price-line b {
+  color: #111;
+}
+
+.price-line.final {
+  border-bottom: none;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.price-line.final span,
+.price-line.final b {
+  color: #9b7a45;
+}
+
+.passenger-price-list {
+  margin: 14px 0;
+  padding: 14px;
+  border-radius: 16px;
+  background: white;
+}
+
+.passenger-price-list h4 {
+  margin: 0 0 10px;
+  color: #9b7a45;
+}
+
+.passenger-price-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 0;
+  border-top: 1px solid #eee;
+}
+
+.passenger-price-row:first-of-type {
+  border-top: none;
+}
+
+.passenger-price-row span {
+  display: block;
+  margin-top: 4px;
+  color: #666;
+  font-size: 13px;
+}
+
+.passenger-price-row strong {
+  color: #111;
+}
+
+.passenger-info {
+  color: #555;
+  margin-top: 6px;
+  font-size: 14px;
 }

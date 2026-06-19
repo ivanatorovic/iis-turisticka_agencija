@@ -3,10 +3,12 @@ package com.example.turisticka_agencija.service;
 import com.example.turisticka_agencija.dto.AlternativeTermDto;
 import com.example.turisticka_agencija.dto.AvailabilityResponse;
 import com.example.turisticka_agencija.dto.CreateReservationRequest;
+import com.example.turisticka_agencija.dto.ReservationPassengerRequest;
 import com.example.turisticka_agencija.model.*;
 import com.example.turisticka_agencija.repository.*;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,15 +18,18 @@ public class ReservationService {
     private final UserRepository userRepository;
     private final ArrangementRepository arrangementRepository;
     private final ArrangementTermRepository arrangementTermRepository;
+    private final DynamicPricingService dynamicPricingService;
 
     public ReservationService(ReservationRepository reservationRepository,
                               UserRepository userRepository,
                               ArrangementRepository arrangementRepository,
-                              ArrangementTermRepository arrangementTermRepository) {
+                              ArrangementTermRepository arrangementTermRepository,
+                              DynamicPricingService dynamicPricingService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.arrangementRepository = arrangementRepository;
         this.arrangementTermRepository = arrangementTermRepository;
+        this.dynamicPricingService = dynamicPricingService;
     }
 
     public List<Reservation> getAllReservations() {
@@ -86,15 +91,88 @@ public class ReservationService {
             throw new RuntimeException("Not enough available spots");
         }
 
-        double totalPrice = arrangement.getBasePrice() * request.getNumberOfPassengers();
+        if (request.getPassengers() == null
+                || request.getPassengers().size() != request.getNumberOfPassengers()) {
+            throw new RuntimeException("Broj putnika nije ispravan");
+        }
+
+        double basePricePerPerson = arrangement.getBasePrice();
+
+        double dynamicPricePerPerson =
+                dynamicPricingService.calculatePrice(arrangement, arrangementTerm);
 
         Reservation reservation = new Reservation();
+
+        double arrangementTotalPrice = 0;
+
+        List<ReservationPassenger> reservationPassengers = new ArrayList<>();
+
+        for (ReservationPassengerRequest passengerRequest : request.getPassengers()) {
+            ReservationPassenger passenger = new ReservationPassenger();
+
+            passenger.setFirstName(passengerRequest.getFirstName());
+            passenger.setLastName(passengerRequest.getLastName());
+            passenger.setAge(passengerRequest.getAge());
+
+            double passengerPrice;
+            String discountDescription;
+
+            if (passengerRequest.getAge() < 5) {
+                passengerPrice = 0;
+                discountDescription = "Dete do 5 godina - gratis";
+            } else if (passengerRequest.getAge() <= 12) {
+                passengerPrice = dynamicPricePerPerson * 0.5;
+                discountDescription = "Dečiji popust 50%";
+            } else {
+                passengerPrice = dynamicPricePerPerson;
+                discountDescription = "Puna cena";
+            }
+
+            passenger.setPrice(passengerPrice);
+            passenger.setDiscountDescription(discountDescription);
+            passenger.setReservation(reservation);
+
+            arrangementTotalPrice += passengerPrice;
+            reservationPassengers.add(passenger);
+        }
+
+        double insurancePrice = 0;
+
+        if (request.isInsuranceSelected()) {
+            insurancePrice = 30 * request.getNumberOfPassengers();
+        }
+
+        double totalPrice = arrangementTotalPrice + insurancePrice;
+
+        if (request.getExpectedTotalPrice() != null
+                && Math.abs(totalPrice - request.getExpectedTotalPrice()) > 0.01) {
+            throw new RuntimeException(
+                    "Cena se promenila. Nova cena je "
+                            + totalPrice
+                            + " €. Molimo proverite obračun i pokušajte ponovo."
+            );
+        }
 
         reservation.setUser(user);
         reservation.setArrangement(arrangement);
         reservation.setArrangementTerm(arrangementTerm);
+        reservation.setPassengers(reservationPassengers);
+
         reservation.setNumberOfPassengers(request.getNumberOfPassengers());
+
+        reservation.setPassengerFirstName(request.getPassengerFirstName());
+        reservation.setPassengerLastName(request.getPassengerLastName());
+        reservation.setPassengerEmail(request.getPassengerEmail());
+
+        reservation.setBasePricePerPerson(basePricePerPerson);
+        reservation.setDynamicPricePerPerson(dynamicPricePerPerson);
+
+        reservation.setInsuranceSelected(request.isInsuranceSelected());
+        reservation.setInsurancePrice(insurancePrice);
+
+        reservation.setArrangementTotalPrice(arrangementTotalPrice);
         reservation.setTotalPrice(totalPrice);
+
         reservation.setStatus(ReservationStatus.CONFIRMED);
 
         PaymentType paymentType = request.getPaymentType() != null

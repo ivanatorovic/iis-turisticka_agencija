@@ -55,6 +55,10 @@
       Analitika prodaje
     </a>
 
+    <a routerLink="/pricing-rules" *ngIf="isManager()" (click)="closeMenu()">
+  Pravila cena
+</a>
+
     <a routerLink="/received-workflows" *ngIf="isManager()" (click)="closeMenu()">
       Primljeni radni tokovi
     </a>
