@@ -228,7 +228,7 @@ export class ArrangementService {
   private readonly additionalActivityRegistrationsUrl =
     'http://localhost:8080/api/additional-activity-registrations';
 
-    private readonly pricingRulesUrl = 'http://localhost:8080/api/pricing-rules';
+  private readonly pricingRulesUrl = 'http://localhost:8080/api/pricing-rules';
 
   constructor(
     private http: HttpClient,
@@ -451,26 +451,26 @@ export class ArrangementService {
     );
   }
   getPricingRules(): Observable<PricingRule[]> {
-  return this.http.get<PricingRule[]>(this.pricingRulesUrl, {
-    headers: this.getHeaders(),
-  });
-}
+    return this.http.get<PricingRule[]>(this.pricingRulesUrl, {
+      headers: this.getHeaders(),
+    });
+  }
 
-createPricingRule(rule: PricingRule): Observable<PricingRule> {
-  return this.http.post<PricingRule>(this.pricingRulesUrl, rule, {
-    headers: this.getHeaders(),
-  });
-}
+  createPricingRule(rule: PricingRule): Observable<PricingRule> {
+    return this.http.post<PricingRule>(this.pricingRulesUrl, rule, {
+      headers: this.getHeaders(),
+    });
+  }
 
-updatePricingRule(id: number, rule: PricingRule): Observable<PricingRule> {
-  return this.http.put<PricingRule>(`${this.pricingRulesUrl}/${id}`, rule, {
-    headers: this.getHeaders(),
-  });
-}
+  updatePricingRule(id: number, rule: PricingRule): Observable<PricingRule> {
+    return this.http.put<PricingRule>(`${this.pricingRulesUrl}/${id}`, rule, {
+      headers: this.getHeaders(),
+    });
+  }
 
-deletePricingRule(id: number): Observable<void> {
-  return this.http.delete<void>(`${this.pricingRulesUrl}/${id}`, {
-    headers: this.getHeaders(),
-  });
-}
+  deletePricingRule(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.pricingRulesUrl}/${id}`, {
+      headers: this.getHeaders(),
+    });
+  }
 }

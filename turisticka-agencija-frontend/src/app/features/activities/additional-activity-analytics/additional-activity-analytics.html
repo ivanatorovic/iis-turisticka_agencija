@@ -1,0 +1,231 @@
+<section class="analytics-page">
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <nav class="navbar">
+    <div class="left-nav">
+      <app-sidebar-menu></app-sidebar-menu>
+      <a class="logo">LUXTRAVEL</a>
+    </div>
+  </nav>
+
+  <main class="content">
+    <div class="header-row">
+      <header class="page-header">
+        <p class="subtitle">MENADŽERSKI IZVEŠTAJ</p>
+        <h1>Dodatne aktivnosti</h1>
+        <p class="description">
+          Pregled prijava, popunjenosti, prihoda, otkazivanja i opterećenja vodiča.
+        </p>
+      </header>
+
+      <div class="top-actions">
+        <button class="back-btn" routerLink="/additional-activities-manager">
+          Nazad na aktivnosti
+        </button>
+      </div>
+    </div>
+
+    <section class="filter-panel">
+      <div class="filter-grid">
+        <label>
+          Aranžman
+          <select [(ngModel)]="filters.arrangementId" (change)="onArrangementChange()">
+            <option [ngValue]="null">Izaberite aranžman</option>
+            <option *ngFor="let arrangement of arrangements" [ngValue]="arrangement.id">
+              {{ arrangement.name }}
+            </option>
+          </select>
+        </label>
+
+        <label>
+          Termin aranžmana
+          <select [(ngModel)]="filters.arrangementTermId">
+            <option [ngValue]="null">Svi termini</option>
+            <option *ngFor="let term of selectedTerms" [ngValue]="term.id">
+              {{ term.term.startDate | date: 'dd.MM.yyyy.' }} -
+              {{ term.term.endDate | date: 'dd.MM.yyyy.' }}
+            </option>
+          </select>
+        </label>
+      </div>
+
+      <div class="filter-actions">
+        <button class="filter-btn" type="button" (click)="loadAnalytics()">Prikaži izveštaj</button>
+        <button class="clear-filter-btn" type="button" (click)="clearFilters()">
+          Očisti filtere
+        </button>
+        <button
+          class="filter-btn"
+          type="button"
+          (click)="generatePdfReport()"
+          [disabled]="generatingPdf"
+        >
+          {{ generatingPdf ? 'Generisanje...' : 'Generiši PDF izveštaj' }}
+        </button>
+      </div>
+    </section>
+
+    <div *ngIf="loading || loadingArrangements" class="message-box">Učitavanje izveštaja...</div>
+
+    <div *ngIf="errorMessage && !loading" class="message-box error">
+      {{ errorMessage }}
+    </div>
+
+    <ng-container *ngIf="analytics && !loading && !errorMessage">
+      <section class="kpi-grid">
+        <article class="kpi-card">
+          <span>Ukupan broj prijava</span>
+          <strong>{{ analytics.summary.totalRegistrations }}</strong>
+        </article>
+
+        <article class="kpi-card">
+          <span>Ukupan broj učesnika</span>
+          <strong>{{ analytics.summary.totalParticipants }}</strong>
+        </article>
+
+        <article class="kpi-card">
+          <span>Ukupan prihod</span>
+          <strong>{{ analytics.summary.totalRevenue }} €</strong>
+        </article>
+
+        <article class="kpi-card">
+          <span>Prosečna popunjenost</span>
+          <strong>{{ analytics.summary.averageOccupancy }}%</strong>
+        </article>
+      </section>
+
+      <section class="section-block report-card revenue-card full-width-card">
+        <div class="section-title-row">
+          <p class="subtitle small">PRIHOD</p>
+          <h2>Prihod po aktivnosti</h2>
+        </div>
+
+        <div class="vertical-chart-scroll">
+          <div class="vertical-chart">
+            <div class="vertical-bar-item" *ngFor="let item of analytics.revenue">
+              <div class="vertical-value">{{ item.revenue }} €</div>
+
+              <div class="vertical-bar-wrapper">
+                <div
+                  class="vertical-bar"
+                  [style.height.%]="getBarWidth(item.revenue, getMaxRevenue())"
+                ></div>
+              </div>
+
+              <div class="vertical-label" [title]="item.activityName">
+                {{ item.activityName }}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section-block analytics-two-column">
+        <article class="report-card">
+          <div class="section-title-row">
+            <p class="subtitle small">POPULARNOST</p>
+            <h2>Popularnost aktivnosti</h2>
+          </div>
+
+          <div class="horizontal-chart">
+            <div class="horizontal-row" *ngFor="let item of analytics.popularity">
+              <div class="horizontal-info">
+                <strong>{{ item.activityName }}</strong>
+                <span>{{ item.participantsCount }} učesnika</span>
+              </div>
+
+              <div class="horizontal-track">
+                <div
+                  class="horizontal-fill"
+                  [style.width.%]="getBarWidth(item.participantsCount, getMaxParticipants())"
+                ></div>
+              </div>
+
+              <small>{{ item.registrationsCount }} prijava</small>
+            </div>
+          </div>
+        </article>
+
+        <article class="report-card">
+          <div class="section-title-row">
+            <p class="subtitle small">POPUNJENOST</p>
+            <h2>Popunjenost aktivnosti</h2>
+          </div>
+
+          <div class="table-wrapper compact-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Aktivnost</th>
+                  <th>Kap.</th>
+                  <th>Zauz.</th>
+                  <th>Popunjenost</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                <tr *ngFor="let item of analytics.occupancy">
+                  <td>{{ item.activityName }}</td>
+                  <td>{{ item.capacity }}</td>
+                  <td>{{ item.reservedSpots }}</td>
+                  <td>
+                    <div class="occupancy-cell">
+                      <div class="occupancy-track">
+                        <div
+                          class="occupancy-fill"
+                          [style.width.%]="item.occupancyRate > 100 ? 100 : item.occupancyRate"
+                        ></div>
+                      </div>
+
+                      <span class="status-badge">{{ item.occupancyRate }}%</span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+
+      <section class="section-block two-columns">
+        <article class="report-card">
+          <div class="section-title-row">
+            <p class="subtitle small">OTKAZIVANJA</p>
+            <h2>Stopa otkazivanja</h2>
+          </div>
+
+          <div class="simple-list">
+            <div class="cancel-item" *ngFor="let item of analytics.cancellations">
+              <div class="cancel-top">
+                <span>{{ item.activityName }}</span>
+                <strong>{{ item.cancelRate }}%</strong>
+              </div>
+
+              <div class="cancel-track">
+                <div
+                  class="cancel-fill"
+                  [style.width.%]="item.cancelRate > 100 ? 100 : item.cancelRate"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <article class="report-card">
+          <div class="section-title-row">
+            <p class="subtitle small">VODIČI</p>
+            <h2>Opterećenje vodiča</h2>
+          </div>
+
+          <div class="simple-list">
+            <div class="simple-item" *ngFor="let item of analytics.guideWorkload">
+              <span>{{ item.guideName || 'Bez vodiča' }}</span>
+              <strong>{{ item.activitiesCount }} akt. / {{ item.participantsCount }} uč.</strong>
+            </div>
+          </div>
+        </article>
+      </section>
+    </ng-container>
+  </main>
+</section>

@@ -22,6 +22,7 @@ import { AdditionalActivitiesCustomer } from './features/activities/additional-a
 import { AdditionalActivitiesGuide } from './features/activities/additional-activities-guide/additional-activities-guide';
 import { RecommendedActivities } from './features/activities/recommended-activities/recommended-activities';
 import { PricingRules } from './features/pricing-rules/pricing-rules';
+import { AdditionalActivityAnalytics } from './features/activities/additional-activity-analytics/additional-activity-analytics';
 export const routes: Routes = [
   {
     path: '',
@@ -158,7 +159,11 @@ export const routes: Routes = [
     component: RecommendedActivities,
   },
   {
-  path: 'pricing-rules',
-  component: PricingRules,
-},
+    path: 'pricing-rules',
+    component: PricingRules,
+  },
+  {
+    path: 'additional-activity-analytics',
+    component: AdditionalActivityAnalytics,
+  },
 ];
