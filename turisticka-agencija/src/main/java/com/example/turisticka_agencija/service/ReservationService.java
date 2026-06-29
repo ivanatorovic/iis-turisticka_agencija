@@ -13,7 +13,7 @@ import java.util.List;
 
 @Service
 public class ReservationService {
-
+    private final EmailService emailService;
     private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final ArrangementRepository arrangementRepository;
@@ -24,12 +24,14 @@ public class ReservationService {
                               UserRepository userRepository,
                               ArrangementRepository arrangementRepository,
                               ArrangementTermRepository arrangementTermRepository,
-                              DynamicPricingService dynamicPricingService) {
+                              DynamicPricingService dynamicPricingService,
+                              EmailService emailService) {
         this.reservationRepository = reservationRepository;
         this.userRepository = userRepository;
         this.arrangementRepository = arrangementRepository;
         this.arrangementTermRepository = arrangementTermRepository;
         this.dynamicPricingService = dynamicPricingService;
+        this.emailService = emailService;
     }
 
     public List<Reservation> getAllReservations() {
@@ -199,7 +201,15 @@ public class ReservationService {
 
         arrangementTermRepository.save(arrangementTerm);
 
-        return reservationRepository.save(reservation);
+        Reservation savedReservation = reservationRepository.save(reservation);
+
+        try {
+            emailService.sendReservationConfirmation(savedReservation);
+        } catch (Exception e) {
+            System.out.println("Email nije poslat: " + e.getMessage());
+        }
+
+        return savedReservation;
     }
 
     public Reservation cancelReservation(Long reservationId) {
