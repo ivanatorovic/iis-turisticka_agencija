@@ -193,4 +193,34 @@ export class ReservationsOverview implements OnInit {
       },
     });
   }
+
+  searchTerm = '';
+
+get filteredReservations(): Reservation[] {
+  const term = this.searchTerm.toLowerCase().trim();
+
+  if (!term) {
+    return this.reservations;
+  }
+
+  return this.reservations.filter((reservation) => {
+    const arrangementName = reservation.arrangement?.name?.toLowerCase() || '';
+    const destination = reservation.arrangement?.destination?.name?.toLowerCase() || '';
+    const country = reservation.arrangement?.destination?.country?.toLowerCase() || '';
+    const firstName = reservation.passengerFirstName?.toLowerCase() || '';
+    const lastName = reservation.passengerLastName?.toLowerCase() || '';
+    const email = reservation.passengerEmail?.toLowerCase() || '';
+    const status = reservation.status?.toLowerCase() || '';
+
+    return (
+      arrangementName.includes(term) ||
+      destination.includes(term) ||
+      country.includes(term) ||
+      firstName.includes(term) ||
+      lastName.includes(term) ||
+      email.includes(term) ||
+      status.includes(term)
+    );
+  });
+}
 }

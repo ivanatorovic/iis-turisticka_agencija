@@ -8,6 +8,17 @@
       <p class="description">
         Pregled rezervacija, statusa i detaljne strukture cene aranžmana.
       </p>
+      <div class="search-box" *ngIf="reservations.length > 0">
+  <input
+    type="text"
+    placeholder="Pretraži po aranžmanu, destinaciji, putniku, emailu ili statusu..."
+    [(ngModel)]="searchTerm"
+  />
+
+  <button *ngIf="searchTerm" type="button" (click)="searchTerm = ''">
+    Očisti
+  </button>
+</div>
     </div>
 
     <p class="success-message" *ngIf="successMessage">{{ successMessage }}</p>
@@ -17,8 +28,8 @@
       Nema rezervacija za prikaz.
     </p>
 
-    <div class="reservations-list" *ngIf="reservations.length > 0">
-      <div class="reservation-card" *ngFor="let reservation of reservations">
+    <div class="reservations-list" *ngIf="filteredReservations.length > 0">
+  <div class="reservation-card" *ngFor="let reservation of filteredReservations">
         <div class="reservation-main">
           <div>
             <p class="destination">
