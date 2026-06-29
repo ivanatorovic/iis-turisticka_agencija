@@ -1,15 +1,10 @@
 package com.example.turisticka_agencija.service;
 
 import com.example.turisticka_agencija.dto.*;
-import com.example.turisticka_agencija.model.Reservation;
-import com.example.turisticka_agencija.model.ReservationStatus;
 import com.example.turisticka_agencija.repository.ReservationRepository;
 import org.springframework.stereotype.Service;
 
-import java.time.Month;
-import java.time.format.TextStyle;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class SalesAnalyticsService {
@@ -21,25 +16,12 @@ public class SalesAnalyticsService {
     }
 
     public YearlySalesSummaryDto getYearlySummary(int year) {
-        List<Reservation> reservationsForYear = reservationRepository.findAll()
-                .stream()
-                .filter(reservation -> getTravelYear(reservation) == year)
-                .toList();
+        YearlySalesSummaryProjection data = reservationRepository.getYearlySummaryData(year);
 
-        long totalReservations = reservationsForYear.size();
-
-        long confirmedReservations = reservationsForYear.stream()
-                .filter(reservation -> reservation.getStatus() == ReservationStatus.CONFIRMED)
-                .count();
-
-        long cancelledReservations = reservationsForYear.stream()
-                .filter(reservation -> reservation.getStatus() == ReservationStatus.CANCELLED)
-                .count();
-
-        double totalRevenue = reservationsForYear.stream()
-                .filter(reservation -> reservation.getStatus() == ReservationStatus.CONFIRMED)
-                .mapToDouble(Reservation::getTotalPrice)
-                .sum();
+        long totalReservations = safeLong(data.getTotalReservations());
+        long confirmedReservations = safeLong(data.getConfirmedReservations());
+        long cancelledReservations = safeLong(data.getCancelledReservations());
+        double totalRevenue = safeDouble(data.getTotalRevenue());
 
         double averageReservationValue = confirmedReservations > 0
                 ? totalRevenue / confirmedReservations
@@ -56,54 +38,37 @@ public class SalesAnalyticsService {
     }
 
     public List<YearRevenueDto> getRevenueByYears() {
-        return reservationRepository.findAll()
-                .stream()
-                .filter(reservation -> reservation.getStatus() == ReservationStatus.CONFIRMED)
-                .collect(Collectors.groupingBy(this::getTravelYear))
-                .entrySet()
-                .stream()
-                .map(entry -> new YearRevenueDto(
-                        entry.getKey(),
-                        entry.getValue().size(),
-                        entry.getValue()
-                                .stream()
-                                .mapToDouble(Reservation::getTotalPrice)
-                                .sum()
-                ))
-                .sorted(Comparator.comparingInt(YearRevenueDto::getYear))
-                .toList();
+        return reservationRepository.getRevenueByYears();
     }
 
     public List<MonthlyArrangementSalesDto> getMonthlyArrangementSales(Long arrangementId, int year) {
-        List<Reservation> reservations = reservationRepository.findAll()
-                .stream()
-                .filter(reservation -> reservation.getStatus() == ReservationStatus.CONFIRMED)
-                .filter(reservation -> reservation.getArrangement().getId().equals(arrangementId))
-                .filter(reservation -> getTravelYear(reservation) == year)
-                .toList();
+        List<MonthlyArrangementSalesProjection> rows =
+                reservationRepository.getMonthlyArrangementSalesData(arrangementId, year);
+
+        Map<Integer, MonthlyArrangementSalesProjection> byMonth = new HashMap<>();
+
+        for (MonthlyArrangementSalesProjection row : rows) {
+            byMonth.put(row.getMonth(), row);
+        }
+
+        String[] months = {
+                "Januar", "Februar", "Mart", "April",
+                "Maj", "Jun", "Jul", "Avgust",
+                "Septembar", "Oktobar", "Novembar", "Decembar"
+        };
 
         List<MonthlyArrangementSalesDto> result = new ArrayList<>();
 
         for (int month = 1; month <= 12; month++) {
-            int currentMonth = month;
+            MonthlyArrangementSalesProjection row = byMonth.get(month);
 
-            List<Reservation> reservationsForMonth = reservations.stream()
-                    .filter(reservation -> getTravelMonth(reservation) == currentMonth)
-                    .toList();
-
-            long count = reservationsForMonth.size();
-
-            double revenue = reservationsForMonth.stream()
-                    .mapToDouble(Reservation::getTotalPrice)
-                    .sum();
-
-            String monthName = Month.of(month)
-                    .getDisplayName(TextStyle.FULL, new Locale("sr", "RS"));
+            long reservationCount = row != null ? safeLong(row.getReservationCount()) : 0;
+            double revenue = row != null ? safeDouble(row.getRevenue()) : 0;
 
             result.add(new MonthlyArrangementSalesDto(
                     month,
-                    monthName,
-                    count,
+                    months[month - 1],
+                    reservationCount,
                     revenue
             ));
         }
@@ -112,78 +77,18 @@ public class SalesAnalyticsService {
     }
 
     public List<PopularDestinationDto> getPopularDestinations(int year) {
-        return reservationRepository.findAll()
-                .stream()
-                .filter(reservation -> reservation.getStatus() == ReservationStatus.CONFIRMED)
-                .filter(reservation -> getTravelYear(reservation) == year)
-                .collect(Collectors.groupingBy(reservation ->
-                        reservation.getArrangement().getDestination().getName()
-                                + "|" +
-                                reservation.getArrangement().getDestination().getCountry()
-                ))
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    String[] parts = entry.getKey().split("\\|");
-
-                    long count = entry.getValue().size();
-
-                    double revenue = entry.getValue()
-                            .stream()
-                            .mapToDouble(Reservation::getTotalPrice)
-                            .sum();
-
-                    return new PopularDestinationDto(
-                            parts[0],
-                            parts[1],
-                            count,
-                            revenue
-                    );
-                })
-                .sorted(Comparator.comparingLong(PopularDestinationDto::getReservationCount).reversed())
-                .toList();
+        return reservationRepository.getPopularDestinations(year);
     }
 
     public List<PopularArrangementDto> getPopularArrangements(int year) {
-        return reservationRepository.findAll()
-                .stream()
-                .filter(reservation -> reservation.getStatus() == ReservationStatus.CONFIRMED)
-                .filter(reservation -> getTravelYear(reservation) == year)
-                .collect(Collectors.groupingBy(reservation -> reservation.getArrangement().getId()))
-                .entrySet()
-                .stream()
-                .map(entry -> {
-                    Reservation first = entry.getValue().get(0);
-
-                    long count = entry.getValue().size();
-
-                    double revenue = entry.getValue()
-                            .stream()
-                            .mapToDouble(Reservation::getTotalPrice)
-                            .sum();
-
-                    return new PopularArrangementDto(
-                            first.getArrangement().getId(),
-                            first.getArrangement().getName(),
-                            count,
-                            revenue
-                    );
-                })
-                .sorted(Comparator.comparingLong(PopularArrangementDto::getReservationCount).reversed())
-                .toList();
+        return reservationRepository.getPopularArrangements(year);
     }
 
-    private int getTravelYear(Reservation reservation) {
-        return reservation.getArrangementTerm()
-                .getTerm()
-                .getStartDate()
-                .getYear();
+    private long safeLong(Long value) {
+        return value == null ? 0 : value;
     }
 
-    private int getTravelMonth(Reservation reservation) {
-        return reservation.getArrangementTerm()
-                .getTerm()
-                .getStartDate()
-                .getMonthValue();
+    private double safeDouble(Double value) {
+        return value == null ? 0 : value;
     }
 }

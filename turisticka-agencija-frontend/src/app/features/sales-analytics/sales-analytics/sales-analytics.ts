@@ -125,4 +125,26 @@ export class SalesAnalytics implements OnInit {
   onArrangementChange(): void {
     this.loadMonthlyArrangementSales();
   }
+
+  generatePdf(): void {
+  this.salesAnalyticsService
+    .generatePdf(this.selectedYear, this.selectedArrangementId)
+    .subscribe({
+      next: (blob) => {
+        const file = new Blob([blob], { type: 'application/pdf' });
+        const url = window.URL.createObjectURL(file);
+
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `sales-analytics-${this.selectedYear}.pdf`;
+        link.click();
+
+        window.URL.revokeObjectURL(url);
+      },
+      error: (err) => {
+        console.error(err);
+        this.errorMessage = 'Greška pri generisanju PDF izveštaja.';
+      },
+    });
+}
 }

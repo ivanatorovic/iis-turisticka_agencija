@@ -104,4 +104,18 @@ export class SalesAnalyticsService {
       params,
     });
   }
+
+  generatePdf(year: number, arrangementId: number | null): Observable<Blob> {
+  let params = new HttpParams().set('year', year);
+
+  if (arrangementId) {
+    params = params.set('arrangementId', arrangementId);
+  }
+
+  return this.http.get(`${this.apiUrl}/pdf`, {
+    headers: this.getHeaders(),
+    params,
+    responseType: 'blob',
+  });
+}
 }
