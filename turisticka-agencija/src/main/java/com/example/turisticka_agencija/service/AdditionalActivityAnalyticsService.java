@@ -4,6 +4,7 @@ import com.example.turisticka_agencija.dto.*;
 import com.example.turisticka_agencija.exception.BadRequestException;
 import com.example.turisticka_agencija.model.Role;
 import com.example.turisticka_agencija.model.User;
+import com.example.turisticka_agencija.projection.AdditionalActivityAnalyticsSummaryProjection;
 import com.example.turisticka_agencija.repository.AdditionalActivityAnalyticsRepository;
 import com.example.turisticka_agencija.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -49,164 +50,136 @@ public class AdditionalActivityAnalyticsService {
             Principal principal
     ) {
         validateManager(principal);
-
-        if (arrangementId == null) {
-            throw new BadRequestException("Aranžman je obavezan za izveštaj");
-        }
-
-        var rows = analyticsRepository.getAnalyticsReport(
-                arrangementId,
-                arrangementTermId
-        );
+        validateArrangement(arrangementId);
 
         List<AdditionalActivityAnalyticsRowDto> tableRows =
-                rows.stream()
-                        .map(row ->
-                                new AdditionalActivityAnalyticsRowDto(
-                                        row.getArrangementId(),
-                                        row.getArrangementName(),
-                                        row.getArrangementTermId(),
-                                        row.getTermStartDate(),
-                                        row.getTermEndDate(),
-                                        row.getExecutionId(),
-                                        row.getActivityName(),
-                                        row.getActivityDate(),
-                                        row.getGuideName(),
-                                        row.getRegistrationsCount(),
-                                        row.getParticipantsCount(),
-                                        row.getCapacity(),
-                                        row.getReservedSpots(),
-                                        row.getOccupancyRate(),
-                                        row.getRevenue(),
-                                        row.getCancelRate()
-                                )
-                        )
-                        .toList();
+                getTableRows(arrangementId, arrangementTermId);
 
         return new AdditionalActivityAnalyticsResponse(
-                buildSummary(tableRows),
-                buildPopularity(tableRows),
-                buildOccupancy(tableRows),
-                buildRevenue(tableRows),
-                buildCancellations(tableRows),
-                buildGuideWorkload(tableRows),
+                getSummary(arrangementId, arrangementTermId),
+                getPopularity(arrangementId, arrangementTermId),
+                getOccupancy(arrangementId, arrangementTermId),
+                getRevenue(arrangementId, arrangementTermId),
+                getCancellations(arrangementId, arrangementTermId),
+                getGuideWorkload(arrangementId, arrangementTermId),
                 tableRows
         );
     }
 
-    private AdditionalActivityAnalyticsSummaryDto buildSummary(
-            List<AdditionalActivityAnalyticsRowDto> rows
-    ) {
-        long totalRegistrations = rows.stream()
-                .mapToLong(AdditionalActivityAnalyticsRowDto::getRegistrationsCount)
-                .sum();
-
-        long totalParticipants = rows.stream()
-                .mapToLong(AdditionalActivityAnalyticsRowDto::getParticipantsCount)
-                .sum();
-
-        double totalRevenue = rows.stream()
-                .mapToDouble(AdditionalActivityAnalyticsRowDto::getRevenue)
-                .sum();
-
-        double averageOccupancy = rows.isEmpty()
-                ? 0
-                : rows.stream()
-                .mapToDouble(AdditionalActivityAnalyticsRowDto::getOccupancyRate)
-                .average()
-                .orElse(0);
-
-        return new AdditionalActivityAnalyticsSummaryDto(
-                totalRegistrations,
-                totalParticipants,
-                round(totalRevenue),
-                round(averageOccupancy)
-        );
+    private void validateArrangement(Long arrangementId) {
+        if (arrangementId == null) {
+            throw new BadRequestException("Aranžman je obavezan za izveštaj");
+        }
     }
 
-    private List<ActivityPopularityDto> buildPopularity(
-            List<AdditionalActivityAnalyticsRowDto> rows
+    private List<AdditionalActivityAnalyticsRowDto> getTableRows(
+            Long arrangementId,
+            Long arrangementTermId
     ) {
-        Map<String, List<AdditionalActivityAnalyticsRowDto>> grouped =
-                rows.stream().collect(Collectors.groupingBy(
-                        AdditionalActivityAnalyticsRowDto::getActivityName
-                ));
-
-        return grouped.entrySet()
+        return analyticsRepository.getAnalyticsReport(arrangementId, arrangementTermId)
                 .stream()
-                .map(entry -> new ActivityPopularityDto(
-                        entry.getKey(),
-                        entry.getValue().stream()
-                                .mapToLong(AdditionalActivityAnalyticsRowDto::getRegistrationsCount)
-                                .sum(),
-                        entry.getValue().stream()
-                                .mapToLong(AdditionalActivityAnalyticsRowDto::getParticipantsCount)
-                                .sum()
+                .map(row -> new AdditionalActivityAnalyticsRowDto(
+                        row.getArrangementId(),
+                        row.getArrangementName(),
+                        row.getArrangementTermId(),
+                        row.getTermStartDate(),
+                        row.getTermEndDate(),
+                        row.getExecutionId(),
+                        row.getActivityName(),
+                        row.getActivityDate(),
+                        row.getGuideName(),
+                        row.getRegistrationsCount(),
+                        row.getParticipantsCount(),
+                        row.getCapacity(),
+                        row.getReservedSpots(),
+                        row.getOccupancyRate(),
+                        row.getRevenue(),
+                        row.getCancelRate()
                 ))
-                .sorted(Comparator.comparingLong(ActivityPopularityDto::getParticipantsCount).reversed())
                 .toList();
     }
 
-    private List<ActivityOccupancyDto> buildOccupancy(
-            List<AdditionalActivityAnalyticsRowDto> rows
+    private AdditionalActivityAnalyticsSummaryDto getSummary(
+            Long arrangementId,
+            Long arrangementTermId
     ) {
-        return rows.stream()
+        AdditionalActivityAnalyticsSummaryProjection summary =
+                analyticsRepository.getSummary(arrangementId, arrangementTermId);
+
+        return new AdditionalActivityAnalyticsSummaryDto(
+                summary.getTotalRegistrations(),
+                summary.getTotalParticipants(),
+                summary.getTotalRevenue(),
+                summary.getAverageOccupancy()
+        );
+    }
+
+    private List<ActivityPopularityDto> getPopularity(
+            Long arrangementId,
+            Long arrangementTermId
+    ) {
+        return analyticsRepository.getPopularity(arrangementId, arrangementTermId)
+                .stream()
+                .map(row -> new ActivityPopularityDto(
+                        row.getActivityName(),
+                        row.getRegistrationsCount(),
+                        row.getParticipantsCount()
+                ))
+                .toList();
+    }
+
+    private List<ActivityOccupancyDto> getOccupancy(
+            Long arrangementId,
+            Long arrangementTermId
+    ) {
+        return analyticsRepository.getOccupancy(arrangementId, arrangementTermId)
+                .stream()
                 .map(row -> new ActivityOccupancyDto(
                         row.getActivityName(),
                         row.getCapacity(),
                         row.getReservedSpots(),
-                        round(row.getOccupancyRate())
+                        row.getOccupancyRate()
                 ))
-                .sorted(Comparator.comparingDouble(ActivityOccupancyDto::getOccupancyRate).reversed())
                 .toList();
     }
 
-    private List<ActivityRevenueDto> buildRevenue(
-            List<AdditionalActivityAnalyticsRowDto> rows
+    private List<ActivityRevenueDto> getRevenue(
+            Long arrangementId,
+            Long arrangementTermId
     ) {
-        Map<String, Double> grouped = rows.stream()
-                .collect(Collectors.groupingBy(
-                        AdditionalActivityAnalyticsRowDto::getActivityName,
-                        Collectors.summingDouble(AdditionalActivityAnalyticsRowDto::getRevenue)
-                ));
-
-        return grouped.entrySet()
+        return analyticsRepository.getRevenue(arrangementId, arrangementTermId)
                 .stream()
-                .map(entry -> new ActivityRevenueDto(entry.getKey(), round(entry.getValue())))
-                .sorted(Comparator.comparingDouble(ActivityRevenueDto::getRevenue).reversed())
+                .map(row -> new ActivityRevenueDto(
+                        row.getActivityName(),
+                        row.getRevenue()
+                ))
                 .toList();
     }
 
-    private List<ActivityCancellationDto> buildCancellations(
-            List<AdditionalActivityAnalyticsRowDto> rows
+    private List<ActivityCancellationDto> getCancellations(
+            Long arrangementId,
+            Long arrangementTermId
     ) {
-        return rows.stream()
+        return analyticsRepository.getCancellations(arrangementId, arrangementTermId)
+                .stream()
                 .map(row -> new ActivityCancellationDto(
                         row.getActivityName(),
-                        round(row.getCancelRate())
+                        row.getCancelRate()
                 ))
-                .sorted(Comparator.comparingDouble(ActivityCancellationDto::getCancelRate).reversed())
                 .toList();
     }
 
-    private List<GuideWorkloadDto> buildGuideWorkload(
-            List<AdditionalActivityAnalyticsRowDto> rows
+    private List<GuideWorkloadDto> getGuideWorkload(
+            Long arrangementId,
+            Long arrangementTermId
     ) {
-        Map<String, List<AdditionalActivityAnalyticsRowDto>> grouped =
-                rows.stream().collect(Collectors.groupingBy(
-                        AdditionalActivityAnalyticsRowDto::getGuideName
-                ));
-
-        return grouped.entrySet()
+        return analyticsRepository.getGuideWorkload(arrangementId, arrangementTermId)
                 .stream()
-                .map(entry -> new GuideWorkloadDto(
-                        entry.getKey(),
-                        entry.getValue().size(),
-                        entry.getValue().stream()
-                                .mapToLong(AdditionalActivityAnalyticsRowDto::getParticipantsCount)
-                                .sum()
+                .map(row -> new GuideWorkloadDto(
+                        row.getGuideName(),
+                        row.getExecutionsCount(),
+                        row.getParticipantsCount()
                 ))
-                .sorted(Comparator.comparingLong(GuideWorkloadDto::getParticipantsCount).reversed())
                 .toList();
     }
 
